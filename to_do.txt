@@ -1,0 +1,2 @@
+1) установить Docker и Node
+2) npm create t3-app@latest
