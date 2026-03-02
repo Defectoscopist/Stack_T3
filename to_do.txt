@@ -1,4 +1,13 @@
 1) установить Docker и Node
+Если Docker бесконечно грузится -
+Открываем «Безопасность Windows» («Windows Security»)
+Выбираем «Контроль приложений и браузера» («Apps & Browser control»)
+Выбираем «Exploit protection settings» в самом низу («Exploit protection settings»)
+Переключаемся во вкладку «Настройка программ» («Program settings»)
+Ищем в списке «C:\WINDOWS\System32\vmcompute.exe». Если в списке нет, то нажимаем «Добавить» и вводим указанный адрес.
+Наживаем редактировать («Edit»)
+Находим «Code flow guard (CFG)» и отключаем перегрузку системных настроек («Override system settings»)
+Перезагружаем комп
 2) npm create t3-app@latest
 3) ./start_database.sh
 4) npm run db:push
