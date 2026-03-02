@@ -1,2 +1,4 @@
 1) установить Docker и Node
 2) npm create t3-app@latest
+3) ./start_database.sh
+4) npm run db:push
