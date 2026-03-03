@@ -16,8 +16,8 @@ wsl --shutdown
 
 2) npm create t3-app@latest
 3) ./start_database.sh
-4) npm run db:push
 
 5) Составить архитектуру в призме
 6) Открыть докер и запустить приложение
 7) npx prisma migrate dev --name list (создастся БД из призмы)
+8) npx prisma studio - посмотреть БД

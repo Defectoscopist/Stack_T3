@@ -1,0 +1,22 @@
+1) Создать БД:		docker run --name mysql-dev -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=testdb -p 3307:3306 -d mysql:8
+2) Залезть в нее:	docker exec -it mysql-dev mysql -u root -p
+
+CREATE DATABASE [db_name];					Создать БД
+USE [db_name];							Использовать БД
+CREATE TABLE [t_name] (						Создать таблицу
+	id INT [[AUTO_INCREMENT]] PRIMARY KEY,
+	some_param VARCHAR(255) NOT NULL,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+SHOW TABLES;							Показать таблицы
+DESCRIBE [t_name];						Посмотретреть структуру таблицы
+INSERT INTO [t_name] some_param VALUES ('test@mail.com');	Вставить данные в столбец
+SELECT * FROM [t_name];						Показать данные таблицы
+;
+;
+;
+;
+;
+;
+
