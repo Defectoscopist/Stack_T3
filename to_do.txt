@@ -8,9 +8,16 @@
 Наживаем редактировать («Edit»)
 Находим «Code flow guard (CFG)» и отключаем перегрузку системных настроек («Override system settings»)
 Перезагружаем комп
+
+В PowerShell от имени администратора:
+wsl --unregister docker-desktop
+wsl --unregister docker-desktop-data
+wsl --shutdown
+
 2) npm create t3-app@latest
 3) ./start_database.sh
 4) npm run db:push
 
 5) Составить архитектуру в призме
-6)
+6) Открыть докер и запустить приложение
+7) npx prisma migrate dev --name list (создастся БД из призмы)

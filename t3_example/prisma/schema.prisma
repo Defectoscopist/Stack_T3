@@ -104,10 +104,10 @@ model Cart {
 model CartItem {
     id          String          @id @default(cuid())
     cart        Cart            @relation(fields: [cartId], references: [id])
-    cartId      String          //@unique
+    cartId      String
 
     variant     ProductVariant  @relation(fields: [variantId], references: [id])
-    variantId   String          //@unique
+    variantId   String
 
     quantity    Int
     @@unique([cartId, variantId])
@@ -147,10 +147,10 @@ model Order {
 model OrderItem {
     id          String          @id @default(cuid())
     order       Order           @relation(fields: [orderId], references: [id])
-    orderId     String          //@unique
+    orderId     String          
 
     variant     ProductVariant  @relation(fields: [variantId], references: [id])
-    variantId   String          //@unique
+    variantId   String          
     price       Decimal         @db.Decimal(10,2)
     quantity    Int
 }
@@ -158,16 +158,28 @@ model OrderItem {
 /*************************************** Products **********************************/
 
 model Product {
-    id          String      @id @default(cuid())
-    name        String
-    description String
-    slug        String      @unique
-    isActive    Boolean     @default(true)
+    id              String      @id @default(cuid())
+    name            String
+    description     String
+    slug            String      @unique
+    isActive        Boolean     @default(true)
 
-    variant ProductVariant[]
+    category        Category    @relation(fields: [categoryId], references: [id])
+    categoryId      String
 
-    createdAt   DateTime    @default(now())
-    updatedAt   DateTime    @updatedAt
+    variant         ProductVariant[]
+
+    images          ProductImage[]
+
+    brand           Brand       @relation(fields: [brandId], references: [id])
+    brandId         String
+
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
+
+    isFeatured      Boolean     @default(false)
+    publishedAt     DateTime?
+    deletedAt       DateTime?
 }
 
 model ProductVariant {
@@ -182,6 +194,39 @@ model ProductVariant {
     memory      String?
     edition     String?
 
+    cartItems   CartItem[]
+    orderItems  OrderItem[]
+
     createdAt   DateTime    @default(now())
     updatedAt   DateTime    @updatedAt
+}
+
+model Category {
+    id          String      @id @default(cuid())
+    name        String
+    slug        String      @unique
+    parent      Category?   @relation("CategoryHierarchy", fields: [parentId], references: [id])
+    parentId    String?
+    children    Category[]  @relation("CategoryHierarchy")
+
+    products    Product[]
+
+    createdAt   DateTime    @default(now())
+}
+
+model ProductImage {
+    id          String      @id @default(cuid())
+    url         String
+    alt         String?
+    product     Product     @relation(fields: [productId], references: [id])
+    productId   String
+
+    position Int
+}
+
+model Brand {
+    id          String      @id @default(cuid())
+    name        String
+    slug        String      @unique
+    products    Product[]
 }
