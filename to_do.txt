@@ -48,4 +48,12 @@ src/
 ------ order.service.ts
 ---- db.ts
 
-2.2) Пишем сервисы
+2.2) Пишем сервисы:
+запросы в server/services
+маршруты в server/api/routers
+чекнуть наличие root.ts в server/api и в нем:
+export const appRouter = createTRPCRouter({
+  cart: cartRouter,
+});
+
+2.3) Тестируем: npm run dev
