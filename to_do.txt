@@ -1,4 +1,6 @@
-1) установить Docker и Node
+==================================================		БД		========================================================
+
+1.1) установить Docker и Node
 Если Docker бесконечно грузится -
 Открываем «Безопасность Windows» («Windows Security»)
 Выбираем «Контроль приложений и браузера» («Apps & Browser control»)
@@ -14,10 +16,36 @@ wsl --unregister docker-desktop
 wsl --unregister docker-desktop-data
 wsl --shutdown
 
-2) npm create t3-app@latest
-3) ./start_database.sh
+1.2) npm create t3-app@latest
+1.3) ./start_database.sh
 
-5) Составить архитектуру в призме
-6) Открыть докер и запустить приложение
-7) npx prisma migrate dev --name list (создастся БД из призмы)
-8) npx prisma studio - посмотреть БД
+1.4) Составить архитектуру в призме
+1.5) Открыть докер и запустить приложение
+1.6) npx prisma migrate dev --name list (создастся БД из призмы)
+1.7) npx prisma studio - посмотреть БД
+1.8) При добавлении в DBeaver, в свойствах драйвера:
+allowPublicKeyRetrieval	true
+useSSL	false
+
+1.9) Накидать тестовые данные в seed.ts
+1.10) в корне создать prisma.config.ts
+1.11) npm install -D tsx
+1.10) npx prisma db seed
+
+==================================================		API		========================================================
+
+2.1) Ваяем архитектуру по типу:
+src/
+-- server/
+---- api/
+------  routers/
+-------- cart.ts
+-------- order.ts
+-------- product.ts
+------ root.ts
+---- services/
+------ cart.service.ts
+------ order.service.ts
+---- db.ts
+
+2.2) Пишем сервисы
