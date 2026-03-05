@@ -1,4 +1,7 @@
 {
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "name": "t3_example",
   "version": "0.1.0",
   "private": true,
@@ -49,6 +52,7 @@
     "prettier-plugin-tailwindcss": "^0.6.11",
     "prisma": "^6.6.0",
     "tailwindcss": "^4.0.15",
+    "tsx": "^4.21.0",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.27.0"
   },

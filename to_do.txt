@@ -29,6 +29,11 @@ useSSL	false
 
 1.9) Накидать тестовые данные в seed.ts
 1.10) в корне создать prisma.config.ts
+в package.json:
+"prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+заткнуть dummy Discord
 1.11) npm install -D tsx
 1.10) npx prisma db seed
 
