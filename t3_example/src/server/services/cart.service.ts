@@ -38,13 +38,23 @@ export const cartService = {
             })
         }
 
+        const variant = await db.productVariant.findUnique({
+            where: { id: variantId },
+            select: { price: true }
+        });
+
+        if (!variant) {
+            return null
+        }
+
         return db.cartItem.create({
             data: {
                 cartId: cart.id,
                 variantId,
-                quantity
+                quantity,
+                price: variant.price
             }
-        })
+        });
     },
 
     async updateItem (userId: string, variantId: string, quantity: number) {
