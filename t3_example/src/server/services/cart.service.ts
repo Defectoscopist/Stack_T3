@@ -1,5 +1,6 @@
-import { Quando } from "next/font/google";
+//import { Quando } from "next/font/google";
 import { db } from "../db"
+//import { success } from "zod/v4";
 
 export const cartService = {
     async getCart(userId: string) {
@@ -86,5 +87,20 @@ export const cartService = {
                 variantId
             }
         })
+    },
+
+    async clearCart (userId:string) {
+        const cart = await db.cart.findUnique({
+            where: {userId}
+        })
+        if (!cart) throw new Error("Cart not found!");
+
+        await db.cartItem.deleteMany({
+            where: {
+                cartId: cart.id
+            }
+        })
+
+        return {success: true};
     }
 }

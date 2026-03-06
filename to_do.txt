@@ -44,13 +44,14 @@ src/
 -- server/
 ---- api/
 ------  routers/
--------- cart.ts
--------- order.ts
--------- product.ts
+-------- cart.router.ts
+-------- order.router.ts
+-------- product.router.ts
 ------ root.ts
 ---- services/
 ------ cart.service.ts
 ------ order.service.ts
+------ product.service.ts
 ---- db.ts
 
 2.2) Пишем сервисы:
@@ -62,3 +63,4 @@ export const appRouter = createTRPCRouter({
 });
 
 2.3) Тестируем: npm run dev
+

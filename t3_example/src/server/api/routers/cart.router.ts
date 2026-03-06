@@ -28,6 +28,7 @@ export const cartRouter = createTRPCRouter ({
             return cartService.removeItem(ctx.session.user.id, input.variantId)
         }),
 
+    //updateItem: protectedProcedure
     updateItem: protectedProcedure
         .input(
             z.object({
@@ -37,6 +38,11 @@ export const cartRouter = createTRPCRouter ({
         )
         .mutation(({ctx, input}) => {
             return cartService.updateItem(ctx.session.user.id, input.variantId, input.quantity)
-        })
+        }),
+
+    clearCart: protectedProcedure
+        .mutation(({ctx}) => {
+            return cartService.clearCart(ctx.session.user.id)
+        }),
 
 })
