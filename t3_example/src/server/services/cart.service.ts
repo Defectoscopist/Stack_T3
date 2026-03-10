@@ -1,4 +1,5 @@
 //import { Quando } from "next/font/google";
+import { TRPCError } from "@trpc/server"
 import { db } from "../db"
 //import { success } from "zod/v4";
 
@@ -9,7 +10,11 @@ export const cartService = {
             include: {
                 items: {
                     include: {
-                        variant: true
+                        variant: {
+                            include: {
+                                product: true
+                            }
+                        }
                     }
                 }
             }
@@ -17,6 +22,30 @@ export const cartService = {
     },
 
     async addItem(userId: string, variantId: string, quantity: number) {
+
+        const variant = await db.productVariant.findUnique({
+            where: {id: variantId},
+            select: {
+                id: true,
+                price: true,
+                stock: true
+            }
+        })
+
+        if (!variant) {
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: "Variant not found"
+            })
+        }
+
+        if (variant.stock < quantity) {
+            throw new TRPCError ({
+                code: "BAD_REQUEST",
+                message: "Not enough stock"
+            })
+        }
+
         let cart = await db.cart.findUnique({
             where: {userId},
             include: {items: true}
@@ -32,19 +61,20 @@ export const cartService = {
         const existingItem = cart.items.find((i) => i.variantId === variantId)
 
         if (existingItem) {
+
+            const newQuantity = existingItem.quantity + quantity
+
+            if (newQuantity > variant.stock) {
+                throw new TRPCError ({
+                    code: "BAD_REQUEST",
+                    message: "Not enough stock"
+                })
+            }
+
             return db.cartItem.update ({
                 where: {id: existingItem.id},
-                data: {quantity: existingItem.quantity + quantity}
+                data: {quantity: newQuantity}
             })
-        }
-
-        const variant = await db.productVariant.findUnique({
-            where: { id: variantId },
-            select: { price: true }
-        });
-
-        if (!variant) {
-            return null
         }
 
         return db.cartItem.create({
@@ -60,9 +90,15 @@ export const cartService = {
     async updateItem (userId: string, variantId: string, quantity: number) {
         
         const cart = await db.cart.findUnique ({
-            where: {userId: userId}
+            where: {userId}
         })
-        if (!cart) throw new Error("Cart not found!");
+        
+        if (!cart) {
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: "Cart not found"
+            })
+        }
 
         const item = await db.cartItem.findFirst({
             where: {
@@ -70,13 +106,42 @@ export const cartService = {
                 variantId
             }
         })
-        if (!item) throw new Error("Item not found!");
+        
+        if (!item) {
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: "Item not found"
+            })
+        }
 
         if (quantity <= 0) {
             return db.cartItem.delete({
                 where: {id: item.id}
             })
         }
+
+        const variant = await db.productVariant.findUnique({
+            where: {
+                id: variantId
+            },
+            select: {
+                stock: true
+            }
+        })
+
+        if (!variant) {
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: "Variant not found"
+            })
+        }
+
+        if (quantity > variant.stock) {
+                throw new TRPCError ({
+                    code: "BAD_REQUEST",
+                    message: "Not enough stock"
+                })
+            }
 
         return db.cartItem.update({
             where: {id: item.id},
@@ -89,7 +154,13 @@ export const cartService = {
         const cart = await db.cart.findUnique({
             where: {userId}
         })
-        if (!cart) throw new Error("Cart not found!");
+        
+        if (!cart) {
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: "Cart not found"
+            })
+        }
 
         return db.cartItem.deleteMany({
             where: {
@@ -99,11 +170,16 @@ export const cartService = {
         })
     },
 
-    async clearCart (userId:string) {
+    async clearCart (userId: string) {
         const cart = await db.cart.findUnique({
             where: {userId}
         })
-        if (!cart) throw new Error("Cart not found!");
+        if (!cart) {
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: "Cart not found"
+            })
+        }
 
         await db.cartItem.deleteMany({
             where: {
@@ -112,5 +188,6 @@ export const cartService = {
         })
 
         return {success: true};
-    }
+    },
 }
+

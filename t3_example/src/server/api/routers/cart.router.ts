@@ -28,7 +28,6 @@ export const cartRouter = createTRPCRouter ({
             return cartService.removeItem(ctx.session.user.id, input.variantId)
         }),
 
-    //updateItem: protectedProcedure
     updateItem: protectedProcedure
         .input(
             z.object({

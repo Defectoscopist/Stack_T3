@@ -54,7 +54,7 @@ src/
 ------ product.service.ts
 ---- db.ts
 
-2.2) Пишем сервисы:
+2.2) Пишем сервисы, роутеры, тестируем на клиенте:
 запросы в server/services
 маршруты в server/api/routers
 чекнуть наличие root.ts в server/api и в нем:
@@ -64,3 +64,59 @@ export const appRouter = createTRPCRouter({
 
 2.3) Тестируем: npm run dev
 
+2.4) Если что-то поменялось в призме:
+npx prisma migrate dev --name update_schema
+npx prisma generate
+
+==================================================		Frontend	========================================================
+
+3.1) npx shadcn@latest init
+Radix
+Nova
+3.2) npx shadcn@latest add:
+button
+card
+input
+badge
+sheet
+
+3.3) Структура примерно следующая:
+src
+├ app
+│ ├ layout.tsx
+│ ├ page.tsx
+│ ├ products
+│ │ ├ page.tsx
+│ │ └ [slug]
+│ │ └ page.tsx
+│
+├ components
+│ ├ layout
+│ │ ├ header.tsx
+│ │ └ container.tsx
+│
+│ ├ product
+│ │ ├ product-card.tsx
+│ │ ├ product-grid.tsx
+│ │ ├ product-price.tsx
+│ │ └ product-image.tsx
+│
+│ ├ cart
+│ │ ├ cart-button.tsx
+│ │ ├ cart-drawer.tsx
+│ │ └ cart-item.tsx
+│
+│ ├ ui
+│ │ ├ button.tsx
+│ │ ├ card.tsx
+│ │ ├ badge.tsx
+│ │ ├ input.tsx
+│ │ └ sheet.tsx
+│
+├ lib
+│ ├ trpc
+│ ├ api
+│ └ utils
+│
+├ styles
+│ └ globals.css

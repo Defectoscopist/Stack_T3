@@ -1,7 +1,7 @@
 import { db } from "../db";
 
 export const productService = {
-    async getAllProducts() {
+    async getAll() {
         return db.product.findMany({
             where: {
                 isActive: true,
@@ -15,7 +15,41 @@ export const productService = {
         })
     },
 
-    async getProductBySlug(slug: string) {
+    async getAllPagination(page: number, limit: number) {
+        const skip = (page - 1) * limit;
+
+        const [products, total] = await db.$transaction ([
+            db.product.findMany({
+                where: {
+                    isActive: true,
+                    deletedAt: null
+                },
+                include: {
+                    images: true,
+                    variant: true,
+                    brand: true
+                },
+                skip,
+                take: limit
+            }),
+
+            db.product.count ({
+                where: {
+                    isActive: true,
+                    deletedAt: null
+                }
+            })
+        ]);
+
+        return {
+            products,
+            total,
+            page,
+            pages: Math.ceil(total/limit)
+        }
+    },
+
+    async getBySlug(slug: string) {
         return db.product.findUnique({
             where: {slug},
             include: {
@@ -27,7 +61,7 @@ export const productService = {
         })
     },
 
-    async getProductById(productId: string) {
+    async getById(productId: string) {
         return db.product.findUnique({
             where: {id: productId},
             include: {

@@ -1,11 +1,23 @@
 import {z} from "zod"
 import { productService } from "~/server/services/product.service"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
+import { count } from "console"
 
 export const productRouter = createTRPCRouter({
     getAll: publicProcedure.query(() => {
-        return productService.getAllProducts()
+        return productService.getAll()
     }),
+
+    getAllPagination: publicProcedure
+        .input(
+            z.object({
+                page: z.number(),
+                limit: z.number()
+            })
+        )
+        .query(({input}) => {
+            return productService.getAllPagination(input.page, input.limit)
+        }),
 
     getBySlug: publicProcedure
         .input(
@@ -14,7 +26,7 @@ export const productRouter = createTRPCRouter({
             })
         )
         .query(({input}) => {
-            return productService.getProductBySlug(input.slug)
+            return productService.getBySlug(input.slug)
         }),
 
     getById: publicProcedure
@@ -24,6 +36,6 @@ export const productRouter = createTRPCRouter({
             })
         )
         .query(({input}) => {
-            return productService.getProductById(input.id)
+            return productService.getById(input.id)
         })
 })
