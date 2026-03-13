@@ -205,7 +205,7 @@ model ProductVariant {
 
   sku      String   @unique
   price    Decimal  @db.Decimal(10, 2)
-  oldprice Decimal?
+  oldprice Decimal? @db.Decimal(10, 2)
   stock    Int
   color    String?
   memory   String?

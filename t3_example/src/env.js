@@ -5,8 +5,6 @@ export const env = createEnv({
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
    * isn't built with invalid env vars.
-   * GITHUB_CLIENT_ID="Ov23li84dr4dFb1JP5CA"
-GITHUB_CLIENT_SECRET="b3b2ff035a3c19f2ee3ab64c88b73e518bfff0d9"
    */
   server: {
     AUTH_SECRET:
@@ -15,8 +13,6 @@ GITHUB_CLIENT_SECRET="b3b2ff035a3c19f2ee3ab64c88b73e518bfff0d9"
         : z.string().optional(),
     AUTH_DISCORD_ID: z.string(),
     AUTH_DISCORD_SECRET: z.string(),
-    GITHUB_CLIENT_ID: z.string(),
-    GITHUB_CLIENT_SECRET: z.string(),
     DATABASE_URL: z.string().url(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
@@ -40,8 +36,6 @@ GITHUB_CLIENT_SECRET="b3b2ff035a3c19f2ee3ab64c88b73e518bfff0d9"
     AUTH_SECRET: process.env.AUTH_SECRET,
     AUTH_DISCORD_ID: process.env.AUTH_DISCORD_ID,
     AUTH_DISCORD_SECRET: process.env.AUTH_DISCORD_SECRET,
-    GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
-    GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
   },
