@@ -1,0 +1,62 @@
+Steps
+Phase 1: Foundation & Core API (Weeks 1-4)
+Build basic product catalog with tRPC + Prisma fundamentals.
+
+Backend: Product router (list, search, get by ID), pagination, N+1 optimization
+Frontend: Products listing page, ProductCard component, React Query basics
+Learn: tRPC procedures, Zod validation, Decimal pricing serialization
+Verify: GET /api/trpc/product.getAll works, product page loads
+Phase 2: User Features & Shopping Cart (Weeks 5-8)
+Implement authentication-dependent features and order flow.
+
+Backend: Auth middleware, cart mutations (add/remove/update), order creation with stock handling
+Frontend: Protected routes, cart page, checkout form, order confirmation
+Learn: Protected procedures, transactions, optimistic updates
+Verify: Add to cart works, checkout creates order in DB, unauthenticated users redirected
+Phase 3: Admin, Content & Quality (Weeks 9-13)
+Build admin dashboard, add reviews/wishlists, implement testing.
+
+Backend: Admin procedures with role-based access, product management, order analytics
+Frontend: Admin dashboard, product editor, order management
+Testing: Unit tests (Vitest), integration tests (React Testing Library), E2E (Playwright)
+Verify: Tests pass, admin sees all products/orders, regular users cannot access admin
+Status: Job-ready after this phase
+Phase 4: Security, Performance & DevOps (Weeks 14-18)
+Production-harden the app with rate limiting, caching, monitoring, deployment.
+
+Backend: Rate limiting, CSRF protection, sensitive data masking, query optimization, Redis caching
+Frontend: Image optimization with next/image, code splitting, RSC optimization
+DevOps: Docker containerization, GitHub Actions CI/CD, Vercel + PlanetScale deployment
+Monitoring: OpenTelemetry, request latency tracking, error logging
+Verify: Rate limits work, Lighthouse >90, CI/CD passes, app deployed
+Status: Senior mid-level ready
+Phase 5: Mobile with React Native (Weeks 19-24) depends on Phase 4 (optional in parallel after week 13)
+Expand to iOS/Android with shared API, native features.
+
+Setup: Monorepo structure (web + mobile), shared API types
+Mobile: Navigation, screens (products, cart, profile), auth, offline support
+Native: Image picker, push notifications, deep linking
+Verify: App works on iOS simulator and Android emulator, pulls data from same backend
+Status: Full-stack web + mobile senior developer
+
+Verification Milestones
+Phase	Key Verification	Status
+1	Product listing loads, search works	Basic functionality
+2	Cart → Checkout → Order creation	User flows complete
+3	Admin dashboard, tests >70% coverage	Production-ready MVP
+4	Deployed app, Lighthouse >90, CI/CD	Production hardened
+5	Mobile app running on simulators	Full-stack ready
+Decisions & Scope
+✅ Included:
+
+Full-featured e-commerce (MVP → full-featured → enterprise)
+Web + React Native mobile (monorepo structure)
+Security, performance, DevOps as core learning (not afterthought)
+Testing at all levels (unit, integration, E2E)
+Job/freelance readiness (portfolio-quality)
+⏸️ Deferred (Phase 5+):
+
+Microservices architecture
+Advanced machine learning (recommendations)
+Multi-language/currency support
+Advanced analytics dashboard
