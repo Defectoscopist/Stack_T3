@@ -2,6 +2,10 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 //import DiscordProvider from "next-auth/providers/discord";
 import GitHubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
+import VKProvider from "next-auth/providers/vk";
+import YandexProvider from "next-auth/providers/yandex";
+
 import { env } from "~/env";
 import { db } from "~/server/db";
 
@@ -35,8 +39,26 @@ export const authConfig = {
   providers: [
     GitHubProvider ({
       clientId: env.GITHUB_CLIENT_ID,
-      clientSecret: env.GITHUB_CLIENT_SECRET
-    })
+      clientSecret: env.GITHUB_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true
+    }),
+    GoogleProvider ({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking : true
+    }), 
+    VKProvider ({
+      clientId: env.VK_CLIENT_ID,
+      clientSecret: env.VK_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true
+    }),
+    YandexProvider ({
+      clientId: env.YANDEX_CLIENT_ID,
+      clientSecret: env.YANDEX_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true,
+      redirect_uri: "http://localhost:3000/api/auth/callback/yandex"
+    }),
+
     //DiscordProvider,
     /**
      * ...add more providers here.
@@ -49,8 +71,16 @@ export const authConfig = {
      */
   ],
   adapter: PrismaAdapter(db),
+
   callbacks: {
-    session: ({ session, user }) => ({
+    async signIn({ user, account, profile }) {
+      // Для Яндекс провайдера всегда разрешаем вход
+      if (account?.provider === 'yandex') {
+        return true;
+      }
+      return true;
+    },
+    session: ({session, user}) => ({
       ...session,
       user: {
         ...session.user,
@@ -58,4 +88,5 @@ export const authConfig = {
       },
     }),
   },
+
 } satisfies NextAuthConfig;
