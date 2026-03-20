@@ -20,7 +20,7 @@ declare module "next-auth" {
     user: {
       id: string;
       // ...other properties
-      // role: UserRole;
+      role: string;
     } & DefaultSession["user"];
   }
 
@@ -56,7 +56,6 @@ export const authConfig = {
       clientId: env.YANDEX_CLIENT_ID,
       clientSecret: env.YANDEX_CLIENT_SECRET,
       allowDangerousEmailAccountLinking: true,
-      redirect_uri: "http://localhost:3000/api/auth/callback/yandex"
     }),
 
     //DiscordProvider,
