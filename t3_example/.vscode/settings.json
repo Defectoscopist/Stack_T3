@@ -1,0 +1,28 @@
+{
+    "piny.project_settings": {
+        "open-pages": [
+            "pinyfakepage.html"
+        ],
+        "urls": {
+            "pinyfakepage.html": {
+                "open-page-views": [
+                    {
+                        "w": 320,
+                        "h": 0
+                    }
+                ]
+            }
+        },
+        "app-routes": {
+            "routes": [
+                "/",
+                "/lessons"
+            ],
+            "current_route": "/lessons"
+        },
+        "css.validate": false,
+        "tailwindCSS.experimental.classRegex": [
+            ["@apply\\s+([^;]+);", "$1"]
+        ]
+    }
+}

@@ -35,7 +35,8 @@ useSSL	false
   },
 заткнуть dummy Discord
 1.11) npm install -D tsx
-1.10) npx prisma db seed
+1.12) npx prisma migrate dev --name init
+1.13) npx prisma db seed
 
 ==================================================		API		========================================================
 

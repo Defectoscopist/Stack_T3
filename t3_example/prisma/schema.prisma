@@ -22,7 +22,6 @@ enum Role {
 /*************************************** User **********************************/
 
 // Necessary for Next auth
-// Necessary for Next auth
 model Account {
     id                       String  @id @default(cuid())
     userId                   String
@@ -149,6 +148,9 @@ model Order {
     shippingStreet          String
     shippingPostalCode      String
 
+    warehouse       Warehouse?  @relation(fields: [warehouseId], references: [id])
+    warehouseId     String?
+
     createdAt               DateTime    @default(now())
     updatedAt               DateTime    @updatedAt
 }
@@ -165,6 +167,37 @@ model OrderItem {
 }
 
 /*************************************** Products **********************************/
+
+model Warehouse {
+    id          String          @id @default(cuid())
+    name        String          @unique// "Москва — Север", "Dubai Hub"
+    city        String          // "Moscow"
+    country     String          // "RU"
+    address     String?
+
+    stocks      VariantStock[]
+    orders      Order[]
+
+    isActive    Boolean         @default(true)
+    createdAt   DateTime        @default(now())
+}
+
+model VariantStock {
+    id          String          @id @default(cuid())
+
+    variant     ProductVariant  @relation(fields: [variantId], references: [id])
+    variantId   String
+
+    warehouse   Warehouse       @relation(fields: [warehouseId], references: [id])
+    warehouseId String
+
+    quantity    Int             @default(0)
+    reserved    Int             @default(0) 
+
+    updatedAt   DateTime        @updatedAt
+
+    @@unique([variantId, warehouseId])
+}
 
 model Product {
     id              String      @id @default(cuid())
@@ -199,13 +232,19 @@ model ProductVariant {
     sku         String      @unique
     price       Decimal     @db.Decimal(10,2)
     oldprice    Decimal?    @db.Decimal(10,2)
-    stock       Int
+
+    stocks      VariantStock[]
+
     color       String?
+    colorHex    String?
+
     memory      String?
     edition     String?
 
     cartItems   CartItem[]
     orderItems  OrderItem[]
+
+    images ProductImage[]
 
     createdAt   DateTime    @default(now())
     updatedAt   DateTime    @updatedAt
@@ -228,8 +267,12 @@ model ProductImage {
     id          String      @id @default(cuid())
     url         String
     alt         String?
+
     product     Product     @relation(fields: [productId], references: [id])
     productId   String
+
+    Variant     ProductVariant?  @relation(fields: [variantId], references: [id])
+    variantId   String?
 
     position Int
 }
