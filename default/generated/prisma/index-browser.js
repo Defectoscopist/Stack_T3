@@ -187,7 +187,15 @@ exports.Prisma.ProductScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   isFeatured: 'isFeatured',
-  isActive: 'isActive'
+  isActive: 'isActive',
+  isBestSeller: 'isBestSeller',
+  isOnSale: 'isOnSale',
+  salePrice: 'salePrice',
+  originalPrice: 'originalPrice',
+  discountPercent: 'discountPercent',
+  tags: 'tags',
+  productType: 'productType',
+  sex: 'sex'
 };
 
 exports.Prisma.ProductVariantScalarFieldEnum = {
@@ -331,7 +339,8 @@ exports.Prisma.ProductOrderByRelevanceFieldEnum = {
   description: 'description',
   slug: 'slug',
   brandId: 'brandId',
-  categoryId: 'categoryId'
+  categoryId: 'categoryId',
+  tags: 'tags'
 };
 
 exports.Prisma.ProductVariantOrderByRelevanceFieldEnum = {
@@ -386,6 +395,25 @@ exports.Prisma.AddressOrderByRelevanceFieldEnum = {
   country: 'country',
   userId: 'userId'
 };
+exports.ProductType = exports.$Enums.ProductType = {
+  GENERAL: 'GENERAL',
+  SPORT: 'SPORT',
+  HOME: 'HOME',
+  OFFICE: 'OFFICE',
+  CASUAL: 'CASUAL',
+  FORMAL: 'FORMAL',
+  ATHLETIC: 'ATHLETIC',
+  OUTDOOR: 'OUTDOOR',
+  ACCESSORY: 'ACCESSORY'
+};
+
+exports.Sex = exports.$Enums.Sex = {
+  MEN: 'MEN',
+  WOMEN: 'WOMEN',
+  KIDS: 'KIDS',
+  UNISEX: 'UNISEX'
+};
+
 exports.Size = exports.$Enums.Size = {
   XXXXS: 'XXXXS',
   XXXS: 'XXXS',

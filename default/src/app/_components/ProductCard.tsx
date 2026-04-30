@@ -18,6 +18,13 @@ interface ProductCardProps {
     }>;
     isFeatured: boolean;
     isActive: boolean;
+    isBestSeller: boolean;
+    isOnSale: boolean;
+    salePrice: number | null;
+    originalPrice: number | null;
+    discountPercent: number;
+    tags: string;
+    productType: string;
     categoryId: string;
     brandId: string;
   };
@@ -28,12 +35,16 @@ export function ProductCard({ product }: ProductCardProps) {
   const lowestPrice = Math.min(...product.variants.map(v => v.price));
   const hasStock = product.variants.some(v => v.stock > 0);
 
+  // Calculate display price (use sale price if on sale)
+  const displayPrice = product.isOnSale && product.salePrice ? product.salePrice : lowestPrice;
+  const originalPrice = product.isOnSale && product.originalPrice ? product.originalPrice : lowestPrice;
+
   return (
     <Link
       href={`/product/${product.slug}`}
-      className="group overflow-hidden rounded-4xl border border-white/10 bg-slate-950/90 shadow-[0_30px_60px_-18px_rgba(0,0,0,0.6)] transition duration-300 hover:-translate-y-1.5 hover:shadow-[0_35px_80px_-22px_rgba(52,211,153,0.24)]"
+      className="group overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition duration-300 hover:shadow-lg hover:-translate-y-1"
     >
-      <div className="aspect-square relative overflow-hidden border-b border-white/10">
+      <div className="aspect-square relative overflow-hidden">
         {product.imagesUrl.length > 0 ? (
           <Image
             src={product.imagesUrl[0]!}
@@ -47,23 +58,40 @@ export function ProductCard({ product }: ProductCardProps) {
             <span className="text-gray-400">No Image</span>
           </div>
         )}
-        {product.isFeatured && (
-          <div className="absolute top-4 left-4 rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200 backdrop-blur-sm">
-            Featured
+        <div className="absolute top-4 left-4 flex flex-col gap-2">
+          {product.isFeatured && (
+            <div className="rounded-full bg-black text-white px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+              Featured
+            </div>
+          )}
+          {product.isBestSeller && (
+            <div className="rounded-full bg-red-500 text-white px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+              Best Seller
+            </div>
+          )}
+        </div>
+        {product.isOnSale && (
+          <div className="absolute top-4 right-4 rounded-full bg-green-500 text-white px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+            {product.discountPercent}% OFF
           </div>
         )}
         {!hasStock && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <span className="text-sm font-semibold text-white">Out of Stock</span>
           </div>
         )}
       </div>
       <div className="p-5 space-y-3">
-        <h3 className="text-xl font-semibold tracking-tight text-white line-clamp-2">{product.name}</h3>
-        <p className="text-slate-400 text-sm leading-relaxed line-clamp-2">{product.description}</p>
+        <h3 className="text-lg font-semibold text-black line-clamp-2">{product.name}</h3>
+        <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">{product.description}</p>
         <div className="flex items-center justify-between gap-4">
-          <span className="text-2xl font-bold text-emerald-300">${lowestPrice.toFixed(2)}</span>
-          <span className="text-sm uppercase tracking-[0.14em] text-slate-500">
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-bold text-black">${displayPrice.toFixed(2)}</span>
+            {product.isOnSale && displayPrice < originalPrice && (
+              <span className="text-sm text-gray-500 line-through">${originalPrice.toFixed(2)}</span>
+            )}
+          </div>
+          <span className="text-sm uppercase tracking-wide text-gray-500">
             {product.variants.length} option{product.variants.length !== 1 ? 's' : ''}
           </span>
         </div>

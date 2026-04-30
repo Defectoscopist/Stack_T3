@@ -111,6 +111,31 @@ export namespace $Enums {
 export type Size = (typeof Size)[keyof typeof Size]
 
 
+export const ProductType: {
+  GENERAL: 'GENERAL',
+  SPORT: 'SPORT',
+  HOME: 'HOME',
+  OFFICE: 'OFFICE',
+  CASUAL: 'CASUAL',
+  FORMAL: 'FORMAL',
+  ATHLETIC: 'ATHLETIC',
+  OUTDOOR: 'OUTDOOR',
+  ACCESSORY: 'ACCESSORY'
+};
+
+export type ProductType = (typeof ProductType)[keyof typeof ProductType]
+
+
+export const Sex: {
+  MEN: 'MEN',
+  WOMEN: 'WOMEN',
+  KIDS: 'KIDS',
+  UNISEX: 'UNISEX'
+};
+
+export type Sex = (typeof Sex)[keyof typeof Sex]
+
+
 export const OrderStatus: {
   PENDING: 'PENDING',
   DELIVERING: 'DELIVERING',
@@ -127,6 +152,14 @@ export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
 export type Size = $Enums.Size
 
 export const Size: typeof $Enums.Size
+
+export type ProductType = $Enums.ProductType
+
+export const ProductType: typeof $Enums.ProductType
+
+export type Sex = $Enums.Sex
+
+export const Sex: typeof $Enums.Sex
 
 export type OrderStatus = $Enums.OrderStatus
 
@@ -8226,8 +8259,22 @@ export namespace Prisma {
 
   export type AggregateProduct = {
     _count: ProductCountAggregateOutputType | null
+    _avg: ProductAvgAggregateOutputType | null
+    _sum: ProductSumAggregateOutputType | null
     _min: ProductMinAggregateOutputType | null
     _max: ProductMaxAggregateOutputType | null
+  }
+
+  export type ProductAvgAggregateOutputType = {
+    salePrice: Decimal | null
+    originalPrice: Decimal | null
+    discountPercent: number | null
+  }
+
+  export type ProductSumAggregateOutputType = {
+    salePrice: Decimal | null
+    originalPrice: Decimal | null
+    discountPercent: number | null
   }
 
   export type ProductMinAggregateOutputType = {
@@ -8241,6 +8288,14 @@ export namespace Prisma {
     updatedAt: Date | null
     isFeatured: boolean | null
     isActive: boolean | null
+    isBestSeller: boolean | null
+    isOnSale: boolean | null
+    salePrice: Decimal | null
+    originalPrice: Decimal | null
+    discountPercent: number | null
+    tags: string | null
+    productType: $Enums.ProductType | null
+    sex: $Enums.Sex | null
   }
 
   export type ProductMaxAggregateOutputType = {
@@ -8254,6 +8309,14 @@ export namespace Prisma {
     updatedAt: Date | null
     isFeatured: boolean | null
     isActive: boolean | null
+    isBestSeller: boolean | null
+    isOnSale: boolean | null
+    salePrice: Decimal | null
+    originalPrice: Decimal | null
+    discountPercent: number | null
+    tags: string | null
+    productType: $Enums.ProductType | null
+    sex: $Enums.Sex | null
   }
 
   export type ProductCountAggregateOutputType = {
@@ -8267,9 +8330,29 @@ export namespace Prisma {
     updatedAt: number
     isFeatured: number
     isActive: number
+    isBestSeller: number
+    isOnSale: number
+    salePrice: number
+    originalPrice: number
+    discountPercent: number
+    tags: number
+    productType: number
+    sex: number
     _all: number
   }
 
+
+  export type ProductAvgAggregateInputType = {
+    salePrice?: true
+    originalPrice?: true
+    discountPercent?: true
+  }
+
+  export type ProductSumAggregateInputType = {
+    salePrice?: true
+    originalPrice?: true
+    discountPercent?: true
+  }
 
   export type ProductMinAggregateInputType = {
     id?: true
@@ -8282,6 +8365,14 @@ export namespace Prisma {
     updatedAt?: true
     isFeatured?: true
     isActive?: true
+    isBestSeller?: true
+    isOnSale?: true
+    salePrice?: true
+    originalPrice?: true
+    discountPercent?: true
+    tags?: true
+    productType?: true
+    sex?: true
   }
 
   export type ProductMaxAggregateInputType = {
@@ -8295,6 +8386,14 @@ export namespace Prisma {
     updatedAt?: true
     isFeatured?: true
     isActive?: true
+    isBestSeller?: true
+    isOnSale?: true
+    salePrice?: true
+    originalPrice?: true
+    discountPercent?: true
+    tags?: true
+    productType?: true
+    sex?: true
   }
 
   export type ProductCountAggregateInputType = {
@@ -8308,6 +8407,14 @@ export namespace Prisma {
     updatedAt?: true
     isFeatured?: true
     isActive?: true
+    isBestSeller?: true
+    isOnSale?: true
+    salePrice?: true
+    originalPrice?: true
+    discountPercent?: true
+    tags?: true
+    productType?: true
+    sex?: true
     _all?: true
   }
 
@@ -8349,6 +8456,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: ProductAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ProductSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ProductMinAggregateInputType
@@ -8379,6 +8498,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: ProductCountAggregateInputType | true
+    _avg?: ProductAvgAggregateInputType
+    _sum?: ProductSumAggregateInputType
     _min?: ProductMinAggregateInputType
     _max?: ProductMaxAggregateInputType
   }
@@ -8394,7 +8515,17 @@ export namespace Prisma {
     updatedAt: Date
     isFeatured: boolean
     isActive: boolean
+    isBestSeller: boolean
+    isOnSale: boolean
+    salePrice: Decimal | null
+    originalPrice: Decimal | null
+    discountPercent: number | null
+    tags: string | null
+    productType: $Enums.ProductType
+    sex: $Enums.Sex
     _count: ProductCountAggregateOutputType | null
+    _avg: ProductAvgAggregateOutputType | null
+    _sum: ProductSumAggregateOutputType | null
     _min: ProductMinAggregateOutputType | null
     _max: ProductMaxAggregateOutputType | null
   }
@@ -8424,6 +8555,14 @@ export namespace Prisma {
     updatedAt?: boolean
     isFeatured?: boolean
     isActive?: boolean
+    isBestSeller?: boolean
+    isOnSale?: boolean
+    salePrice?: boolean
+    originalPrice?: boolean
+    discountPercent?: boolean
+    tags?: boolean
+    productType?: boolean
+    sex?: boolean
     variants?: boolean | Product$variantsArgs<ExtArgs>
     brand?: boolean | BrandDefaultArgs<ExtArgs>
     category?: boolean | CategoryDefaultArgs<ExtArgs>
@@ -8444,9 +8583,17 @@ export namespace Prisma {
     updatedAt?: boolean
     isFeatured?: boolean
     isActive?: boolean
+    isBestSeller?: boolean
+    isOnSale?: boolean
+    salePrice?: boolean
+    originalPrice?: boolean
+    discountPercent?: boolean
+    tags?: boolean
+    productType?: boolean
+    sex?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "slug" | "brandId" | "categoryId" | "createdAt" | "updatedAt" | "isFeatured" | "isActive", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "slug" | "brandId" | "categoryId" | "createdAt" | "updatedAt" | "isFeatured" | "isActive" | "isBestSeller" | "isOnSale" | "salePrice" | "originalPrice" | "discountPercent" | "tags" | "productType" | "sex", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     variants?: boolean | Product$variantsArgs<ExtArgs>
     brand?: boolean | BrandDefaultArgs<ExtArgs>
@@ -8474,6 +8621,14 @@ export namespace Prisma {
       updatedAt: Date
       isFeatured: boolean
       isActive: boolean
+      isBestSeller: boolean
+      isOnSale: boolean
+      salePrice: Prisma.Decimal | null
+      originalPrice: Prisma.Decimal | null
+      discountPercent: number | null
+      tags: string | null
+      productType: $Enums.ProductType
+      sex: $Enums.Sex
     }, ExtArgs["result"]["product"]>
     composites: {}
   }
@@ -8857,6 +9012,14 @@ export namespace Prisma {
     readonly updatedAt: FieldRef<"Product", 'DateTime'>
     readonly isFeatured: FieldRef<"Product", 'Boolean'>
     readonly isActive: FieldRef<"Product", 'Boolean'>
+    readonly isBestSeller: FieldRef<"Product", 'Boolean'>
+    readonly isOnSale: FieldRef<"Product", 'Boolean'>
+    readonly salePrice: FieldRef<"Product", 'Decimal'>
+    readonly originalPrice: FieldRef<"Product", 'Decimal'>
+    readonly discountPercent: FieldRef<"Product", 'Int'>
+    readonly tags: FieldRef<"Product", 'String'>
+    readonly productType: FieldRef<"Product", 'ProductType'>
+    readonly sex: FieldRef<"Product", 'Sex'>
   }
     
 
@@ -17324,7 +17487,15 @@ export namespace Prisma {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     isFeatured: 'isFeatured',
-    isActive: 'isActive'
+    isActive: 'isActive',
+    isBestSeller: 'isBestSeller',
+    isOnSale: 'isOnSale',
+    salePrice: 'salePrice',
+    originalPrice: 'originalPrice',
+    discountPercent: 'discountPercent',
+    tags: 'tags',
+    productType: 'productType',
+    sex: 'sex'
   };
 
   export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -17519,7 +17690,8 @@ export namespace Prisma {
     description: 'description',
     slug: 'slug',
     brandId: 'brandId',
-    categoryId: 'categoryId'
+    categoryId: 'categoryId',
+    tags: 'tags'
   };
 
   export type ProductOrderByRelevanceFieldEnum = (typeof ProductOrderByRelevanceFieldEnum)[keyof typeof ProductOrderByRelevanceFieldEnum]
@@ -17639,6 +17811,20 @@ export namespace Prisma {
    * Reference to a field of type 'Decimal'
    */
   export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+  /**
+   * Reference to a field of type 'ProductType'
+   */
+  export type EnumProductTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductType'>
+    
+
+
+  /**
+   * Reference to a field of type 'Sex'
+   */
+  export type EnumSexFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Sex'>
     
 
 
@@ -18072,6 +18258,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Product"> | Date | string
     isFeatured?: BoolFilter<"Product"> | boolean
     isActive?: BoolFilter<"Product"> | boolean
+    isBestSeller?: BoolFilter<"Product"> | boolean
+    isOnSale?: BoolFilter<"Product"> | boolean
+    salePrice?: DecimalNullableFilter<"Product"> | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: DecimalNullableFilter<"Product"> | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: IntNullableFilter<"Product"> | number | null
+    tags?: StringNullableFilter<"Product"> | string | null
+    productType?: EnumProductTypeFilter<"Product"> | $Enums.ProductType
+    sex?: EnumSexFilter<"Product"> | $Enums.Sex
     variants?: ProductVariantListRelationFilter
     brand?: XOR<BrandScalarRelationFilter, BrandWhereInput>
     category?: XOR<CategoryScalarRelationFilter, CategoryWhereInput>
@@ -18089,6 +18283,14 @@ export namespace Prisma {
     updatedAt?: SortOrder
     isFeatured?: SortOrder
     isActive?: SortOrder
+    isBestSeller?: SortOrder
+    isOnSale?: SortOrder
+    salePrice?: SortOrderInput | SortOrder
+    originalPrice?: SortOrderInput | SortOrder
+    discountPercent?: SortOrderInput | SortOrder
+    tags?: SortOrderInput | SortOrder
+    productType?: SortOrder
+    sex?: SortOrder
     variants?: ProductVariantOrderByRelationAggregateInput
     brand?: BrandOrderByWithRelationInput
     category?: CategoryOrderByWithRelationInput
@@ -18110,6 +18312,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Product"> | Date | string
     isFeatured?: BoolFilter<"Product"> | boolean
     isActive?: BoolFilter<"Product"> | boolean
+    isBestSeller?: BoolFilter<"Product"> | boolean
+    isOnSale?: BoolFilter<"Product"> | boolean
+    salePrice?: DecimalNullableFilter<"Product"> | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: DecimalNullableFilter<"Product"> | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: IntNullableFilter<"Product"> | number | null
+    tags?: StringNullableFilter<"Product"> | string | null
+    productType?: EnumProductTypeFilter<"Product"> | $Enums.ProductType
+    sex?: EnumSexFilter<"Product"> | $Enums.Sex
     variants?: ProductVariantListRelationFilter
     brand?: XOR<BrandScalarRelationFilter, BrandWhereInput>
     category?: XOR<CategoryScalarRelationFilter, CategoryWhereInput>
@@ -18127,9 +18337,19 @@ export namespace Prisma {
     updatedAt?: SortOrder
     isFeatured?: SortOrder
     isActive?: SortOrder
+    isBestSeller?: SortOrder
+    isOnSale?: SortOrder
+    salePrice?: SortOrderInput | SortOrder
+    originalPrice?: SortOrderInput | SortOrder
+    discountPercent?: SortOrderInput | SortOrder
+    tags?: SortOrderInput | SortOrder
+    productType?: SortOrder
+    sex?: SortOrder
     _count?: ProductCountOrderByAggregateInput
+    _avg?: ProductAvgOrderByAggregateInput
     _max?: ProductMaxOrderByAggregateInput
     _min?: ProductMinOrderByAggregateInput
+    _sum?: ProductSumOrderByAggregateInput
   }
 
   export type ProductScalarWhereWithAggregatesInput = {
@@ -18146,6 +18366,14 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
     isFeatured?: BoolWithAggregatesFilter<"Product"> | boolean
     isActive?: BoolWithAggregatesFilter<"Product"> | boolean
+    isBestSeller?: BoolWithAggregatesFilter<"Product"> | boolean
+    isOnSale?: BoolWithAggregatesFilter<"Product"> | boolean
+    salePrice?: DecimalNullableWithAggregatesFilter<"Product"> | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: DecimalNullableWithAggregatesFilter<"Product"> | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: IntNullableWithAggregatesFilter<"Product"> | number | null
+    tags?: StringNullableWithAggregatesFilter<"Product"> | string | null
+    productType?: EnumProductTypeWithAggregatesFilter<"Product"> | $Enums.ProductType
+    sex?: EnumSexWithAggregatesFilter<"Product"> | $Enums.Sex
   }
 
   export type ProductVariantWhereInput = {
@@ -19131,6 +19359,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     isFeatured?: boolean
     isActive?: boolean
+    isBestSeller?: boolean
+    isOnSale?: boolean
+    salePrice?: Decimal | DecimalJsLike | number | string | null
+    originalPrice?: Decimal | DecimalJsLike | number | string | null
+    discountPercent?: number | null
+    tags?: string | null
+    productType?: $Enums.ProductType
+    sex?: $Enums.Sex
     variants?: ProductVariantCreateNestedManyWithoutProductInput
     brand: BrandCreateNestedOneWithoutProductsInput
     category: CategoryCreateNestedOneWithoutProductsInput
@@ -19148,6 +19384,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     isFeatured?: boolean
     isActive?: boolean
+    isBestSeller?: boolean
+    isOnSale?: boolean
+    salePrice?: Decimal | DecimalJsLike | number | string | null
+    originalPrice?: Decimal | DecimalJsLike | number | string | null
+    discountPercent?: number | null
+    tags?: string | null
+    productType?: $Enums.ProductType
+    sex?: $Enums.Sex
     variants?: ProductVariantUncheckedCreateNestedManyWithoutProductInput
     productImages?: ProductImageUncheckedCreateNestedManyWithoutProductInput
   }
@@ -19161,6 +19405,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBestSeller?: BoolFieldUpdateOperationsInput | boolean
+    isOnSale?: BoolFieldUpdateOperationsInput | boolean
+    salePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
+    productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     variants?: ProductVariantUpdateManyWithoutProductNestedInput
     brand?: BrandUpdateOneRequiredWithoutProductsNestedInput
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
@@ -19178,6 +19430,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBestSeller?: BoolFieldUpdateOperationsInput | boolean
+    isOnSale?: BoolFieldUpdateOperationsInput | boolean
+    salePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
+    productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     variants?: ProductVariantUncheckedUpdateManyWithoutProductNestedInput
     productImages?: ProductImageUncheckedUpdateManyWithoutProductNestedInput
   }
@@ -19193,6 +19453,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     isFeatured?: boolean
     isActive?: boolean
+    isBestSeller?: boolean
+    isOnSale?: boolean
+    salePrice?: Decimal | DecimalJsLike | number | string | null
+    originalPrice?: Decimal | DecimalJsLike | number | string | null
+    discountPercent?: number | null
+    tags?: string | null
+    productType?: $Enums.ProductType
+    sex?: $Enums.Sex
   }
 
   export type ProductUpdateManyMutationInput = {
@@ -19204,6 +19472,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBestSeller?: BoolFieldUpdateOperationsInput | boolean
+    isOnSale?: BoolFieldUpdateOperationsInput | boolean
+    salePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
+    productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
   }
 
   export type ProductUncheckedUpdateManyInput = {
@@ -19217,6 +19493,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBestSeller?: BoolFieldUpdateOperationsInput | boolean
+    isOnSale?: BoolFieldUpdateOperationsInput | boolean
+    salePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
+    productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
   }
 
   export type ProductVariantCreateInput = {
@@ -20224,6 +20508,31 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+  export type DecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type EnumProductTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductType | EnumProductTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ProductType[]
+    notIn?: $Enums.ProductType[]
+    not?: NestedEnumProductTypeFilter<$PrismaModel> | $Enums.ProductType
+  }
+
+  export type EnumSexFilter<$PrismaModel = never> = {
+    equals?: $Enums.Sex | EnumSexFieldRefInput<$PrismaModel>
+    in?: $Enums.Sex[]
+    notIn?: $Enums.Sex[]
+    not?: NestedEnumSexFilter<$PrismaModel> | $Enums.Sex
+  }
+
   export type ProductVariantListRelationFilter = {
     every?: ProductVariantWhereInput
     some?: ProductVariantWhereInput
@@ -20271,6 +20580,20 @@ export namespace Prisma {
     updatedAt?: SortOrder
     isFeatured?: SortOrder
     isActive?: SortOrder
+    isBestSeller?: SortOrder
+    isOnSale?: SortOrder
+    salePrice?: SortOrder
+    originalPrice?: SortOrder
+    discountPercent?: SortOrder
+    tags?: SortOrder
+    productType?: SortOrder
+    sex?: SortOrder
+  }
+
+  export type ProductAvgOrderByAggregateInput = {
+    salePrice?: SortOrder
+    originalPrice?: SortOrder
+    discountPercent?: SortOrder
   }
 
   export type ProductMaxOrderByAggregateInput = {
@@ -20284,6 +20607,14 @@ export namespace Prisma {
     updatedAt?: SortOrder
     isFeatured?: SortOrder
     isActive?: SortOrder
+    isBestSeller?: SortOrder
+    isOnSale?: SortOrder
+    salePrice?: SortOrder
+    originalPrice?: SortOrder
+    discountPercent?: SortOrder
+    tags?: SortOrder
+    productType?: SortOrder
+    sex?: SortOrder
   }
 
   export type ProductMinOrderByAggregateInput = {
@@ -20297,6 +20628,20 @@ export namespace Prisma {
     updatedAt?: SortOrder
     isFeatured?: SortOrder
     isActive?: SortOrder
+    isBestSeller?: SortOrder
+    isOnSale?: SortOrder
+    salePrice?: SortOrder
+    originalPrice?: SortOrder
+    discountPercent?: SortOrder
+    tags?: SortOrder
+    productType?: SortOrder
+    sex?: SortOrder
+  }
+
+  export type ProductSumOrderByAggregateInput = {
+    salePrice?: SortOrder
+    originalPrice?: SortOrder
+    discountPercent?: SortOrder
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -20305,6 +20650,42 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
+  }
+
+  export type EnumProductTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductType | EnumProductTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ProductType[]
+    notIn?: $Enums.ProductType[]
+    not?: NestedEnumProductTypeWithAggregatesFilter<$PrismaModel> | $Enums.ProductType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumProductTypeFilter<$PrismaModel>
+    _max?: NestedEnumProductTypeFilter<$PrismaModel>
+  }
+
+  export type EnumSexWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Sex | EnumSexFieldRefInput<$PrismaModel>
+    in?: $Enums.Sex[]
+    notIn?: $Enums.Sex[]
+    not?: NestedEnumSexWithAggregatesFilter<$PrismaModel> | $Enums.Sex
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSexFilter<$PrismaModel>
+    _max?: NestedEnumSexFilter<$PrismaModel>
   }
 
   export type DecimalFilter<$PrismaModel = never> = {
@@ -21174,6 +21555,22 @@ export namespace Prisma {
     set?: boolean
   }
 
+  export type NullableDecimalFieldUpdateOperationsInput = {
+    set?: Decimal | DecimalJsLike | number | string | null
+    increment?: Decimal | DecimalJsLike | number | string
+    decrement?: Decimal | DecimalJsLike | number | string
+    multiply?: Decimal | DecimalJsLike | number | string
+    divide?: Decimal | DecimalJsLike | number | string
+  }
+
+  export type EnumProductTypeFieldUpdateOperationsInput = {
+    set?: $Enums.ProductType
+  }
+
+  export type EnumSexFieldUpdateOperationsInput = {
+    set?: $Enums.Sex
+  }
+
   export type ProductVariantUpdateManyWithoutProductNestedInput = {
     create?: XOR<ProductVariantCreateWithoutProductInput, ProductVariantUncheckedCreateWithoutProductInput> | ProductVariantCreateWithoutProductInput[] | ProductVariantUncheckedCreateWithoutProductInput[]
     connectOrCreate?: ProductVariantCreateOrConnectWithoutProductInput | ProductVariantCreateOrConnectWithoutProductInput[]
@@ -21880,12 +22277,73 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+  export type NestedDecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type NestedEnumProductTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductType | EnumProductTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ProductType[]
+    notIn?: $Enums.ProductType[]
+    not?: NestedEnumProductTypeFilter<$PrismaModel> | $Enums.ProductType
+  }
+
+  export type NestedEnumSexFilter<$PrismaModel = never> = {
+    equals?: $Enums.Sex | EnumSexFieldRefInput<$PrismaModel>
+    in?: $Enums.Sex[]
+    notIn?: $Enums.Sex[]
+    not?: NestedEnumSexFilter<$PrismaModel> | $Enums.Sex
+  }
+
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumProductTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductType | EnumProductTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ProductType[]
+    notIn?: $Enums.ProductType[]
+    not?: NestedEnumProductTypeWithAggregatesFilter<$PrismaModel> | $Enums.ProductType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumProductTypeFilter<$PrismaModel>
+    _max?: NestedEnumProductTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSexWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Sex | EnumSexFieldRefInput<$PrismaModel>
+    in?: $Enums.Sex[]
+    notIn?: $Enums.Sex[]
+    not?: NestedEnumSexWithAggregatesFilter<$PrismaModel> | $Enums.Sex
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSexFilter<$PrismaModel>
+    _max?: NestedEnumSexFilter<$PrismaModel>
   }
 
   export type NestedDecimalFilter<$PrismaModel = never> = {
@@ -22482,6 +22940,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     isFeatured?: boolean
     isActive?: boolean
+    isBestSeller?: boolean
+    isOnSale?: boolean
+    salePrice?: Decimal | DecimalJsLike | number | string | null
+    originalPrice?: Decimal | DecimalJsLike | number | string | null
+    discountPercent?: number | null
+    tags?: string | null
+    productType?: $Enums.ProductType
+    sex?: $Enums.Sex
     variants?: ProductVariantCreateNestedManyWithoutProductInput
     brand: BrandCreateNestedOneWithoutProductsInput
     productImages?: ProductImageCreateNestedManyWithoutProductInput
@@ -22497,6 +22963,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     isFeatured?: boolean
     isActive?: boolean
+    isBestSeller?: boolean
+    isOnSale?: boolean
+    salePrice?: Decimal | DecimalJsLike | number | string | null
+    originalPrice?: Decimal | DecimalJsLike | number | string | null
+    discountPercent?: number | null
+    tags?: string | null
+    productType?: $Enums.ProductType
+    sex?: $Enums.Sex
     variants?: ProductVariantUncheckedCreateNestedManyWithoutProductInput
     productImages?: ProductImageUncheckedCreateNestedManyWithoutProductInput
   }
@@ -22541,6 +23015,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Product"> | Date | string
     isFeatured?: BoolFilter<"Product"> | boolean
     isActive?: BoolFilter<"Product"> | boolean
+    isBestSeller?: BoolFilter<"Product"> | boolean
+    isOnSale?: BoolFilter<"Product"> | boolean
+    salePrice?: DecimalNullableFilter<"Product"> | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: DecimalNullableFilter<"Product"> | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: IntNullableFilter<"Product"> | number | null
+    tags?: StringNullableFilter<"Product"> | string | null
+    productType?: EnumProductTypeFilter<"Product"> | $Enums.ProductType
+    sex?: EnumSexFilter<"Product"> | $Enums.Sex
   }
 
   export type ProductCreateWithoutBrandInput = {
@@ -22552,6 +23034,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     isFeatured?: boolean
     isActive?: boolean
+    isBestSeller?: boolean
+    isOnSale?: boolean
+    salePrice?: Decimal | DecimalJsLike | number | string | null
+    originalPrice?: Decimal | DecimalJsLike | number | string | null
+    discountPercent?: number | null
+    tags?: string | null
+    productType?: $Enums.ProductType
+    sex?: $Enums.Sex
     variants?: ProductVariantCreateNestedManyWithoutProductInput
     category: CategoryCreateNestedOneWithoutProductsInput
     productImages?: ProductImageCreateNestedManyWithoutProductInput
@@ -22567,6 +23057,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     isFeatured?: boolean
     isActive?: boolean
+    isBestSeller?: boolean
+    isOnSale?: boolean
+    salePrice?: Decimal | DecimalJsLike | number | string | null
+    originalPrice?: Decimal | DecimalJsLike | number | string | null
+    discountPercent?: number | null
+    tags?: string | null
+    productType?: $Enums.ProductType
+    sex?: $Enums.Sex
     variants?: ProductVariantUncheckedCreateNestedManyWithoutProductInput
     productImages?: ProductImageUncheckedCreateNestedManyWithoutProductInput
   }
@@ -22830,6 +23328,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     isFeatured?: boolean
     isActive?: boolean
+    isBestSeller?: boolean
+    isOnSale?: boolean
+    salePrice?: Decimal | DecimalJsLike | number | string | null
+    originalPrice?: Decimal | DecimalJsLike | number | string | null
+    discountPercent?: number | null
+    tags?: string | null
+    productType?: $Enums.ProductType
+    sex?: $Enums.Sex
     brand: BrandCreateNestedOneWithoutProductsInput
     category: CategoryCreateNestedOneWithoutProductsInput
     productImages?: ProductImageCreateNestedManyWithoutProductInput
@@ -22846,6 +23352,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     isFeatured?: boolean
     isActive?: boolean
+    isBestSeller?: boolean
+    isOnSale?: boolean
+    salePrice?: Decimal | DecimalJsLike | number | string | null
+    originalPrice?: Decimal | DecimalJsLike | number | string | null
+    discountPercent?: number | null
+    tags?: string | null
+    productType?: $Enums.ProductType
+    sex?: $Enums.Sex
     productImages?: ProductImageUncheckedCreateNestedManyWithoutProductInput
   }
 
@@ -22956,6 +23470,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBestSeller?: BoolFieldUpdateOperationsInput | boolean
+    isOnSale?: BoolFieldUpdateOperationsInput | boolean
+    salePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
+    productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     brand?: BrandUpdateOneRequiredWithoutProductsNestedInput
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
     productImages?: ProductImageUpdateManyWithoutProductNestedInput
@@ -22972,6 +23494,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBestSeller?: BoolFieldUpdateOperationsInput | boolean
+    isOnSale?: BoolFieldUpdateOperationsInput | boolean
+    salePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
+    productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     productImages?: ProductImageUncheckedUpdateManyWithoutProductNestedInput
   }
 
@@ -23070,6 +23600,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     isFeatured?: boolean
     isActive?: boolean
+    isBestSeller?: boolean
+    isOnSale?: boolean
+    salePrice?: Decimal | DecimalJsLike | number | string | null
+    originalPrice?: Decimal | DecimalJsLike | number | string | null
+    discountPercent?: number | null
+    tags?: string | null
+    productType?: $Enums.ProductType
+    sex?: $Enums.Sex
     variants?: ProductVariantCreateNestedManyWithoutProductInput
     brand: BrandCreateNestedOneWithoutProductsInput
     category: CategoryCreateNestedOneWithoutProductsInput
@@ -23086,6 +23624,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     isFeatured?: boolean
     isActive?: boolean
+    isBestSeller?: boolean
+    isOnSale?: boolean
+    salePrice?: Decimal | DecimalJsLike | number | string | null
+    originalPrice?: Decimal | DecimalJsLike | number | string | null
+    discountPercent?: number | null
+    tags?: string | null
+    productType?: $Enums.ProductType
+    sex?: $Enums.Sex
     variants?: ProductVariantUncheckedCreateNestedManyWithoutProductInput
   }
 
@@ -23114,6 +23660,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBestSeller?: BoolFieldUpdateOperationsInput | boolean
+    isOnSale?: BoolFieldUpdateOperationsInput | boolean
+    salePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
+    productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     variants?: ProductVariantUpdateManyWithoutProductNestedInput
     brand?: BrandUpdateOneRequiredWithoutProductsNestedInput
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
@@ -23130,6 +23684,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBestSeller?: BoolFieldUpdateOperationsInput | boolean
+    isOnSale?: BoolFieldUpdateOperationsInput | boolean
+    salePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
+    productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     variants?: ProductVariantUncheckedUpdateManyWithoutProductNestedInput
   }
 
@@ -24091,6 +24653,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     isFeatured?: boolean
     isActive?: boolean
+    isBestSeller?: boolean
+    isOnSale?: boolean
+    salePrice?: Decimal | DecimalJsLike | number | string | null
+    originalPrice?: Decimal | DecimalJsLike | number | string | null
+    discountPercent?: number | null
+    tags?: string | null
+    productType?: $Enums.ProductType
+    sex?: $Enums.Sex
   }
 
   export type ProductUpdateWithoutCategoryInput = {
@@ -24102,6 +24672,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBestSeller?: BoolFieldUpdateOperationsInput | boolean
+    isOnSale?: BoolFieldUpdateOperationsInput | boolean
+    salePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
+    productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     variants?: ProductVariantUpdateManyWithoutProductNestedInput
     brand?: BrandUpdateOneRequiredWithoutProductsNestedInput
     productImages?: ProductImageUpdateManyWithoutProductNestedInput
@@ -24117,6 +24695,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBestSeller?: BoolFieldUpdateOperationsInput | boolean
+    isOnSale?: BoolFieldUpdateOperationsInput | boolean
+    salePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
+    productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     variants?: ProductVariantUncheckedUpdateManyWithoutProductNestedInput
     productImages?: ProductImageUncheckedUpdateManyWithoutProductNestedInput
   }
@@ -24131,6 +24717,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBestSeller?: BoolFieldUpdateOperationsInput | boolean
+    isOnSale?: BoolFieldUpdateOperationsInput | boolean
+    salePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
+    productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
   }
 
   export type ProductCreateManyBrandInput = {
@@ -24143,6 +24737,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     isFeatured?: boolean
     isActive?: boolean
+    isBestSeller?: boolean
+    isOnSale?: boolean
+    salePrice?: Decimal | DecimalJsLike | number | string | null
+    originalPrice?: Decimal | DecimalJsLike | number | string | null
+    discountPercent?: number | null
+    tags?: string | null
+    productType?: $Enums.ProductType
+    sex?: $Enums.Sex
   }
 
   export type ProductUpdateWithoutBrandInput = {
@@ -24154,6 +24756,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBestSeller?: BoolFieldUpdateOperationsInput | boolean
+    isOnSale?: BoolFieldUpdateOperationsInput | boolean
+    salePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
+    productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     variants?: ProductVariantUpdateManyWithoutProductNestedInput
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
     productImages?: ProductImageUpdateManyWithoutProductNestedInput
@@ -24169,6 +24779,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBestSeller?: BoolFieldUpdateOperationsInput | boolean
+    isOnSale?: BoolFieldUpdateOperationsInput | boolean
+    salePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
+    productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     variants?: ProductVariantUncheckedUpdateManyWithoutProductNestedInput
     productImages?: ProductImageUncheckedUpdateManyWithoutProductNestedInput
   }
@@ -24183,6 +24801,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isBestSeller?: BoolFieldUpdateOperationsInput | boolean
+    isOnSale?: BoolFieldUpdateOperationsInput | boolean
+    salePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    originalPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    discountPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
+    productType?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
   }
 
   export type ProductVariantCreateManyProductInput = {

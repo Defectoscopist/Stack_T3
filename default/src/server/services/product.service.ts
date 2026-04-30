@@ -2,7 +2,7 @@ import type { z } from "zod";
 import type * as ProductSchemas from "../schemas/product.schema";
 
 import { db } from "~/server/db";
-import type { Prisma } from "generated/prisma";
+import type { Prisma, ProductType } from "generated/prisma";
 
 export class ProductService {
   constructor(private prisma: typeof db) {}
@@ -32,8 +32,22 @@ export class ProductService {
       slug: product.slug,
       isFeatured: product.isFeatured,
       isActive: product.isActive,
+      isBestSeller: product.isBestSeller,
+      isOnSale: product.isOnSale,
+      salePrice: product.salePrice ? Number(product.salePrice) : null,
+      originalPrice: product.originalPrice ? Number(product.originalPrice) : null,
+      discountPercent: product.discountPercent,
+      tags: product.tags,
+      productType: product.productType,
       categoryId: product.categoryId,
       brandId: product.brandId,
+      sex: product.sex,
+      category: {
+        id: product.category.id,
+        name: product.category.name,
+        slug: product.category.slug,
+        description: product.category.description,
+      },
       imagesUrl: product.productImages.map(img => img.url),
       variants: product.variants.map(variant => ({
         id: variant.id,
@@ -71,8 +85,22 @@ export class ProductService {
       slug: product.slug,
       isFeatured: product.isFeatured,
       isActive: product.isActive,
+      isBestSeller: product.isBestSeller,
+      isOnSale: product.isOnSale,
+      salePrice: product.salePrice ? Number(product.salePrice) : null,
+      originalPrice: product.originalPrice ? Number(product.originalPrice) : null,
+      discountPercent: product.discountPercent,
+      tags: product.tags,
+      productType: product.productType,
       categoryId: product.categoryId,
       brandId: product.brandId,
+      sex: product.sex,
+      category: {
+        id: product.category.id,
+        name: product.category.name,
+        slug: product.category.slug,
+        description: product.category.description,
+      },
       imagesUrl: product.productImages.map(img => img.url),
       variants: product.variants.map(variant => ({
         id: variant.id,
@@ -91,8 +119,13 @@ export class ProductService {
       offset,
       isActive,
       isFeatured,
+      isBestSeller,
+      isOnSale,
       brandId,
       categoryId,
+      productType,
+      minPrice,
+      maxPrice,
       search,
       images,
       variants,
@@ -100,9 +133,20 @@ export class ProductService {
 
     const where: Prisma.ProductWhereInput = {
       isActive,
-      isFeatured,
+      ...(isFeatured !== undefined && { isFeatured }),
+      ...(isBestSeller !== undefined && { isBestSeller }),
+      ...(isOnSale !== undefined && { isOnSale }),
       ...(brandId && { brandId }),
       ...(categoryId && { categoryId }),
+      ...(productType && { productType: productType as ProductType }),
+      ...(minPrice !== undefined || maxPrice !== undefined ? {
+        variants: {
+          some: {
+            ...(minPrice !== undefined && { price: { gte: minPrice } }),
+            ...(maxPrice !== undefined && { price: { lte: maxPrice } }),
+          },
+        },
+      } : {}),
       ...(search && {
         OR: [
           { name: { contains: search.toLowerCase() } },
@@ -135,8 +179,22 @@ export class ProductService {
       slug: product.slug,
       isFeatured: product.isFeatured,
       isActive: product.isActive,
+      isBestSeller: product.isBestSeller,
+      isOnSale: product.isOnSale,
+      salePrice: product.salePrice ? Number(product.salePrice) : null,
+      originalPrice: product.originalPrice ? Number(product.originalPrice) : null,
+      discountPercent: product.discountPercent,
+      tags: product.tags,
+      productType: product.productType,
       categoryId: product.categoryId,
       brandId: product.brandId,
+      sex: product.sex,
+      category: {
+        id: product.category.id,
+        name: product.category.name,
+        slug: product.category.slug,
+        description: product.category.description,
+      },
       imagesUrl: product.productImages?.map(img => img.url) || [],
       variants: product.variants?.map(variant => ({
         id: variant.id,
@@ -175,8 +233,22 @@ export class ProductService {
       slug: product.slug,
       isFeatured: product.isFeatured,
       isActive: product.isActive,
+      isBestSeller: product.isBestSeller,
+      isOnSale: product.isOnSale,
+      salePrice: product.salePrice ? Number(product.salePrice) : null,
+      originalPrice: product.originalPrice ? Number(product.originalPrice) : null,
+      discountPercent: product.discountPercent,
+      tags: product.tags,
+      productType: product.productType,
       categoryId: product.categoryId,
       brandId: product.brandId,
+      sex: product.sex,
+      category: {
+        id: product.category.id,
+        name: product.category.name,
+        slug: product.category.slug,
+        description: product.category.description,
+      },
       imagesUrl: product.productImages.map(img => img.url),
       variants: product.variants.map(variant => ({
         id: variant.id,

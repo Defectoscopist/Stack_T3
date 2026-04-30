@@ -1,4 +1,5 @@
-import { PrismaClient, Size } from '../generated/prisma/index.js';
+import { PrismaClient, Size, Sex } from '../generated/prisma/index.js';
+import { faker } from '@faker-js/faker';
 
 const prisma = new PrismaClient();
 
@@ -17,6 +18,12 @@ function mapUSizeToEnum(usSize: string): Size {
     'US 14': Size.XXXXL,
   };
   return sizeMap[usSize] || Size.ONE_SIZE;
+}
+
+// Helper function to generate random image URLs based on category
+function generateImageUrl(categorySlug: string): string {
+  const seed = `${categorySlug}-${Math.floor(Math.random() * 1000)}`;
+  return `https://picsum.photos/seed/${seed}/500/500`;
 }
 
 async function main() {
@@ -106,9 +113,51 @@ async function main() {
         description: 'Balls, equipment, and gear',
       },
     }),
+    prisma.category.create({
+      data: {
+        name: 'T-Shirts',
+        slug: 't-shirts',
+        description: 'Casual and athletic t-shirts',
+      },
+    }),
+    prisma.category.create({
+      data: {
+        name: 'Hoodies',
+        slug: 'hoodies',
+        description: 'Comfortable hoodies and sweatshirts',
+      },
+    }),
+    prisma.category.create({
+      data: {
+        name: 'Pants',
+        slug: 'pants',
+        description: 'Jeans, trousers, and athletic pants',
+      },
+    }),
+    prisma.category.create({
+      data: {
+        name: 'Jackets',
+        slug: 'jackets',
+        description: 'Coats, jackets, and outerwear',
+      },
+    }),
+    prisma.category.create({
+      data: {
+        name: 'Bags',
+        slug: 'bags',
+        description: 'Backpacks, duffel bags, and accessories',
+      },
+    }),
+    prisma.category.create({
+      data: {
+        name: 'Watches',
+        slug: 'watches',
+        description: 'Smart watches and timepieces',
+      },
+    }),
   ]);
 
-  console.log('✅ Created 6 categories');
+  console.log('✅ Created 12 categories');
 
   // Helper function to create products with variants
   interface ProductData {
@@ -117,6 +166,7 @@ async function main() {
     slug: string;
     categoryId: string;
     brandId: string;
+    sex: Sex;
     variants: Array<{
       name: string;
       slug: string;
@@ -124,7 +174,6 @@ async function main() {
       size?: string;
       price: number;
       stock: number;
-      images: Array<{ url: string; altText: string }>;
     }>;
   }
 
@@ -136,6 +185,7 @@ async function main() {
       slug: 'air-max-90',
       categoryId: categories[0].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'White/Black',
@@ -144,7 +194,6 @@ async function main() {
           size: 'US 10',
           price: 129.99,
           stock: 50,
-          images: [{ url: 'https://placehold.co/500x500?text=Air+Max+90+White', altText: 'Air Max 90 White' }],
         },
         {
           name: 'Red/White',
@@ -153,7 +202,6 @@ async function main() {
           size: 'US 10',
           price: 129.99,
           stock: 40,
-          images: [{ url: 'https://placehold.co/500x500?text=Air+Max+90+Red', altText: 'Air Max 90 Red' }],
         },
         {
           name: 'All Black',
@@ -162,7 +210,6 @@ async function main() {
           size: 'US 11',
           price: 139.99,
           stock: 35,
-          images: [{ url: 'https://placehold.co/500x500?text=Air+Max+90+Black', altText: 'Air Max 90 Black' }],
         },
       ],
     },
@@ -172,6 +219,7 @@ async function main() {
       slug: 'ultra-boost-22',
       categoryId: categories[0].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Cloud White',
@@ -180,7 +228,6 @@ async function main() {
           size: 'US 9',
           price: 199.99,
           stock: 25,
-          images: [{ url: 'https://placehold.co/500x500?text=Ultra+Boost+White', altText: 'Ultra Boost White' }],
         },
         {
           name: 'Core Black',
@@ -189,7 +236,6 @@ async function main() {
           size: 'US 9',
           price: 199.99,
           stock: 30,
-          images: [{ url: 'https://placehold.co/500x500?text=Ultra+Boost+Black', altText: 'Ultra Boost Black' }],
         },
       ],
     },
@@ -199,6 +245,7 @@ async function main() {
       slug: 'court-legacy',
       categoryId: categories[0].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'White/Gold',
@@ -207,7 +254,6 @@ async function main() {
           size: 'US 8',
           price: 99.99,
           stock: 60,
-          images: [{ url: 'https://placehold.co/500x500?text=Court+Legacy', altText: 'Court Legacy' }],
         },
         {
           name: 'Black/Silver',
@@ -216,7 +262,6 @@ async function main() {
           size: 'US 8',
           price: 99.99,
           stock: 45,
-          images: [{ url: 'https://placehold.co/500x500?text=Court+Legacy+Black', altText: 'Court Legacy Black' }],
         },
         {
           name: 'Navy/Red',
@@ -225,7 +270,6 @@ async function main() {
           size: 'US 10',
           price: 99.99,
           stock: 50,
-          images: [{ url: 'https://placehold.co/500x500?text=Court+Legacy+Navy', altText: 'Court Legacy Navy' }],
         },
       ],
     },
@@ -235,6 +279,7 @@ async function main() {
       slug: 'revolution-6',
       categoryId: categories[0].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'White',
@@ -243,7 +288,6 @@ async function main() {
           size: 'US 7',
           price: 64.99,
           stock: 100,
-          images: [{ url: 'https://placehold.co/500x500?text=Revolution+6', altText: 'Revolution 6' }],
         },
         {
           name: 'Black',
@@ -252,7 +296,6 @@ async function main() {
           size: 'US 7',
           price: 64.99,
           stock: 80,
-          images: [{ url: 'https://placehold.co/500x500?text=Revolution+6+Black', altText: 'Revolution 6 Black' }],
         },
       ],
     },
@@ -262,6 +305,7 @@ async function main() {
       slug: 'zoomx-invincible',
       categoryId: categories[0].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'White/Blue',
@@ -270,7 +314,6 @@ async function main() {
           size: 'US 11',
           price: 299.99,
           stock: 15,
-          images: [{ url: 'https://placehold.co/500x500?text=ZoomX+Invincible', altText: 'ZoomX Invincible' }],
         },
         {
           name: 'Black/Yellow',
@@ -279,7 +322,6 @@ async function main() {
           size: 'US 11',
           price: 299.99,
           stock: 10,
-          images: [{ url: 'https://placehold.co/500x500?text=ZoomX+Invincible+Black', altText: 'ZoomX Invincible Black' }],
         },
         {
           name: 'Red/White',
@@ -288,7 +330,6 @@ async function main() {
           size: 'US 12',
           price: 299.99,
           stock: 12,
-          images: [{ url: 'https://placehold.co/500x500?text=ZoomX+Invincible+Red', altText: 'ZoomX Invincible Red' }],
         },
       ],
     },
@@ -298,6 +339,7 @@ async function main() {
       slug: 'nite-jogger',
       categoryId: categories[0].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Silver Metallic',
@@ -306,7 +348,6 @@ async function main() {
           size: 'US 9',
           price: 149.99,
           stock: 40,
-          images: [{ url: 'https://placehold.co/500x500?text=Nite+Jogger', altText: 'Nite Jogger' }],
         },
         {
           name: 'Grey/Blue',
@@ -315,7 +356,6 @@ async function main() {
           size: 'US 9',
           price: 149.99,
           stock: 35,
-          images: [{ url: 'https://placehold.co/500x500?text=Nite+Jogger+Grey', altText: 'Nite Jogger Grey' }],
         },
         {
           name: 'Black/White',
@@ -324,7 +364,6 @@ async function main() {
           size: 'US 10',
           price: 149.99,
           stock: 38,
-          images: [{ url: 'https://placehold.co/500x500?text=Nite+Jogger+Black', altText: 'Nite Jogger Black' }],
         },
         {
           name: 'Purple',
@@ -333,7 +372,6 @@ async function main() {
           size: 'US 8',
           price: 149.99,
           stock: 25,
-          images: [{ url: 'https://placehold.co/500x500?text=Nite+Jogger+Purple', altText: 'Nite Jogger Purple' }],
         },
       ],
     },
@@ -343,6 +381,7 @@ async function main() {
       slug: 'phantom-gt2',
       categoryId: categories[0].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Black/Green',
@@ -351,7 +390,6 @@ async function main() {
           size: 'US 10',
           price: 279.99,
           stock: 20,
-          images: [{ url: 'https://placehold.co/500x500?text=Phantom+GT2', altText: 'Phantom GT2' }],
         },
         {
           name: 'White/Gold',
@@ -360,7 +398,6 @@ async function main() {
           size: 'US 10',
           price: 279.99,
           stock: 18,
-          images: [{ url: 'https://placehold.co/500x500?text=Phantom+GT2+White', altText: 'Phantom GT2 White' }],
         },
       ],
     },
@@ -370,6 +407,7 @@ async function main() {
       slug: 'copa-pure',
       categoryId: categories[0].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'White/Black',
@@ -378,7 +416,6 @@ async function main() {
           size: 'US 11',
           price: 249.99,
           stock: 22,
-          images: [{ url: 'https://placehold.co/500x500?text=Copa+Pure', altText: 'Copa Pure' }],
         },
         {
           name: 'All Black',
@@ -387,7 +424,6 @@ async function main() {
           size: 'US 11',
           price: 249.99,
           stock: 20,
-          images: [{ url: 'https://placehold.co/500x500?text=Copa+Pure+Black', altText: 'Copa Pure Black' }],
         },
         {
           name: 'Gold/Black',
@@ -396,7 +432,6 @@ async function main() {
           size: 'US 12',
           price: 249.99,
           stock: 15,
-          images: [{ url: 'https://placehold.co/500x500?text=Copa+Pure+Gold', altText: 'Copa Pure Gold' }],
         },
       ],
     },
@@ -408,6 +443,7 @@ async function main() {
       slug: 'classic-tshirt',
       categoryId: categories[1].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'White Small',
@@ -416,7 +452,6 @@ async function main() {
           size: 'S',
           price: 34.99,
           stock: 200,
-          images: [{ url: 'https://placehold.co/500x500?text=Classic+TShirt', altText: 'Classic T-Shirt' }],
         },
         {
           name: 'White Medium',
@@ -425,7 +460,6 @@ async function main() {
           size: 'M',
           price: 34.99,
           stock: 250,
-          images: [{ url: 'https://placehold.co/500x500?text=Classic+TShirt', altText: 'Classic T-Shirt' }],
         },
         {
           name: 'Black Large',
@@ -434,7 +468,6 @@ async function main() {
           size: 'L',
           price: 34.99,
           stock: 180,
-          images: [{ url: 'https://placehold.co/500x500?text=Classic+TShirt+Black', altText: 'Classic T-Shirt Black' }],
         },
         {
           name: 'Grey XL',
@@ -443,7 +476,6 @@ async function main() {
           size: 'XL',
           price: 34.99,
           stock: 150,
-          images: [{ url: 'https://placehold.co/500x500?text=Classic+TShirt+Grey', altText: 'Classic T-Shirt Grey' }],
         },
       ],
     },
@@ -453,6 +485,7 @@ async function main() {
       slug: 'running-tank-top',
       categoryId: categories[1].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Black Small',
@@ -461,7 +494,6 @@ async function main() {
           size: 'S',
           price: 44.99,
           stock: 100,
-          images: [{ url: 'https://placehold.co/500x500?text=Running+Tank', altText: 'Running Tank' }],
         },
         {
           name: 'White Medium',
@@ -470,7 +502,6 @@ async function main() {
           size: 'M',
           price: 44.99,
           stock: 120,
-          images: [{ url: 'https://placehold.co/500x500?text=Running+Tank+White', altText: 'Running Tank White' }],
         },
         {
           name: 'Blue Large',
@@ -479,7 +510,6 @@ async function main() {
           size: 'L',
           price: 44.99,
           stock: 90,
-          images: [{ url: 'https://placehold.co/500x500?text=Running+Tank+Blue', altText: 'Running Tank Blue' }],
         },
       ],
     },
@@ -489,6 +519,7 @@ async function main() {
       slug: 'windrunner-jacket',
       categoryId: categories[1].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Black Small',
@@ -497,7 +528,6 @@ async function main() {
           size: 'S',
           price: 139.99,
           stock: 60,
-          images: [{ url: 'https://placehold.co/500x500?text=Windrunner', altText: 'Windrunner Jacket' }],
         },
         {
           name: 'Red Medium',
@@ -506,7 +536,6 @@ async function main() {
           size: 'M',
           price: 139.99,
           stock: 55,
-          images: [{ url: 'https://placehold.co/500x500?text=Windrunner+Red', altText: 'Windrunner Red' }],
         },
         {
           name: 'White Large',
@@ -515,7 +544,6 @@ async function main() {
           size: 'L',
           price: 139.99,
           stock: 50,
-          images: [{ url: 'https://placehold.co/500x500?text=Windrunner+White', altText: 'Windrunner White' }],
         },
         {
           name: 'Blue XL',
@@ -524,7 +552,6 @@ async function main() {
           size: 'XL',
           price: 139.99,
           stock: 45,
-          images: [{ url: 'https://placehold.co/500x500?text=Windrunner+Blue', altText: 'Windrunner Blue' }],
         },
       ],
     },
@@ -534,6 +561,7 @@ async function main() {
       slug: 'essential-hoodie',
       categoryId: categories[1].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Grey Small',
@@ -542,7 +570,6 @@ async function main() {
           size: 'S',
           price: 89.99,
           stock: 80,
-          images: [{ url: 'https://placehold.co/500x500?text=Essential+Hoodie', altText: 'Essential Hoodie' }],
         },
         {
           name: 'Black Medium',
@@ -551,7 +578,6 @@ async function main() {
           size: 'M',
           price: 89.99,
           stock: 95,
-          images: [{ url: 'https://placehold.co/500x500?text=Essential+Hoodie+Black', altText: 'Essential Hoodie Black' }],
         },
         {
           name: 'Navy Large',
@@ -560,7 +586,6 @@ async function main() {
           size: 'L',
           price: 89.99,
           stock: 70,
-          images: [{ url: 'https://placehold.co/500x500?text=Essential+Hoodie+Navy', altText: 'Essential Hoodie Navy' }],
         },
       ],
     },
@@ -570,6 +595,7 @@ async function main() {
       slug: 'dri-fit-leggings',
       categoryId: categories[1].id,
       brandId: brandNike.id,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Black XS',
@@ -578,7 +604,6 @@ async function main() {
           size: 'XS',
           price: 119.99,
           stock: 75,
-          images: [{ url: 'https://placehold.co/500x500?text=DRI-FIT+Leggings', altText: 'Dri-FIT Leggings' }],
         },
         {
           name: 'Black Small',
@@ -587,7 +612,6 @@ async function main() {
           size: 'S',
           price: 119.99,
           stock: 85,
-          images: [{ url: 'https://placehold.co/500x500?text=DRI-FIT+Leggings', altText: 'Dri-FIT Leggings' }],
         },
         {
           name: 'Purple Medium',
@@ -596,7 +620,6 @@ async function main() {
           size: 'M',
           price: 119.99,
           stock: 60,
-          images: [{ url: 'https://placehold.co/500x500?text=DRI-FIT+Leggings+Purple', altText: 'Dri-FIT Leggings Purple' }],
         },
         {
           name: 'Green Large',
@@ -605,7 +628,6 @@ async function main() {
           size: 'L',
           price: 119.99,
           stock: 50,
-          images: [{ url: 'https://placehold.co/500x500?text=DRI-FIT+Leggings+Green', altText: 'Dri-FIT Leggings Green' }],
         },
       ],
     },
@@ -615,6 +637,7 @@ async function main() {
       slug: 'training-shorts',
       categoryId: categories[1].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Black Small',
@@ -623,7 +646,6 @@ async function main() {
           size: 'S',
           price: 59.99,
           stock: 110,
-          images: [{ url: 'https://placehold.co/500x500?text=Training+Shorts', altText: 'Training Shorts' }],
         },
         {
           name: 'Black Medium',
@@ -632,7 +654,6 @@ async function main() {
           size: 'M',
           price: 59.99,
           stock: 130,
-          images: [{ url: 'https://placehold.co/500x500?text=Training+Shorts', altText: 'Training Shorts' }],
         },
         {
           name: 'Navy Large',
@@ -641,7 +662,6 @@ async function main() {
           size: 'L',
           price: 59.99,
           stock: 100,
-          images: [{ url: 'https://placehold.co/500x500?text=Training+Shorts+Navy', altText: 'Training Shorts Navy' }],
         },
       ],
     },
@@ -651,6 +671,7 @@ async function main() {
       slug: 'utility-belt-bag',
       categoryId: categories[1].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Black',
@@ -659,7 +680,6 @@ async function main() {
           size: 'One Size',
           price: 79.99,
           stock: 140,
-          images: [{ url: 'https://placehold.co/500x500?text=Utility+Belt+Bag', altText: 'Utility Belt Bag' }],
         },
         {
           name: 'Grey',
@@ -668,7 +688,6 @@ async function main() {
           size: 'One Size',
           price: 79.99,
           stock: 120,
-          images: [{ url: 'https://placehold.co/500x500?text=Utility+Belt+Bag+Grey', altText: 'Utility Belt Bag Grey' }],
         },
         {
           name: 'Olive',
@@ -677,7 +696,6 @@ async function main() {
           size: 'One Size',
           price: 79.99,
           stock: 100,
-          images: [{ url: 'https://placehold.co/500x500?text=Utility+Belt+Bag+Olive', altText: 'Utility Belt Bag Olive' }],
         },
       ],
     },
@@ -689,6 +707,7 @@ async function main() {
       slug: 'dri-fit-cap',
       categoryId: categories[2].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Black',
@@ -697,7 +716,6 @@ async function main() {
           size: 'One Size',
           price: 34.99,
           stock: 200,
-          images: [{ url: 'https://placehold.co/500x500?text=DRI-FIT+Cap', altText: 'Dri-FIT Cap' }],
         },
         {
           name: 'White',
@@ -706,7 +724,6 @@ async function main() {
           size: 'One Size',
           price: 34.99,
           stock: 180,
-          images: [{ url: 'https://placehold.co/500x500?text=DRI-FIT+Cap+White', altText: 'Dri-FIT Cap White' }],
         },
         {
           name: 'Red',
@@ -715,7 +732,6 @@ async function main() {
           size: 'One Size',
           price: 34.99,
           stock: 150,
-          images: [{ url: 'https://placehold.co/500x500?text=DRI-FIT+Cap+Red', altText: 'Dri-FIT Cap Red' }],
         },
         {
           name: 'Blue',
@@ -724,7 +740,6 @@ async function main() {
           size: 'One Size',
           price: 34.99,
           stock: 170,
-          images: [{ url: 'https://placehold.co/500x500?text=DRI-FIT+Cap+Blue', altText: 'Dri-FIT Cap Blue' }],
         },
       ],
     },
@@ -734,6 +749,7 @@ async function main() {
       slug: 'crew-socks-3pack',
       categoryId: categories[2].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Black',
@@ -742,7 +758,6 @@ async function main() {
           size: 'One Size',
           price: 24.99,
           stock: 300,
-          images: [{ url: 'https://placehold.co/500x500?text=Crew+Socks', altText: 'Crew Socks' }],
         },
         {
           name: 'White',
@@ -751,7 +766,6 @@ async function main() {
           size: 'One Size',
           price: 24.99,
           stock: 280,
-          images: [{ url: 'https://placehold.co/500x500?text=Crew+Socks+White', altText: 'Crew Socks White' }],
         },
         {
           name: 'Grey Mix',
@@ -760,7 +774,6 @@ async function main() {
           size: 'One Size',
           price: 24.99,
           stock: 250,
-          images: [{ url: 'https://placehold.co/500x500?text=Crew+Socks+Grey', altText: 'Crew Socks Grey' }],
         },
       ],
     },
@@ -770,6 +783,7 @@ async function main() {
       slug: 'headband',
       categoryId: categories[2].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Black',
@@ -778,7 +792,6 @@ async function main() {
           size: 'One Size',
           price: 19.99,
           stock: 250,
-          images: [{ url: 'https://placehold.co/500x500?text=Headband', altText: 'Headband' }],
         },
         {
           name: 'White',
@@ -787,7 +800,6 @@ async function main() {
           size: 'One Size',
           price: 19.99,
           stock: 220,
-          images: [{ url: 'https://placehold.co/500x500?text=Headband+White', altText: 'Headband White' }],
         },
       ],
     },
@@ -797,6 +809,7 @@ async function main() {
       slug: 'gym-towel',
       categoryId: categories[2].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Black',
@@ -805,7 +818,6 @@ async function main() {
           size: 'One Size',
           price: 29.99,
           stock: 180,
-          images: [{ url: 'https://placehold.co/500x500?text=Gym+Towel', altText: 'Gym Towel' }],
         },
         {
           name: 'Grey',
@@ -814,7 +826,6 @@ async function main() {
           size: 'One Size',
           price: 29.99,
           stock: 160,
-          images: [{ url: 'https://placehold.co/500x500?text=Gym+Towel+Grey', altText: 'Gym Towel Grey' }],
         },
         {
           name: 'White',
@@ -823,7 +834,6 @@ async function main() {
           size: 'One Size',
           price: 29.99,
           stock: 175,
-          images: [{ url: 'https://placehold.co/500x500?text=Gym+Towel+White', altText: 'Gym Towel White' }],
         },
       ],
     },
@@ -833,6 +843,7 @@ async function main() {
       slug: 'water-bottle-750ml',
       categoryId: categories[2].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Black',
@@ -841,7 +852,6 @@ async function main() {
           size: '750ml',
           price: 44.99,
           stock: 140,
-          images: [{ url: 'https://placehold.co/500x500?text=Water+Bottle', altText: 'Water Bottle' }],
         },
         {
           name: 'Blue',
@@ -850,7 +860,6 @@ async function main() {
           size: '750ml',
           price: 44.99,
           stock: 130,
-          images: [{ url: 'https://placehold.co/500x500?text=Water+Bottle+Blue', altText: 'Water Bottle Blue' }],
         },
         {
           name: 'Red',
@@ -859,7 +868,6 @@ async function main() {
           size: '750ml',
           price: 44.99,
           stock: 120,
-          images: [{ url: 'https://placehold.co/500x500?text=Water+Bottle+Red', altText: 'Water Bottle Red' }],
         },
       ],
     },
@@ -869,6 +877,7 @@ async function main() {
       slug: 'gloves-winter',
       categoryId: categories[2].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Black',
@@ -877,7 +886,6 @@ async function main() {
           size: 'One Size',
           price: 39.99,
           stock: 110,
-          images: [{ url: 'https://placehold.co/500x500?text=Winter+Gloves', altText: 'Winter Gloves' }],
         },
         {
           name: 'Grey',
@@ -886,7 +894,6 @@ async function main() {
           size: 'One Size',
           price: 39.99,
           stock: 100,
-          images: [{ url: 'https://placehold.co/500x500?text=Winter+Gloves+Grey', altText: 'Winter Gloves Grey' }],
         },
       ],
     },
@@ -898,6 +905,7 @@ async function main() {
       slug: 'sportwatch-pro',
       categoryId: categories[3].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Black',
@@ -906,7 +914,6 @@ async function main() {
           size: 'One Size',
           price: 399.99,
           stock: 30,
-          images: [{ url: 'https://placehold.co/500x500?text=SportWatch+Pro', altText: 'SportWatch Pro' }],
         },
         {
           name: 'Silver',
@@ -915,7 +922,6 @@ async function main() {
           size: 'One Size',
           price: 399.99,
           stock: 25,
-          images: [{ url: 'https://placehold.co/500x500?text=SportWatch+Pro+Silver', altText: 'SportWatch Pro Silver' }],
         },
       ],
     },
@@ -925,6 +931,7 @@ async function main() {
       slug: 'fitness-tracker-band',
       categoryId: categories[3].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Black',
@@ -933,7 +940,6 @@ async function main() {
           size: 'One Size',
           price: 149.99,
           stock: 50,
-          images: [{ url: 'https://placehold.co/500x500?text=Fitness+Tracker', altText: 'Fitness Tracker' }],
         },
         {
           name: 'White',
@@ -942,7 +948,6 @@ async function main() {
           size: 'One Size',
           price: 149.99,
           stock: 45,
-          images: [{ url: 'https://placehold.co/500x500?text=Fitness+Tracker+White', altText: 'Fitness Tracker White' }],
         },
       ],
     },
@@ -952,6 +957,7 @@ async function main() {
       slug: 'wireless-earbuds',
       categoryId: categories[3].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Black',
@@ -960,7 +966,6 @@ async function main() {
           size: 'One Size',
           price: 179.99,
           stock: 60,
-          images: [{ url: 'https://placehold.co/500x500?text=Wireless+Earbuds', altText: 'Wireless Earbuds' }],
         },
         {
           name: 'White',
@@ -969,7 +974,6 @@ async function main() {
           size: 'One Size',
           price: 179.99,
           stock: 50,
-          images: [{ url: 'https://placehold.co/500x500?text=Wireless+Earbuds+White', altText: 'Wireless Earbuds White' }],
         },
         {
           name: 'Grey',
@@ -978,7 +982,6 @@ async function main() {
           size: 'One Size',
           price: 179.99,
           stock: 45,
-          images: [{ url: 'https://placehold.co/500x500?text=Wireless+Earbuds+Grey', altText: 'Wireless Earbuds Grey' }],
         },
       ],
     },
@@ -988,6 +991,7 @@ async function main() {
       slug: 'heart-rate-monitor',
       categoryId: categories[3].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Standard',
@@ -996,7 +1000,6 @@ async function main() {
           size: 'One Size',
           price: 119.99,
           stock: 40,
-          images: [{ url: 'https://placehold.co/500x500?text=Heart+Rate+Monitor', altText: 'Heart Rate Monitor' }],
         },
       ],
     },
@@ -1006,6 +1009,7 @@ async function main() {
       slug: 'gps-running-watch',
       categoryId: categories[3].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Black',
@@ -1014,7 +1018,6 @@ async function main() {
           size: 'One Size',
           price: 299.99,
           stock: 35,
-          images: [{ url: 'https://placehold.co/500x500?text=GPS+Running+Watch', altText: 'GPS Running Watch' }],
         },
         {
           name: 'Red',
@@ -1023,7 +1026,6 @@ async function main() {
           size: 'One Size',
           price: 299.99,
           stock: 30,
-          images: [{ url: 'https://placehold.co/500x500?text=GPS+Running+Watch+Red', altText: 'GPS Running Watch Red' }],
         },
       ],
     },
@@ -1035,6 +1037,7 @@ async function main() {
       slug: 'yoga-mat',
       categoryId: categories[4].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Purple',
@@ -1043,7 +1046,6 @@ async function main() {
           size: '6mm',
           price: 79.99,
           stock: 80,
-          images: [{ url: 'https://placehold.co/500x500?text=Yoga+Mat', altText: 'Yoga Mat' }],
         },
         {
           name: 'Black',
@@ -1052,7 +1054,6 @@ async function main() {
           size: '6mm',
           price: 79.99,
           stock: 90,
-          images: [{ url: 'https://placehold.co/500x500?text=Yoga+Mat+Black', altText: 'Yoga Mat Black' }],
         },
         {
           name: 'Blue',
@@ -1061,7 +1062,6 @@ async function main() {
           size: '6mm',
           price: 79.99,
           stock: 75,
-          images: [{ url: 'https://placehold.co/500x500?text=Yoga+Mat+Blue', altText: 'Yoga Mat Blue' }],
         },
       ],
     },
@@ -1071,6 +1071,7 @@ async function main() {
       slug: 'dumbbell-set',
       categoryId: categories[4].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: '2-20kg',
@@ -1079,7 +1080,6 @@ async function main() {
           size: '2-20kg',
           price: 249.99,
           stock: 20,
-          images: [{ url: 'https://placehold.co/500x500?text=Dumbbell+Set', altText: 'Dumbbell Set' }],
         },
       ],
     },
@@ -1089,6 +1089,7 @@ async function main() {
       slug: 'resistance-bands-set',
       categoryId: categories[4].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: '5-Pack',
@@ -1097,7 +1098,6 @@ async function main() {
           size: 'One Size',
           price: 49.99,
           stock: 150,
-          images: [{ url: 'https://placehold.co/500x500?text=Resistance+Bands', altText: 'Resistance Bands' }],
         },
       ],
     },
@@ -1107,6 +1107,7 @@ async function main() {
       slug: 'pushup-bars',
       categoryId: categories[4].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Standard',
@@ -1115,7 +1116,6 @@ async function main() {
           size: 'One Size',
           price: 34.99,
           stock: 200,
-          images: [{ url: 'https://placehold.co/500x500?text=Push-Up+Bars', altText: 'Push-Up Bars' }],
         },
       ],
     },
@@ -1125,6 +1125,7 @@ async function main() {
       slug: 'ab-roller',
       categoryId: categories[4].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Black',
@@ -1133,7 +1134,6 @@ async function main() {
           size: 'One Size',
           price: 44.99,
           stock: 120,
-          images: [{ url: 'https://placehold.co/500x500?text=Ab+Roller', altText: 'Ab Roller' }],
         },
         {
           name: 'Grey',
@@ -1142,7 +1142,6 @@ async function main() {
           size: 'One Size',
           price: 44.99,
           stock: 100,
-          images: [{ url: 'https://placehold.co/500x500?text=Ab+Roller+Grey', altText: 'Ab Roller Grey' }],
         },
       ],
     },
@@ -1152,6 +1151,7 @@ async function main() {
       slug: 'exercise-ball',
       categoryId: categories[4].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: '65cm',
@@ -1160,7 +1160,6 @@ async function main() {
           size: '65cm',
           price: 69.99,
           stock: 60,
-          images: [{ url: 'https://placehold.co/500x500?text=Exercise+Ball', altText: 'Exercise Ball' }],
         },
         {
           name: '75cm',
@@ -1169,7 +1168,6 @@ async function main() {
           size: '75cm',
           price: 74.99,
           stock: 50,
-          images: [{ url: 'https://placehold.co/500x500?text=Exercise+Ball+Blue', altText: 'Exercise Ball Blue' }],
         },
       ],
     },
@@ -1181,6 +1179,7 @@ async function main() {
       slug: 'soccer-ball-pro',
       categoryId: categories[5].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'White/Black',
@@ -1189,7 +1188,6 @@ async function main() {
           size: '5',
           price: 149.99,
           stock: 45,
-          images: [{ url: 'https://placehold.co/500x500?text=Soccer+Ball', altText: 'Soccer Ball' }],
         },
         {
           name: 'Multi-panel',
@@ -1198,7 +1196,6 @@ async function main() {
           size: '5',
           price: 159.99,
           stock: 35,
-          images: [{ url: 'https://placehold.co/500x500?text=Soccer+Ball+Multi', altText: 'Soccer Ball Multi' }],
         },
       ],
     },
@@ -1208,6 +1205,7 @@ async function main() {
       slug: 'basketball',
       categoryId: categories[5].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Size 7',
@@ -1216,7 +1214,6 @@ async function main() {
           size: '7',
           price: 99.99,
           stock: 55,
-          images: [{ url: 'https://placehold.co/500x500?text=Basketball', altText: 'Basketball' }],
         },
       ],
     },
@@ -1226,6 +1223,7 @@ async function main() {
       slug: 'tennis-racket',
       categoryId: categories[5].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Standard',
@@ -1234,7 +1232,6 @@ async function main() {
           size: '27 inch',
           price: 189.99,
           stock: 25,
-          images: [{ url: 'https://placehold.co/500x500?text=Tennis+Racket', altText: 'Tennis Racket' }],
         },
         {
           name: 'Advanced',
@@ -1243,7 +1240,6 @@ async function main() {
           size: '27 inch',
           price: 229.99,
           stock: 20,
-          images: [{ url: 'https://placehold.co/500x500?text=Tennis+Racket+Pro', altText: 'Tennis Racket Pro' }],
         },
       ],
     },
@@ -1253,6 +1249,7 @@ async function main() {
       slug: 'jump-rope',
       categoryId: categories[5].id,
       brandId: brandNike.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Aluminum',
@@ -1261,7 +1258,6 @@ async function main() {
           size: 'Adjustable',
           price: 54.99,
           stock: 180,
-          images: [{ url: 'https://placehold.co/500x500?text=Jump+Rope', altText: 'Jump Rope' }],
         },
         {
           name: 'Steel',
@@ -1270,7 +1266,6 @@ async function main() {
           size: 'Adjustable',
           price: 64.99,
           stock: 150,
-          images: [{ url: 'https://placehold.co/500x500?text=Jump+Rope+Steel', altText: 'Jump Rope Steel' }],
         },
       ],
     },
@@ -1280,6 +1275,7 @@ async function main() {
       slug: 'lacrosse-stick',
       categoryId: categories[5].id,
       brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
       variants: [
         {
           name: 'Youth',
@@ -1288,7 +1284,6 @@ async function main() {
           size: '40 inch',
           price: 79.99,
           stock: 30,
-          images: [{ url: 'https://placehold.co/500x500?text=Lacrosse+Stick', altText: 'Lacrosse Stick' }],
         },
         {
           name: 'Adult',
@@ -1297,7 +1292,806 @@ async function main() {
           size: '42 inch',
           price: 99.99,
           stock: 25,
-          images: [{ url: 'https://placehold.co/500x500?text=Lacrosse+Stick+Adult', altText: 'Lacrosse Stick Adult' }],
+        },
+      ],
+    },
+
+    // T-SHIRTS (10 products)
+    {
+      name: 'Performance T-Shirt',
+      description: 'Moisture-wicking athletic t-shirt',
+      slug: 'performance-tshirt',
+      categoryId: categories[6].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Black Small',
+          slug: 'performance-tshirt-black-s',
+          color: 'Black',
+          size: 'S',
+          price: 39.99,
+          stock: 150,
+        },
+        {
+          name: 'White Medium',
+          slug: 'performance-tshirt-white-m',
+          color: 'White',
+          size: 'M',
+          price: 39.99,
+          stock: 140,
+        },
+      ],
+    },
+    {
+      name: 'Graphic Tee',
+      description: 'Casual graphic print t-shirt',
+      slug: 'graphic-tee',
+      categoryId: categories[6].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Grey Large',
+          slug: 'graphic-tee-grey-l',
+          color: 'Grey',
+          size: 'L',
+          price: 29.99,
+          stock: 120,
+        },
+        {
+          name: 'Blue XL',
+          slug: 'graphic-tee-blue-xl',
+          color: 'Blue',
+          size: 'XL',
+          price: 29.99,
+          stock: 100,
+        },
+      ],
+    },
+    {
+      name: 'Long Sleeve Tee',
+      description: 'Lightweight long sleeve t-shirt',
+      slug: 'long-sleeve-tee',
+      categoryId: categories[6].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Navy Small',
+          slug: 'long-sleeve-navy-s',
+          color: 'Navy',
+          size: 'S',
+          price: 49.99,
+          stock: 80,
+        },
+      ],
+    },
+    {
+      name: 'V-Neck Tee',
+      description: 'Classic v-neck t-shirt',
+      slug: 'v-neck-tee',
+      categoryId: categories[6].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'White Medium',
+          slug: 'v-neck-white-m',
+          color: 'White',
+          size: 'M',
+          price: 34.99,
+          stock: 90,
+        },
+      ],
+    },
+    {
+      name: 'Polo Shirt',
+      description: 'Breathable polo shirt',
+      slug: 'polo-shirt',
+      categoryId: categories[6].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Red Large',
+          slug: 'polo-red-l',
+          color: 'Red',
+          size: 'L',
+          price: 59.99,
+          stock: 70,
+        },
+      ],
+    },
+    {
+      name: 'Tank Top',
+      description: 'Sleeveless athletic tank',
+      slug: 'tank-top',
+      categoryId: categories[6].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Green Small',
+          slug: 'tank-green-s',
+          color: 'Green',
+          size: 'S',
+          price: 29.99,
+          stock: 110,
+        },
+      ],
+    },
+    {
+      name: 'Henley Tee',
+      description: 'Button-up henley t-shirt',
+      slug: 'henley-tee',
+      categoryId: categories[6].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Grey Medium',
+          slug: 'henley-grey-m',
+          color: 'Grey',
+          size: 'M',
+          price: 44.99,
+          stock: 85,
+        },
+      ],
+    },
+    {
+      name: 'Thermal Tee',
+      description: 'Thermal long sleeve t-shirt',
+      slug: 'thermal-tee',
+      categoryId: categories[6].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Black Large',
+          slug: 'thermal-black-l',
+          color: 'Black',
+          size: 'L',
+          price: 54.99,
+          stock: 65,
+        },
+      ],
+    },
+    {
+      name: 'Racerback Tee',
+      description: 'Racerback athletic t-shirt',
+      slug: 'racerback-tee',
+      categoryId: categories[6].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Pink Small',
+          slug: 'racerback-pink-s',
+          color: 'Pink',
+          size: 'S',
+          price: 39.99,
+          stock: 95,
+        },
+      ],
+    },
+    {
+      name: 'Muscle Tee',
+      description: 'Sleeveless muscle t-shirt',
+      slug: 'muscle-tee',
+      categoryId: categories[6].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'White Medium',
+          slug: 'muscle-white-m',
+          color: 'White',
+          size: 'M',
+          price: 32.99,
+          stock: 105,
+        },
+      ],
+    },
+
+    // HOODIES (8 products)
+    {
+      name: 'Zip Hoodie',
+      description: 'Full-zip athletic hoodie',
+      slug: 'zip-hoodie',
+      categoryId: categories[7].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Black Small',
+          slug: 'zip-hoodie-black-s',
+          color: 'Black',
+          size: 'S',
+          price: 89.99,
+          stock: 60,
+        },
+        {
+          name: 'Grey Medium',
+          slug: 'zip-hoodie-grey-m',
+          color: 'Grey',
+          size: 'M',
+          price: 89.99,
+          stock: 55,
+        },
+      ],
+    },
+    {
+      name: 'Pullover Hoodie',
+      description: 'Classic pullover hoodie',
+      slug: 'pullover-hoodie',
+      categoryId: categories[7].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Navy Large',
+          slug: 'pullover-navy-l',
+          color: 'Navy',
+          size: 'L',
+          price: 79.99,
+          stock: 70,
+        },
+      ],
+    },
+    {
+      name: 'Quarter Zip Hoodie',
+      description: 'Quarter-zip training hoodie',
+      slug: 'quarter-zip-hoodie',
+      categoryId: categories[7].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Blue Medium',
+          slug: 'quarter-zip-blue-m',
+          color: 'Blue',
+          size: 'M',
+          price: 94.99,
+          stock: 45,
+        },
+      ],
+    },
+    {
+      name: 'Fleece Hoodie',
+      description: 'Warm fleece hoodie',
+      slug: 'fleece-hoodie',
+      categoryId: categories[7].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Red Small',
+          slug: 'fleece-red-s',
+          color: 'Red',
+          size: 'S',
+          price: 84.99,
+          stock: 50,
+        },
+      ],
+    },
+    {
+      name: 'Tech Hoodie',
+      description: 'Technical fabric hoodie',
+      slug: 'tech-hoodie',
+      categoryId: categories[7].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Green Large',
+          slug: 'tech-green-l',
+          color: 'Green',
+          size: 'L',
+          price: 109.99,
+          stock: 35,
+        },
+      ],
+    },
+    {
+      name: 'Lightweight Hoodie',
+      description: 'Lightweight training hoodie',
+      slug: 'lightweight-hoodie',
+      categoryId: categories[7].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'White Medium',
+          slug: 'lightweight-white-m',
+          color: 'White',
+          size: 'M',
+          price: 74.99,
+          stock: 65,
+        },
+      ],
+    },
+    {
+      name: 'Oversized Hoodie',
+      description: 'Oversized fit hoodie',
+      slug: 'oversized-hoodie',
+      categoryId: categories[7].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Black XL',
+          slug: 'oversized-black-xl',
+          color: 'Black',
+          size: 'XL',
+          price: 99.99,
+          stock: 40,
+        },
+      ],
+    },
+    {
+      name: 'Crop Hoodie',
+      description: 'Cropped fit hoodie',
+      slug: 'crop-hoodie',
+      categoryId: categories[7].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Pink Small',
+          slug: 'crop-pink-s',
+          color: 'Pink',
+          size: 'S',
+          price: 79.99,
+          stock: 55,
+        },
+      ],
+    },
+
+    // PANTS (8 products)
+    {
+      name: 'Joggers',
+      description: 'Comfortable jogger pants',
+      slug: 'joggers',
+      categoryId: categories[8].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Black Medium',
+          slug: 'joggers-black-m',
+          color: 'Black',
+          size: 'M',
+          price: 79.99,
+          stock: 80,
+        },
+        {
+          name: 'Grey Large',
+          slug: 'joggers-grey-l',
+          color: 'Grey',
+          size: 'L',
+          price: 79.99,
+          stock: 75,
+        },
+      ],
+    },
+    {
+      name: 'Sweatpants',
+      description: 'Classic sweatpants',
+      slug: 'sweatpants',
+      categoryId: categories[8].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Navy Small',
+          slug: 'sweatpants-navy-s',
+          color: 'Navy',
+          size: 'S',
+          price: 69.99,
+          stock: 90,
+        },
+      ],
+    },
+    {
+      name: 'Cargo Pants',
+      description: 'Multi-pocket cargo pants',
+      slug: 'cargo-pants',
+      categoryId: categories[8].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Khaki Medium',
+          slug: 'cargo-khaki-m',
+          color: 'Khaki',
+          size: 'M',
+          price: 89.99,
+          stock: 60,
+        },
+      ],
+    },
+    {
+      name: 'Track Pants',
+      description: 'Athletic track pants',
+      slug: 'track-pants',
+      categoryId: categories[8].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Black Large',
+          slug: 'track-black-l',
+          color: 'Black',
+          size: 'L',
+          price: 74.99,
+          stock: 85,
+        },
+      ],
+    },
+    {
+      name: 'Chinos',
+      description: 'Slim fit chinos',
+      slug: 'chinos',
+      categoryId: categories[8].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Beige Medium',
+          slug: 'chinos-beige-m',
+          color: 'Beige',
+          size: 'M',
+          price: 94.99,
+          stock: 70,
+        },
+      ],
+    },
+    {
+      name: 'Leggings',
+      description: 'High-performance leggings',
+      slug: 'leggings',
+      categoryId: categories[8].id,
+      brandId: brandAdidas.id,
+    sex: Sex.WOMEN,
+      variants: [
+        {
+          name: 'Black Small',
+          slug: 'leggings-black-s',
+          color: 'Black',
+          size: 'S',
+          price: 79.99,
+          stock: 95,
+        },
+      ],
+    },
+    {
+      name: 'Corduroy Pants',
+      description: 'Corduroy casual pants',
+      slug: 'corduroy-pants',
+      categoryId: categories[8].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Brown Large',
+          slug: 'corduroy-brown-l',
+          color: 'Brown',
+          size: 'L',
+          price: 109.99,
+          stock: 50,
+        },
+      ],
+    },
+    {
+      name: 'Denim Jeans',
+      description: 'Classic denim jeans',
+      slug: 'denim-jeans',
+      categoryId: categories[8].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Dark Wash Medium',
+          slug: 'denim-dark-m',
+          color: 'Dark Blue',
+          size: 'M',
+          price: 119.99,
+          stock: 65,
+        },
+      ],
+    },
+
+    // JACKETS (6 products)
+    {
+      name: 'Bomber Jacket',
+      description: 'Classic bomber jacket',
+      slug: 'bomber-jacket',
+      categoryId: categories[9].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Black Medium',
+          slug: 'bomber-black-m',
+          color: 'Black',
+          size: 'M',
+          price: 149.99,
+          stock: 40,
+        },
+      ],
+    },
+    {
+      name: 'Field Jacket',
+      description: 'Military-style field jacket',
+      slug: 'field-jacket',
+      categoryId: categories[9].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Olive Large',
+          slug: 'field-olive-l',
+          color: 'Olive',
+          size: 'L',
+          price: 179.99,
+          stock: 30,
+        },
+      ],
+    },
+    {
+      name: 'Puffer Jacket',
+      description: 'Insulated puffer jacket',
+      slug: 'puffer-jacket',
+      categoryId: categories[9].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Navy Small',
+          slug: 'puffer-navy-s',
+          color: 'Navy',
+          size: 'S',
+          price: 199.99,
+          stock: 35,
+        },
+      ],
+    },
+    {
+      name: 'Track Jacket',
+      description: 'Athletic track jacket',
+      slug: 'track-jacket',
+      categoryId: categories[9].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'White Medium',
+          slug: 'track-jacket-white-m',
+          color: 'White',
+          size: 'M',
+          price: 89.99,
+          stock: 55,
+        },
+      ],
+    },
+    {
+      name: 'Leather Jacket',
+      description: 'Classic leather jacket',
+      slug: 'leather-jacket',
+      categoryId: categories[9].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Brown Large',
+          slug: 'leather-brown-l',
+          color: 'Brown',
+          size: 'L',
+          price: 299.99,
+          stock: 20,
+        },
+      ],
+    },
+    {
+      name: 'Rain Jacket',
+      description: 'Waterproof rain jacket',
+      slug: 'rain-jacket',
+      categoryId: categories[9].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Yellow Medium',
+          slug: 'rain-yellow-m',
+          color: 'Yellow',
+          size: 'M',
+          price: 129.99,
+          stock: 45,
+        },
+      ],
+    },
+
+    // BAGS (6 products)
+    {
+      name: 'Backpack',
+      description: 'Large capacity backpack',
+      slug: 'backpack',
+      categoryId: categories[10].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Black',
+          slug: 'backpack-black',
+          color: 'Black',
+          size: 'One Size',
+          price: 89.99,
+          stock: 70,
+        },
+      ],
+    },
+    {
+      name: 'Duffle Bag',
+      description: 'Large duffel bag',
+      slug: 'duffel-bag',
+      categoryId: categories[10].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Grey',
+          slug: 'duffel-grey',
+          color: 'Grey',
+          size: 'One Size',
+          price: 79.99,
+          stock: 60,
+        },
+      ],
+    },
+    {
+      name: 'Tote Bag',
+      description: 'Canvas tote bag',
+      slug: 'tote-bag',
+      categoryId: categories[10].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Navy',
+          slug: 'tote-navy',
+          color: 'Navy',
+          size: 'One Size',
+          price: 39.99,
+          stock: 100,
+        },
+      ],
+    },
+    {
+      name: 'Messenger Bag',
+      description: 'Crossbody messenger bag',
+      slug: 'messenger-bag',
+      categoryId: categories[10].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Brown',
+          slug: 'messenger-brown',
+          color: 'Brown',
+          size: 'One Size',
+          price: 69.99,
+          stock: 50,
+        },
+      ],
+    },
+    {
+      name: 'Gym Bag',
+      description: 'Ventilated gym bag',
+      slug: 'gym-bag',
+      categoryId: categories[10].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Black',
+          slug: 'gym-bag-black',
+          color: 'Black',
+          size: 'One Size',
+          price: 59.99,
+          stock: 80,
+        },
+      ],
+    },
+    {
+      name: 'Laptop Bag',
+      description: 'Padded laptop bag',
+      slug: 'laptop-bag',
+      categoryId: categories[10].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Grey',
+          slug: 'laptop-grey',
+          color: 'Grey',
+          size: 'One Size',
+          price: 99.99,
+          stock: 40,
+        },
+      ],
+    },
+
+    // WATCHES (4 products)
+    {
+      name: 'Digital Watch',
+      description: 'Digital sports watch',
+      slug: 'digital-watch',
+      categoryId: categories[11].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Black',
+          slug: 'digital-black',
+          color: 'Black',
+          size: 'One Size',
+          price: 199.99,
+          stock: 30,
+        },
+      ],
+    },
+    {
+      name: 'Analog Watch',
+      description: 'Classic analog watch',
+      slug: 'analog-watch',
+      categoryId: categories[11].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Silver',
+          slug: 'analog-silver',
+          color: 'Silver',
+          size: 'One Size',
+          price: 249.99,
+          stock: 25,
+        },
+      ],
+    },
+    {
+      name: 'Chronograph Watch',
+      description: 'Multi-function chronograph',
+      slug: 'chronograph-watch',
+      categoryId: categories[11].id,
+      brandId: brandNike.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Blue',
+          slug: 'chronograph-blue',
+          color: 'Blue',
+          size: 'One Size',
+          price: 349.99,
+          stock: 15,
+        },
+      ],
+    },
+    {
+      name: 'Field Watch',
+      description: 'Rugged field watch',
+      slug: 'field-watch',
+      categoryId: categories[11].id,
+      brandId: brandAdidas.id,
+    sex: Sex.UNISEX,
+      variants: [
+        {
+          name: 'Green',
+          slug: 'field-green',
+          color: 'Green',
+          size: 'One Size',
+          price: 299.99,
+          stock: 20,
         },
       ],
     },
@@ -1305,6 +2099,11 @@ async function main() {
 
   // Create all products with their variants and images
   for (const productData of productsData) {
+    const category = categories.find(c => c.id === productData.categoryId);
+    if (!category) {
+      console.error(`Category with ID ${productData.categoryId} not found for product ${productData.name}`);
+      continue;
+    }
     const product = await prisma.product.create({
       data: {
         name: productData.name,
@@ -1314,11 +2113,14 @@ async function main() {
         brandId: productData.brandId,
         isFeatured: Math.random() > 0.7, // 30% of products are featured
         isActive: true,
+        isBestSeller: Math.random() > 0.8, // 20% of products are best sellers
+        isOnSale: Math.random() > 0.85, // 15% of products are on sale
+        discountPercent: Math.random() > 0.85 ? Math.floor(Math.random() * 30) + 10 : 0, // 10-40% discount
+        tags: 'sport,fitness,athletic', // Default tags as comma-separated string
+        productType: 'SPORT', // Default to sport type
+        sex: productData.sex,
         productImages: {
-          create: productData.variants[0]?.images.map((image) => ({
-            url: image.url,
-            altText: image.altText,
-          })) || [],
+          create: [{ url: generateImageUrl(category.slug), altText: productData.name }],
         },
         variants: {
           create: productData.variants.map((variant) => ({
@@ -1327,10 +2129,7 @@ async function main() {
             color: variant.color || null,
             size: mapUSizeToEnum(variant.size || 'ONE_SIZE'),
             variantImages: {
-              create: variant.images.map((image) => ({
-                url: image.url,
-                altText: image.altText,
-              })),
+              create: [{ url: generateImageUrl(category.slug), altText: variant.name }],
             },
           })),
         },
@@ -1342,9 +2141,9 @@ async function main() {
   console.log(`\nSeeding completed`);
   console.log(`Created:`);
   console.log(`   - 2 Brands`);
-  console.log(`   - 6 Categories`);
-  console.log(`   - 40 Products`);
-  console.log(`   - 120+ Product Variants`);
+  console.log(`   - 12 Categories`);
+  console.log(`   - 100+ Products`);
+  console.log(`   - 300+ Product Variants`);
 }
 
 main()

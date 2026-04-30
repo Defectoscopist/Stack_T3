@@ -33,8 +33,13 @@ export const paginationSchema = z.object({
 export const filteredProductSchema = z.object({
     isActive: z.boolean().default(true).describe("Filter by active status, defaults to true"),
     isFeatured: z.boolean().default(false).describe("Filter by featured status, defaults to false"),
+    isBestSeller: z.boolean().optional().describe("Filter by best seller status"),
+    isOnSale: z.boolean().optional().describe("Filter by on sale status"),
     brandId: z.string().min(1).nullable().default(null).describe("Brand ID must be a non-empty string or null"),
     categoryId: z.string().min(1).nullable().default(null).describe("Category ID must be a non-empty string or null"),
+    productType: z.string().optional().describe("Filter by product type"),
+    minPrice: z.number().min(0).optional().describe("Minimum price filter"),
+    maxPrice: z.number().min(0).optional().describe("Maximum price filter"),
 });
 
 export const getProductsSchema = z.object({
@@ -87,6 +92,20 @@ export const productOutputSchema = z.object({
     variants: productVariantOutputSchema.array().describe("Array of product variants"),
     isFeatured: z.boolean(),
     isActive: z.boolean(),
+    isBestSeller: z.boolean(),
+    isOnSale: z.boolean(),
+    salePrice: z.number().nullable(),
+    originalPrice: z.number().nullable(),
+    discountPercent: z.number(),
+    tags: z.string(),
+    productType: z.string(),
     categoryId: z.string().min(1),
-    brandId: z.string().min(1)
+    brandId: z.string().min(1),
+    sex: z.string(),
+    category: z.object({
+        id: z.string().min(1),
+        name: z.string(),
+        slug: z.string(),
+        description: z.string(),
+    }),
 })
