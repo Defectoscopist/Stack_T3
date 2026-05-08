@@ -50,7 +50,10 @@ export const getProductsSchema = z.object({
     variants: z.boolean().default(true).describe("Include product variants in the response, defaults to true"),
 })
 
-export const getAllProductsSchema = paginationSchema
+export const getAllProductsSchema = z.object({
+    ...paginationSchema.shape,
+    sex: z.string().optional().describe("Filter by sex (men, women, kids)"),
+});
 
 export const productImageOutputSchema = z.array(z.string().url().describe("Array of image URLs for the product")).describe("Array of image URLs for the product")
 

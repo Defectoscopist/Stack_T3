@@ -185,7 +185,7 @@ async function main() {
       slug: 'air-max-90',
       categoryId: categories[0].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'White/Black',
@@ -219,7 +219,7 @@ async function main() {
       slug: 'ultra-boost-22',
       categoryId: categories[0].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Cloud White',
@@ -245,7 +245,7 @@ async function main() {
       slug: 'court-legacy',
       categoryId: categories[0].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.KIDS,
       variants: [
         {
           name: 'White/Gold',
@@ -279,7 +279,7 @@ async function main() {
       slug: 'revolution-6',
       categoryId: categories[0].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.KIDS,
       variants: [
         {
           name: 'White',
@@ -305,7 +305,7 @@ async function main() {
       slug: 'zoomx-invincible',
       categoryId: categories[0].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.KIDS,
       variants: [
         {
           name: 'White/Blue',
@@ -339,7 +339,7 @@ async function main() {
       slug: 'nite-jogger',
       categoryId: categories[0].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.KIDS,
       variants: [
         {
           name: 'Silver Metallic',
@@ -381,7 +381,7 @@ async function main() {
       slug: 'phantom-gt2',
       categoryId: categories[0].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black/Green',
@@ -407,7 +407,7 @@ async function main() {
       slug: 'copa-pure',
       categoryId: categories[0].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'White/Black',
@@ -443,7 +443,7 @@ async function main() {
       slug: 'classic-tshirt',
       categoryId: categories[1].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'White Small',
@@ -485,7 +485,7 @@ async function main() {
       slug: 'running-tank-top',
       categoryId: categories[1].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black Small',
@@ -519,7 +519,7 @@ async function main() {
       slug: 'windrunner-jacket',
       categoryId: categories[1].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black Small',
@@ -561,7 +561,7 @@ async function main() {
       slug: 'essential-hoodie',
       categoryId: categories[1].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Grey Small',
@@ -637,7 +637,7 @@ async function main() {
       slug: 'training-shorts',
       categoryId: categories[1].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black Small',
@@ -671,7 +671,7 @@ async function main() {
       slug: 'utility-belt-bag',
       categoryId: categories[1].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black',
@@ -707,7 +707,7 @@ async function main() {
       slug: 'dri-fit-cap',
       categoryId: categories[2].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black',
@@ -749,7 +749,7 @@ async function main() {
       slug: 'crew-socks-3pack',
       categoryId: categories[2].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black',
@@ -783,7 +783,7 @@ async function main() {
       slug: 'headband',
       categoryId: categories[2].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black',
@@ -809,7 +809,7 @@ async function main() {
       slug: 'gym-towel',
       categoryId: categories[2].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black',
@@ -843,7 +843,7 @@ async function main() {
       slug: 'water-bottle-750ml',
       categoryId: categories[2].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black',
@@ -877,7 +877,7 @@ async function main() {
       slug: 'gloves-winter',
       categoryId: categories[2].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black',
@@ -905,7 +905,7 @@ async function main() {
       slug: 'sportwatch-pro',
       categoryId: categories[3].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black',
@@ -931,7 +931,7 @@ async function main() {
       slug: 'fitness-tracker-band',
       categoryId: categories[3].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black',
@@ -957,7 +957,7 @@ async function main() {
       slug: 'wireless-earbuds',
       categoryId: categories[3].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black',
@@ -991,7 +991,7 @@ async function main() {
       slug: 'heart-rate-monitor',
       categoryId: categories[3].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Standard',
@@ -1009,7 +1009,7 @@ async function main() {
       slug: 'gps-running-watch',
       categoryId: categories[3].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black',
@@ -1037,7 +1037,7 @@ async function main() {
       slug: 'yoga-mat',
       categoryId: categories[4].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Purple',
@@ -1071,7 +1071,7 @@ async function main() {
       slug: 'dumbbell-set',
       categoryId: categories[4].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: '2-20kg',
@@ -1089,7 +1089,7 @@ async function main() {
       slug: 'resistance-bands-set',
       categoryId: categories[4].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: '5-Pack',
@@ -1107,7 +1107,7 @@ async function main() {
       slug: 'pushup-bars',
       categoryId: categories[4].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Standard',
@@ -1125,7 +1125,7 @@ async function main() {
       slug: 'ab-roller',
       categoryId: categories[4].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black',
@@ -1151,7 +1151,7 @@ async function main() {
       slug: 'exercise-ball',
       categoryId: categories[4].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: '65cm',
@@ -1179,7 +1179,7 @@ async function main() {
       slug: 'soccer-ball-pro',
       categoryId: categories[5].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'White/Black',
@@ -1205,7 +1205,7 @@ async function main() {
       slug: 'basketball',
       categoryId: categories[5].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Size 7',
@@ -1223,7 +1223,7 @@ async function main() {
       slug: 'tennis-racket',
       categoryId: categories[5].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Standard',
@@ -1249,7 +1249,7 @@ async function main() {
       slug: 'jump-rope',
       categoryId: categories[5].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Aluminum',
@@ -1275,7 +1275,7 @@ async function main() {
       slug: 'lacrosse-stick',
       categoryId: categories[5].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Youth',
@@ -1303,7 +1303,7 @@ async function main() {
       slug: 'performance-tshirt',
       categoryId: categories[6].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black Small',
@@ -1329,7 +1329,7 @@ async function main() {
       slug: 'graphic-tee',
       categoryId: categories[6].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Grey Large',
@@ -1355,7 +1355,7 @@ async function main() {
       slug: 'long-sleeve-tee',
       categoryId: categories[6].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Navy Small',
@@ -1373,7 +1373,7 @@ async function main() {
       slug: 'v-neck-tee',
       categoryId: categories[6].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'White Medium',
@@ -1391,7 +1391,7 @@ async function main() {
       slug: 'polo-shirt',
       categoryId: categories[6].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Red Large',
@@ -1409,7 +1409,7 @@ async function main() {
       slug: 'tank-top',
       categoryId: categories[6].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Green Small',
@@ -1427,7 +1427,7 @@ async function main() {
       slug: 'henley-tee',
       categoryId: categories[6].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Grey Medium',
@@ -1445,7 +1445,7 @@ async function main() {
       slug: 'thermal-tee',
       categoryId: categories[6].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black Large',
@@ -1463,7 +1463,7 @@ async function main() {
       slug: 'racerback-tee',
       categoryId: categories[6].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Pink Small',
@@ -1481,7 +1481,7 @@ async function main() {
       slug: 'muscle-tee',
       categoryId: categories[6].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'White Medium',
@@ -1501,7 +1501,7 @@ async function main() {
       slug: 'zip-hoodie',
       categoryId: categories[7].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Black Small',
@@ -1527,7 +1527,7 @@ async function main() {
       slug: 'pullover-hoodie',
       categoryId: categories[7].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Navy Large',
@@ -1545,7 +1545,7 @@ async function main() {
       slug: 'quarter-zip-hoodie',
       categoryId: categories[7].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Blue Medium',
@@ -1563,7 +1563,7 @@ async function main() {
       slug: 'fleece-hoodie',
       categoryId: categories[7].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.MEN,
       variants: [
         {
           name: 'Red Small',
@@ -1581,7 +1581,7 @@ async function main() {
       slug: 'tech-hoodie',
       categoryId: categories[7].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Green Large',
@@ -1599,7 +1599,7 @@ async function main() {
       slug: 'lightweight-hoodie',
       categoryId: categories[7].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'White Medium',
@@ -1617,7 +1617,7 @@ async function main() {
       slug: 'oversized-hoodie',
       categoryId: categories[7].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Black XL',
@@ -1635,7 +1635,7 @@ async function main() {
       slug: 'crop-hoodie',
       categoryId: categories[7].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Pink Small',
@@ -1655,7 +1655,7 @@ async function main() {
       slug: 'joggers',
       categoryId: categories[8].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Black Medium',
@@ -1681,7 +1681,7 @@ async function main() {
       slug: 'sweatpants',
       categoryId: categories[8].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Navy Small',
@@ -1699,7 +1699,7 @@ async function main() {
       slug: 'cargo-pants',
       categoryId: categories[8].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Khaki Medium',
@@ -1717,7 +1717,7 @@ async function main() {
       slug: 'track-pants',
       categoryId: categories[8].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Black Large',
@@ -1735,7 +1735,7 @@ async function main() {
       slug: 'chinos',
       categoryId: categories[8].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Beige Medium',
@@ -1771,7 +1771,7 @@ async function main() {
       slug: 'corduroy-pants',
       categoryId: categories[8].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Brown Large',
@@ -1789,7 +1789,7 @@ async function main() {
       slug: 'denim-jeans',
       categoryId: categories[8].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Dark Wash Medium',
@@ -1809,7 +1809,7 @@ async function main() {
       slug: 'bomber-jacket',
       categoryId: categories[9].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Black Medium',
@@ -1827,7 +1827,7 @@ async function main() {
       slug: 'field-jacket',
       categoryId: categories[9].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Olive Large',
@@ -1845,7 +1845,7 @@ async function main() {
       slug: 'puffer-jacket',
       categoryId: categories[9].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Navy Small',
@@ -1863,7 +1863,7 @@ async function main() {
       slug: 'track-jacket',
       categoryId: categories[9].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'White Medium',
@@ -1881,7 +1881,7 @@ async function main() {
       slug: 'leather-jacket',
       categoryId: categories[9].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Brown Large',
@@ -1899,7 +1899,7 @@ async function main() {
       slug: 'rain-jacket',
       categoryId: categories[9].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Yellow Medium',
@@ -1919,7 +1919,7 @@ async function main() {
       slug: 'backpack',
       categoryId: categories[10].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Black',
@@ -1937,7 +1937,7 @@ async function main() {
       slug: 'duffel-bag',
       categoryId: categories[10].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Grey',
@@ -1955,7 +1955,7 @@ async function main() {
       slug: 'tote-bag',
       categoryId: categories[10].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Navy',
@@ -1973,7 +1973,7 @@ async function main() {
       slug: 'messenger-bag',
       categoryId: categories[10].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Brown',
@@ -1991,7 +1991,7 @@ async function main() {
       slug: 'gym-bag',
       categoryId: categories[10].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Black',
@@ -2009,7 +2009,7 @@ async function main() {
       slug: 'laptop-bag',
       categoryId: categories[10].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Grey',
@@ -2029,7 +2029,7 @@ async function main() {
       slug: 'digital-watch',
       categoryId: categories[11].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.WOMEN,
       variants: [
         {
           name: 'Black',
@@ -2047,7 +2047,7 @@ async function main() {
       slug: 'analog-watch',
       categoryId: categories[11].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.KIDS,
       variants: [
         {
           name: 'Silver',
@@ -2065,7 +2065,7 @@ async function main() {
       slug: 'chronograph-watch',
       categoryId: categories[11].id,
       brandId: brandNike.id,
-    sex: Sex.UNISEX,
+    sex: Sex.KIDS,
       variants: [
         {
           name: 'Blue',
@@ -2083,7 +2083,7 @@ async function main() {
       slug: 'field-watch',
       categoryId: categories[11].id,
       brandId: brandAdidas.id,
-    sex: Sex.UNISEX,
+    sex: Sex.KIDS,
       variants: [
         {
           name: 'Green',

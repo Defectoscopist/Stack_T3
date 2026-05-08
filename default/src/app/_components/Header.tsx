@@ -28,34 +28,13 @@ export function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {Object.entries(categoryGroups).map(([gender, cats]) => (
-              <div
+              <Link
                 key={gender}
-                className="relative"
-                onMouseEnter={() => setActiveDropdown(gender)}
-                onMouseLeave={() => setActiveDropdown(null)}
+                href={`/category/${gender}`}
+                className="text-gray-700 hover:text-black font-medium capitalize"
               >
-                <button className="text-gray-700 hover:text-black font-medium capitalize">
-                  {gender}
-                </button>
-                {activeDropdown === gender && (
-                  <div
-                    className="absolute top-full left-0 w-48 bg-white border border-gray-200 rounded-md shadow-lg py-2 z-50"
-                    onMouseEnter={() => setActiveDropdown(gender)}
-                    onMouseLeave={() => setActiveDropdown(null)}
-                  >
-                    {cats.map((cat) => (
-                      <Link
-                        key={cat.slug}
-                        href={`/category/${gender}/${cat.slug}`}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-black"
-                        onClick={() => setActiveDropdown(null)}
-                      >
-                        {cat.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
+                {gender}
+              </Link>
             ))}
             <Link href="/shop" className="text-gray-700 hover:text-black font-medium">
               Shop
@@ -114,21 +93,14 @@ export function Header() {
           <div className="md:hidden border-t border-gray-200 py-4">
             <nav className="space-y-4">
               {Object.entries(categoryGroups).map(([gender, cats]) => (
-                <div key={gender}>
-                  <div className="font-medium text-gray-900 capitalize mb-2">{gender}</div>
-                  <div className="pl-4 space-y-2">
-                    {cats.map((cat) => (
-                      <Link
-                        key={cat.slug}
-                        href={`/category/${gender}/${cat.slug}`}
-                        className="block text-gray-700 hover:text-black"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        {cat.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
+                <Link
+                  key={gender}
+                  href={`/category/${gender}`}
+                  className="block text-gray-700 hover:text-black font-medium capitalize mb-2"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {gender}
+                </Link>
               ))}
               <Link
                 href="/shop"

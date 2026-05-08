@@ -2,7 +2,7 @@ import type { z } from "zod";
 import type * as ProductSchemas from "../schemas/product.schema";
 
 import { db } from "~/server/db";
-import type { Prisma, ProductType } from "generated/prisma";
+import type { Prisma, ProductType, Sex } from "generated/prisma";
 
 export class ProductService {
   constructor(private prisma: typeof db) {}
@@ -210,9 +210,15 @@ export class ProductService {
   async getAllProducts(
     input: z.infer<typeof ProductSchemas.getAllProductsSchema>,
   ) {
-    const { limit, offset } = input;
+    const { limit, offset, sex } = input;
+
+    const where: Prisma.ProductWhereInput = {};
+    if (sex) {
+      where.sex = sex.toUpperCase() as Sex;
+    }
 
     const products = await this.prisma.product.findMany({
+      where,
       take: limit,
       skip: offset,
       include: {
