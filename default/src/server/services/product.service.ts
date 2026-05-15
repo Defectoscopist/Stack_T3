@@ -149,8 +149,10 @@ export class ProductService {
       } : {}),
       ...(search && {
         OR: [
-          { name: { contains: search.toLowerCase() } },
-          { description: { contains: search.toLowerCase() } },
+          { name: { contains: search } },
+          { description: { contains: search } },
+          { category: { name: { contains: search } } },
+          { variants: { some: { color: { contains: search } } } },
         ],
       }),
     };

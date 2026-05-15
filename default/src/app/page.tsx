@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { api } from "~/trpc/react";
 import { ProductCard } from "./_components/ProductCard";
+import { CategoryCard } from "./_components/CategoryCard";
 import { ChevronLeft, ChevronRight, Image, Star } from "lucide-react";
 import { categories } from "~/lib/categories";
 
@@ -201,19 +202,6 @@ function ProductGrid() {
   );
 }
 
-function CategoryCard({ title, description, slug }: { title: string; description: string; slug: string }) {
-  return (
-    <Link href={`/category/men/${slug}`} className="group block rounded-3xl border border-gray-200 bg-white transition hover:-translate-y-1 hover:shadow-lg">
-      <div className="relative aspect-[4/3] overflow-hidden rounded-[1.5rem] mb-4 bg-gray-200 flex items-center justify-center">
-        <span className="text-gray-500">{title} Image</span>
-      </div>
-      <div className="px-5 pb-6">
-        <h3 className="text-xl font-semibold text-black mb-2">{title}</h3>
-        <p className="text-gray-600">{description}</p>
-      </div>
-    </Link>
-  );
-}
 
 function ReviewCard({ name, rating, review }: { name: string; rating: number; review: string }) {
   return (

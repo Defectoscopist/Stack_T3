@@ -27,11 +27,8 @@ export default function CartPage() {
             <div className="text-6xl mb-4">🛒</div>
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">Your cart is empty</h2>
             <p className="text-gray-600 mb-6">Add some products to get started!</p>
-            <Link
-              href="/"
-              className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
-            >
-              Continue Shopping
+            <Link href="/" className="inline-flex items-center justify-center bg-black text-white px-8 py-3 rounded-full font-medium hover:bg-gray-800 transition-colors">
+                Continue shopping
             </Link>
           </div>
         </div>
@@ -104,19 +101,16 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <Link
-                href="/checkout"
-                className="w-full block text-center bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 font-semibold"
-              >
-                Proceed to Checkout
-              </Link>
+              <div className="grid gap-4">
 
-              <Link
-                href="/"
-                className="w-full block text-center mt-3 text-blue-600 hover:text-blue-800"
-              >
-                Continue Shopping
-              </Link>
+                <Link href="/checkout" className="inline-flex items-center justify-center bg-gray-200 text-black px-8 py-3 rounded-full font-medium hover:bg-white transition-colors">
+                  Proceed to Checkout
+                </Link>
+
+                <Link href="/" className="inline-flex items-center justify-center bg-black text-white px-8 py-3 rounded-full font-medium hover:bg-gray-800 transition-colors">
+                  Continue shopping
+                </Link>
+              </div>
             </div>
           </div>
         </div>

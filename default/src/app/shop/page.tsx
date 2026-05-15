@@ -11,7 +11,7 @@ export default function ShopPage() {
   return (
     <div className="min-h-screen bg-white text-black">
       <div className="max-w-screen-2xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
-        <div className="rounded-[2rem] bg-black text-white p-10 mb-12">
+        <div className="rounded-[2rem] bg-black text-white p-10 mb-12 selection:text-blalck selection:bg-white">
           <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] items-center">
             <div>
               <p className="text-sm uppercase tracking-[0.4em] text-gray-400 mb-4">Shop the edit</p>

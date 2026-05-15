@@ -1,34 +1,95 @@
+"use client";
+
 import Link from "next/link";
-import { categoryGroups } from "~/lib/categories";
+import { useState, use, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { ProductGrid } from "./_components/ProductGrid";
+import { CategoryCard } from "../../_components/CategoryCard";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { categories } from "~/lib/categories";
 
 interface SexCategoryPageProps {
-  params: {
+  params: Promise<{
     sex: string;
-  };
+  }>;
 }
 
+const VALID_SEXES = ["men", "women", "kids"];
+
 export default function SexCategoryPage({ params }: SexCategoryPageProps) {
-  const sex = params.sex;
-  const categoryGroup = categoryGroups[sex as keyof typeof categoryGroups] ?? categoryGroups.men;
+  const { sex } = use(params);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!VALID_SEXES.includes(sex)) {
+      router.replace(`/categories/${sex}`);
+    }
+  }, [sex, router]);
+
+  if (!VALID_SEXES.includes(sex)) {
+    return null;
+  }
+
   const displaySex = sex.charAt(0).toUpperCase() + sex.slice(1);
+
+  const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
+
+  const reviews = [
+    {
+      name: "Sarah Johnson",
+      rating: 5,
+      review: "Absolutely love the quality and style. Fast shipping and great customer service!",
+    },
+    {
+      name: "Mike Chen",
+      rating: 5,
+      review: "Found exactly what I was looking for. The fit is perfect and the material is top-notch.",
+    },
+    {
+      name: "Emma Davis",
+      rating: 4,
+      review: "Great selection and affordable prices. Will definitely shop here again.",
+    },
+    {
+      name: "Alex Rodriguez",
+      rating: 5,
+      review: "The website is easy to navigate and the products are exactly as described.",
+    },
+    {
+      name: "Jessica Brown",
+      rating: 5,
+      review: "Amazing collection! The customer service team was incredibly helpful with sizing questions.",
+    },
+    {
+      name: "David Wilson",
+      rating: 4,
+      review: "Good quality products at reasonable prices. Shipping was a bit slow but overall satisfied.",
+    },
+    {
+      name: "Lisa Anderson",
+      rating: 5,
+      review: "Love the variety and the unique pieces. Definitely my go-to fashion destination now!",
+    },
+    {
+      name: "James Taylor",
+      rating: 5,
+      review: "Excellent quality and fast delivery. The packaging was also very professional.",
+    },
+  ];
+
+  const nextReview = () => {
+    setCurrentReviewIndex((prev: number) => (prev + 1) % (reviews.length - 3));
+  };
+
+  const prevReview = () => {
+    setCurrentReviewIndex((prev: number) => (prev - 1 + (reviews.length - 3)) % (reviews.length - 3));
+  };
 
   return (
     <div className="min-h-screen bg-white text-black">
-      {/* Breadcrumb */}
-      <div className="max-w-screen-2xl mx-auto px-4 pt-10 sm:px-6 lg:px-8">
-        <nav className="mb-4 text-sm text-gray-600">
-          <Link href="/" className="hover:text-black">
-            Home
-          </Link>
-          <span className="mx-2">/</span>
-          <span className="capitalize">{displaySex}</span>
-        </nav>
-      </div>
-
       {/* Hero Section */}
-      <section className="relative h-[400px] flex items-center bg-gray-100 rounded-[2rem] max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-        <div className="w-full">
+      <section className="relative h-[660px] flex items-center">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="space-y-6">
               <h1 className="text-5xl lg:text-6xl font-bold text-black leading-tight">
@@ -44,8 +105,14 @@ export default function SexCategoryPage({ params }: SexCategoryPageProps) {
                 Shop Now
               </Link>
             </div>
-            <div className="relative h-[300px] lg:h-[350px] flex items-center justify-center">
-              <img src={`/images/${sex}-hero.png`} alt={`${displaySex} Hero Image`} className="object-cover w-full h-full rounded-lg" />
+            <div className="relative h-[400px] lg:h-[500px]">
+              <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
+                <img
+                  src={`/images/${sex}-hero.png`}
+                  alt={`${displaySex} Hero Image`}
+                  className="object-cover w-full h-full rounded-lg"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -68,65 +135,85 @@ export default function SexCategoryPage({ params }: SexCategoryPageProps) {
       <section className="py-16 bg-gray-50">
         <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-black mb-4">Explore {displaySex} Categories</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Find the perfect style within our curated {displaySex.toLowerCase()} collections.
-            </p>
+            <h2 className="text-3xl font-bold text-black mb-4">What are you looking for?</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {categoryGroup.map((category) => (
-              <Link
+            {categories.map((category) => (
+              <CategoryCard
                 key={category.slug}
-                href={`/category/${sex}/${category.slug}`}
-                className="group block rounded-3xl border border-gray-200 bg-white transition hover:-translate-y-1 hover:shadow-lg"
-              >
-                <div className="relative aspect-[4/3] overflow-hidden rounded-[1.5rem] mb-4 bg-gray-200 flex items-center justify-center">
-                  <span className="text-gray-500">{category.name} Image</span>
-                </div>
-                <div className="px-5 pb-6">
-                  <h3 className="text-xl font-semibold text-black mb-2">{category.name}</h3>
-                  <p className="text-gray-600">Shop the latest {displaySex.toLowerCase()} {category.name.toLowerCase()} styles.</p>
-                </div>
-              </Link>
+                title={category.title}
+                description={category.description}
+                slug={category.slug}
+                basePath={`/category/${sex}`}
+              />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Services / Info Section */}
+      {/* Reviews Section */}
       <section className="py-16">
         <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div className="rounded-2xl bg-gray-50 p-8">
-              <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-black mb-2">Fast Delivery</h3>
-              <p className="text-gray-600">Get your order quickly with our express delivery options. Free shipping on orders over $100.</p>
+          <div className="flex justify-between items-center mb-12">
+            <h2 className="text-3xl font-bold text-black">Customer Reviews</h2>
+            <div className="flex space-x-2">
+              <button
+                onClick={prevReview}
+                className="p-2 border border-gray-300 rounded-full hover:border-black transition-colors disabled:opacity-50"
+                disabled={currentReviewIndex === 0}
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={nextReview}
+                className="p-2 border border-gray-300 rounded-full hover:border-black transition-colors disabled:opacity-50"
+                disabled={currentReviewIndex >= reviews.length - 4}
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
             </div>
-            <div className="rounded-2xl bg-gray-50 p-8">
-              <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-black mb-2">Easy Returns</h3>
-              <p className="text-gray-600">Not satisfied? Return your items hassle-free within 30 days of delivery for a full refund.</p>
-            </div>
-            <div className="rounded-2xl bg-gray-50 p-8">
-              <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-black mb-2">Secure Payments</h3>
-              <p className="text-gray-600">Shop with confidence using our secure payment gateways. Your data is always protected.</p>
+          </div>
+          <div className="overflow-hidden">
+            <div
+              className="flex space-x-6 transition-transform duration-300 ease-in-out"
+              style={{ transform: `translateX(-${currentReviewIndex * (320 + 24)}px)` }}
+            >
+              {reviews.map((review, index) => (
+                <ReviewCard
+                  key={index}
+                  name={review.name}
+                  rating={review.rating}
+                  review={review.review}
+                />
+              ))}
             </div>
           </div>
         </div>
       </section>
+    </div>
+  );
+}
+
+function ReviewCard({ name, rating, review }: { name: string; rating: number; review: string }) {
+  return (
+    <div className="flex-shrink-0 w-80 bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+      <div className="flex items-center mb-4">
+        <div className="w-10 h-10 bg-gray-200 rounded-full mr-3 flex items-center justify-center">
+          <span className="text-gray-600 text-sm">{name[0]}</span>
+        </div>
+        <div>
+          <h4 className="font-semibold text-black">{name}</h4>
+          <div className="flex">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                className={`w-4 h-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+      <p className="text-gray-600">{review}</p>
     </div>
   );
 }
