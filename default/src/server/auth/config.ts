@@ -1,7 +1,11 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
+import GitHubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
+import VKProvider from "next-auth/providers/vk";
+import YandexProvider from "next-auth/providers/yandex";
 
+import { env } from "~/env";
 import { db } from "~/server/db";
 
 /**
@@ -14,15 +18,19 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
-      // role: UserRole;
+      role: string;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    role: string;
+  }
+}
+
+declare module "@auth/core/adapters" {
+  interface AdapterUser {
+    role: string;
+  }
 }
 
 /**
@@ -32,25 +40,44 @@ declare module "next-auth" {
  */
 export const authConfig = {
   providers: [
-    DiscordProvider,
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
+    GitHubProvider ({
+      clientId: env.GITHUB_CLIENT_ID,
+      clientSecret: env.GITHUB_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true
+    }),
+    GoogleProvider ({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking : true
+    }), 
+    VKProvider ({
+      clientId: env.VK_CLIENT_ID,
+      clientSecret: env.VK_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true
+    }),
+    YandexProvider ({
+      clientId: env.YANDEX_CLIENT_ID,
+      clientSecret: env.YANDEX_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true,
+    }),
   ],
   adapter: PrismaAdapter(db),
+
   callbacks: {
-    session: ({ session, user }) => ({
+    async signIn({ user, account, profile }) {
+      if (account?.provider === 'yandex') {
+        return true;
+      }
+      return true;
+    },
+    session: ({session, user}) => ({
       ...session,
       user: {
         ...session.user,
         id: user.id,
+        role: user.role,
       },
     }),
   },
+
 } satisfies NextAuthConfig;

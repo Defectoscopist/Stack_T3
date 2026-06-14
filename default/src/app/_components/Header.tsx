@@ -2,19 +2,21 @@
 
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { Search, ShoppingCart, User, Menu, X, ChevronDown, Loader2 } from "lucide-react";
+import { Search, ShoppingCart, User, Menu, X, ChevronDown, Loader2, Shield } from "lucide-react";
 import Image from "next/image";
 import { useCart } from "./CartContext";
 import { categoryGroups } from "~/lib/categories";
 import { api } from "~/trpc/react";
-
+import { useSession } from "next-auth/react";
 
 export function Header() {
+  const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
-  const { items } = useCart();
+  const { items, removeItem } = useCart();
+  const isAdmin = session?.user?.role === "ADMIN";
 
   const { data: searchResults, isFetching } = api.product.getFiltered.useQuery(
     { search: searchQuery, limit: 6 },
@@ -89,8 +91,8 @@ export function Header() {
             <Link href="/shop" className="text-gray-700 hover:text-black font-medium">
               Discover
             </Link>
-            <Link href="/contact" className="text-gray-700 hover:text-black font-medium">
-              Contact
+            <Link href="/admin" className="text-gray-700 hover:text-black font-medium">
+              Dashboard
             </Link>
           </nav>
 
@@ -207,6 +209,8 @@ export function Header() {
                 )}
               </Link>
               {/* Cart Dropdown */}
+              {/* Invisible bridge to prevent gap closing */}
+              <div className="absolute -bottom-1 right-0 w-20 h-1" />
               <div style={{ backgroundColor: "white" }} className="absolute right-0 top-full mt-1 w-80 border border-gray-200 rounded-xl shadow-lg py-3 transition-all duration-300 ease-out opacity-0 invisible -translate-y-1.5 pointer-events-none group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:pointer-events-auto">
                 <div className="absolute -top-1 right-6 w-3 h-3 rotate-45 border-l border-t border-gray-200 bg-white" />
                 {items.length === 0 ? (
@@ -217,26 +221,36 @@ export function Header() {
                   <>
                     <div className="max-h-64 overflow-y-auto px-2 space-y-1">
                       {items.slice(0, 4).map((item) => (
-                        <Link
-                          key={item.id}
-                          href="/cart"
-                          className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
-                        >
-                          <div className="w-10 h-10 rounded-lg bg-gray-100 shrink-0 overflow-hidden">
-                            {item.imageUrl && (
-                              <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">{item.name}</p>
-                            <p className="text-xs text-gray-500">
-                              {item.size && `${item.size}`}{item.size && item.color ? " / " : ""}{item.color && `${item.color}`} × {item.quantity}
-                            </p>
-                          </div>
-                          <span className="text-sm font-semibold text-gray-900 shrink-0">
-                            ${(item.price * item.quantity).toFixed(2)}
-                          </span>
-                        </Link>
+                        <div key={item.id} className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors group">
+                          <Link
+                            href="/cart"
+                            className="flex items-center gap-3 flex-1 min-w-0"
+                          >
+                            <div className="w-10 h-10 rounded-lg bg-gray-100 shrink-0 overflow-hidden">
+                              {item.imageUrl && (
+                                <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-gray-900 truncate">{item.name}</p>
+                              <p className="text-xs text-gray-500">
+                                {item.size && `${item.size}`}{item.size && item.color ? " / " : ""}{item.color && `${item.color}`} × {item.quantity}
+                              </p>
+                            </div>
+                            <span className="text-sm font-semibold text-gray-900 shrink-0">
+                              ${(item.price * item.quantity).toFixed(2)}
+                            </span>
+                          </Link>
+                          <button
+                            onClick={() => removeItem(item.id)}
+                            className="text-red-500 hover:text-red-700 p-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                            title="Remove item"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
                       ))}
                     </div>
                     {items.length > 4 && (
@@ -320,6 +334,7 @@ export function Header() {
               >
                 Contact
               </Link>
+              
             </nav>
           </div>
         )}

@@ -24,11 +24,11 @@ model Account {
   provider                 String
   providerAccountId        String
   refresh_token            String? @db.Text
-  access_token             String? // @db.Text
+  access_token             String? @db.Text
   expires_at               Int?
   token_type               String?
   scope                    String?
-  id_token                 String? // @db.Text
+  id_token                 String? @db.Text
   session_state            String?
   user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   refresh_token_expires_in Int?
@@ -53,12 +53,18 @@ model VerificationToken {
 }
 
 // ===== USER MODEL =====
+enum UserRole {
+  USER
+  ADMIN
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  role          UserRole  @default(USER)
 
   // Auth relations
   accounts Account[]
@@ -117,12 +123,25 @@ model Product {
   updatedAt     DateTime       @updatedAt
   productImages ProductImage[]
 
-  isFeatured Boolean @default(false)
-  isActive   Boolean @default(false)
+  isFeatured      Boolean     @default(false)
+  isActive        Boolean     @default(false)
+  isBestSeller    Boolean     @default(false)
+  isOnSale        Boolean     @default(false)
+  salePrice       Decimal?    @db.Decimal(10, 2)
+  originalPrice   Decimal?    @db.Decimal(10, 2)
+  discountPercent Int?        @default(0)
+  tags            String?     @default("")
+  productType     ProductType @default(GENERAL)
+  sex             Sex         @default(UNISEX)
 
   @@index([slug])
   @@index([categoryId])
   @@index([brandId])
+  @@index([isFeatured])
+  @@index([isBestSeller])
+  @@index([isOnSale])
+  @@index([productType])
+  @@index([sex])
 }
 
 model ProductVariant {
@@ -216,6 +235,25 @@ enum Size {
   ONE_SIZE
 }
 
+enum ProductType {
+  GENERAL
+  SPORT
+  HOME
+  OFFICE
+  CASUAL
+  FORMAL
+  ATHLETIC
+  OUTDOOR
+  ACCESSORY
+}
+
+enum Sex {
+  MEN
+  WOMEN
+  KIDS
+  UNISEX
+}
+
 // ===== ORDER MODELS =====
 enum OrderStatus {
   PENDING
@@ -266,11 +304,14 @@ model OrderItem {
 // ===== ADDRESS MODEL =====
 model Address {
   id         String @id @default(cuid())
+  firstName  String
+  lastName   String
   street     String
   city       String
   state      String
   postalCode String
   country    String
+  phone      String
 
   // Relations
   orders             Order[]

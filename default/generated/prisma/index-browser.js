@@ -156,6 +156,7 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   emailVerified: 'emailVerified',
   image: 'image',
+  role: 'role',
   homeAddressId: 'homeAddressId'
 };
 
@@ -266,11 +267,14 @@ exports.Prisma.OrderItemScalarFieldEnum = {
 
 exports.Prisma.AddressScalarFieldEnum = {
   id: 'id',
+  firstName: 'firstName',
+  lastName: 'lastName',
   street: 'street',
   city: 'city',
   state: 'state',
   postalCode: 'postalCode',
   country: 'country',
+  phone: 'phone',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -388,13 +392,21 @@ exports.Prisma.OrderItemOrderByRelevanceFieldEnum = {
 
 exports.Prisma.AddressOrderByRelevanceFieldEnum = {
   id: 'id',
+  firstName: 'firstName',
+  lastName: 'lastName',
   street: 'street',
   city: 'city',
   state: 'state',
   postalCode: 'postalCode',
   country: 'country',
+  phone: 'phone',
   userId: 'userId'
 };
+exports.UserRole = exports.$Enums.UserRole = {
+  USER: 'USER',
+  ADMIN: 'ADMIN'
+};
+
 exports.ProductType = exports.$Enums.ProductType = {
   GENERAL: 'GENERAL',
   SPORT: 'SPORT',

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -40,6 +40,23 @@ export default function ProductDetailPage() {
 
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+
+  // Set default selections when product loads
+  useEffect(() => {
+    if (!product) return;
+    
+    // Set default color to first available color
+    if (colorOptions.length > 0 && !selectedColor) {
+      setSelectedColor(colorOptions[0]!);
+    }
+    
+    // Set default size to first available size
+    if (sizeOptions.length > 0 && !selectedSize) {
+      setSelectedSize(String(sizeOptions[0]));
+    }
+  // Only run when product first loads (not on subsequent re-renders)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [!!product]);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [showSizeGuide, setShowSizeGuide] = useState(false);

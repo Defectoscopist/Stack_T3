@@ -55,7 +55,7 @@ export const getAllProductsSchema = z.object({
     sex: z.string().optional().describe("Filter by sex (men, women, kids)"),
 });
 
-export const productImageOutputSchema = z.array(z.string().url().describe("Array of image URLs for the product")).describe("Array of image URLs for the product")
+export const productImageOutputSchema = z.array(z.string().describe("Array of image URLs for the product")).describe("Array of image URLs for the product")
 
 
 //=================================     Product Variants    =====================================

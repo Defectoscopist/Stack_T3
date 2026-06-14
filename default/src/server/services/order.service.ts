@@ -7,6 +7,41 @@ import type { Prisma } from "generated/prisma";
 export class OrderService {
     constructor(private prisma: typeof db) {}
 
+    /**
+     * Automatically simulate order status progression.
+     * Starts a background process: PENDING -> DELIVERING (after 30s) -> COMPLETED (after 2min)
+     */
+    private async simulateStatusProgression(orderId: string) {
+        // After 30 seconds, change to DELIVERING
+        setTimeout(async () => {
+            try {
+                await this.prisma.order.update({
+                    where: { id: orderId },
+                    data: { status: "DELIVERING" },
+                });
+                console.log(`[Order ${orderId}] Status updated to DELIVERING`);
+            } catch (e) {
+                // Order might have been cancelled
+            }
+        }, 30_000);
+
+        // After 2 minutes, change to COMPLETED
+        setTimeout(async () => {
+            try {
+                const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+                if (order && order.status !== "CANCELLED" && order.status !== "RETURNING" && order.status !== "RETURNED") {
+                    await this.prisma.order.update({
+                        where: { id: orderId },
+                        data: { status: "COMPLETED" },
+                    });
+                    console.log(`[Order ${orderId}] Status updated to COMPLETED`);
+                }
+            } catch (e) {
+                // Order might have been cancelled
+            }
+        }, 120_000);
+    }
+
     async createOrder(input: z.infer<typeof OrderSchemas.createOrderSchema>) {
         const { userId, addressId, items } = input;
 
@@ -74,6 +109,10 @@ export class OrderService {
                 ),
             );
 
+            // Start status progression simulation
+            // Don't await — let it run in background
+            this.simulateStatusProgression(order.id).catch(() => {});
+
             return order;
         });
     }
@@ -87,7 +126,20 @@ export class OrderService {
         return this.prisma.order.findMany({
             where,
             include: {
-                orderItems: true,
+                orderItems: {
+                    include: {
+                        productVariant: {
+                            include: {
+                                product: {
+                                    include: {
+                                        productImages: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                address: true,
             },
             take: limit,
             skip: offset,
@@ -98,7 +150,20 @@ export class OrderService {
         return this.prisma.order.findUnique({
             where: { id: input.id },
             include: {
-                orderItems: true,
+                orderItems: {
+                    include: {
+                        productVariant: {
+                            include: {
+                                product: {
+                                    include: {
+                                        productImages: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                address: true,
             },
         });
     }
@@ -113,9 +178,33 @@ export class OrderService {
 
     async cancelOrder(input: z.infer<typeof OrderSchemas.cancelOrderSchema>) {
         const { orderId } = input;
-        return this.prisma.order.update({
-            where: { id: orderId },
-            data: { status: "CANCELLED" },
+        return this.prisma.$transaction(async (tx) => {
+            // Get order items to restore stock
+            const order = await tx.order.findUnique({
+                where: { id: orderId },
+                include: { orderItems: true },
+            });
+            if (!order) throw new Error("Order not found");
+
+            // Cancel the order
+            const updated = await tx.order.update({
+                where: { id: orderId },
+                data: { status: "CANCELLED" },
+            });
+
+            // Restore stock for each item
+            await Promise.all(
+                order.orderItems.map((item) =>
+                    tx.productVariant.update({
+                        where: { id: item.productVariantId },
+                        data: {
+                            stock: { increment: item.quantity },
+                        },
+                    }),
+                ),
+            );
+
+            return updated;
         });
     }
 }
