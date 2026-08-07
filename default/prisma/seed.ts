@@ -1,4 +1,4 @@
-import { PrismaClient, Size, Sex } from '../generated/prisma/index.js';
+import { PrismaClient, Size, Sex, type Category } from '../generated/prisma/index.js';
 import { faker } from '@faker-js/faker';
 
 const prisma = new PrismaClient();
@@ -79,93 +79,49 @@ async function main() {
 
   console.log('✅ Created 2 brands');
 
-  // Create Categories
-  const categories = await Promise.all([
-    prisma.category.create({
-      data: {
-        name: 'Shoes',
-        slug: 'shoes',
-        description: 'Athletic and casual footwear',
-      },
-    }),
-    prisma.category.create({
-      data: {
-        name: 'Apparel',
-        slug: 'apparel',
-        description: 'T-shirts, jackets, and more',
-      },
-    }),
-    prisma.category.create({
-      data: {
-        name: 'Accessories',
-        slug: 'accessories',
-        description: 'Hats, bags, and accessories',
-      },
-    }),
-    prisma.category.create({
-      data: {
-        name: 'Electronics',
-        slug: 'electronics',
-        description: 'Sports watches and trackers',
-      },
-    }),
-    prisma.category.create({
-      data: {
-        name: 'Home & Gym',
-        slug: 'home-gym',
-        description: 'Home gym equipment',
-      },
-    }),
-    prisma.category.create({
-      data: {
-        name: 'Sports Gear',
-        slug: 'sports-gear',
-        description: 'Balls, equipment, and gear',
-      },
-    }),
-    prisma.category.create({
-      data: {
-        name: 'T-Shirts',
-        slug: 't-shirts',
-        description: 'Casual and athletic t-shirts',
-      },
-    }),
-    prisma.category.create({
-      data: {
-        name: 'Hoodies',
-        slug: 'hoodies',
-        description: 'Comfortable hoodies and sweatshirts',
-      },
-    }),
-    prisma.category.create({
-      data: {
-        name: 'Pants',
-        slug: 'pants',
-        description: 'Jeans, trousers, and athletic pants',
-      },
-    }),
-    prisma.category.create({
-      data: {
-        name: 'Jackets',
-        slug: 'jackets',
-        description: 'Coats, jackets, and outerwear',
-      },
-    }),
-    prisma.category.create({
-      data: {
-        name: 'Bags',
-        slug: 'bags',
-        description: 'Backpacks, duffel bags, and accessories',
-      },
-    }),
-    prisma.category.create({
-      data: {
-        name: 'Watches',
-        slug: 'watches',
-        description: 'Smart watches and timepieces',
-      },
-    }),
-  ]);
+  // Create Categories (sequentially to avoid MySQL deadlocks with parallel writes)
+  const categoriesData = [
+    { name: 'Shoes', slug: 'shoes', description: 'Athletic and casual footwear' },
+    { name: 'Apparel', slug: 'apparel', description: 'T-shirts, jackets, and more' },
+    { name: 'Accessories', slug: 'accessories', description: 'Hats, bags, and accessories' },
+    { name: 'Electronics', slug: 'electronics', description: 'Sports watches and trackers' },
+    { name: 'Home & Gym', slug: 'home-gym', description: 'Home gym equipment' },
+    { name: 'Sports Gear', slug: 'sports-gear', description: 'Balls, equipment, and gear' },
+    { name: 'T-Shirts', slug: 't-shirts', description: 'Casual and athletic t-shirts' },
+    { name: 'Hoodies', slug: 'hoodies', description: 'Comfortable hoodies and sweatshirts' },
+    { name: 'Pants', slug: 'pants', description: 'Jeans, trousers, and athletic pants' },
+    { name: 'Jackets', slug: 'jackets', description: 'Coats, jackets, and outerwear' },
+    { name: 'Bags', slug: 'bags', description: 'Backpacks, duffel bags, and accessories' },
+    { name: 'Watches', slug: 'watches', description: 'Smart watches and timepieces' },
+  ];
+
+  const categories: [
+    Category,
+    Category,
+    Category,
+    Category,
+    Category,
+    Category,
+    Category,
+    Category,
+    Category,
+    Category,
+    Category,
+    Category,
+  ] = [
+    await prisma.category.create({ data: categoriesData[0]! }),
+    await prisma.category.create({ data: categoriesData[1]! }),
+    await prisma.category.create({ data: categoriesData[2]! }),
+    await prisma.category.create({ data: categoriesData[3]! }),
+    await prisma.category.create({ data: categoriesData[4]! }),
+    await prisma.category.create({ data: categoriesData[5]! }),
+    await prisma.category.create({ data: categoriesData[6]! }),
+    await prisma.category.create({ data: categoriesData[7]! }),
+    await prisma.category.create({ data: categoriesData[8]! }),
+    await prisma.category.create({ data: categoriesData[9]! }),
+    await prisma.category.create({ data: categoriesData[10]! }),
+    await prisma.category.create({ data: categoriesData[11]! }),
+  ];
 
   console.log('✅ Created 12 categories');
 

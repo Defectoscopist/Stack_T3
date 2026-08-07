@@ -7,24 +7,54 @@ import type { Prisma, ProductType, Sex } from "generated/prisma";
 export class ProductService {
   constructor(private prisma: typeof db) {}
 
-  async getProductById(
-    input: z.infer<typeof ProductSchemas.getProductsByIdSchema>,
-  ) {
-    const product = await this.prisma.product.findUnique({
-      where: { id: input.id },
-      include: {
-        brand: true,
-        category: true,
-        productImages: true,
-        variants: {
-          include: { variantImages: true },
-        },
-      },
-    });
+  /** Shared include for popular product queries */
+  private productInclude = {
+    brand: true,
+    category: true,
+    productImages: true,
+    variants: {
+      include: { variantImages: true },
+    },
+    _count: { select: { reviews: true } },
+  } as const;
 
-    if (!product) return null;
+  /** Transform a Prisma product to the output schema shape */
+  private mapProduct(product: {
+    id: string;
+    name: string;
+    description: string;
+    slug: string;
+    isFeatured: boolean;
+    isActive: boolean;
+    isBestSeller: boolean;
+    isOnSale: boolean;
+    salePrice: Prisma.Decimal | null;
+    originalPrice: Prisma.Decimal | null;
+    discountPercent: number | null;
+    tags: string | null;
+    productType: string;
+    categoryId: string;
+    brandId: string;
+    sex: string;
+    category: { id: string; name: string; slug: string; description: string };
+    productImages: { url: string }[];
+    variants: {
+      id: string;
+      price: Prisma.Decimal;
+      stock: number;
+      color: string | null;
+      size: string;
+      variantImages: { url: string }[];
+    }[];
+    _count?: { reviews: number };
+    reviews?: { rating: number }[];
+  }) {
+    const totalSoldAggregate = this.productSoldByProductId.get(product.id) ?? 0;
+    const reviews = product.reviews ?? [];
+    const averageRating = reviews.length
+      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+      : 0;
 
-    // Transform the data to match the output schema - only return expected fields
     return {
       id: product.id,
       name: product.name,
@@ -42,6 +72,9 @@ export class ProductService {
       categoryId: product.categoryId,
       brandId: product.brandId,
       sex: product.sex,
+      totalSold: totalSoldAggregate,
+      averageRating: Math.round(averageRating * 10) / 10,
+      reviewCount: product._count?.reviews ?? reviews.length,
       category: {
         id: product.category.id,
         name: product.category.name,
@@ -60,57 +93,70 @@ export class ProductService {
     };
   }
 
+  /** Map of productId -> total quantity sold (from order items) */
+  private productSoldByProductId = new Map<string, number>();
+
+  /** Preload sold quantities for a set of product ids */
+  private async loadSoldQuantities(productIds: string[]) {
+    if (productIds.length === 0) return;
+    const orderItems = await this.prisma.orderItem.groupBy({
+      by: ["productVariantId"],
+      _sum: { quantity: true },
+      where: {
+        productVariant: { productId: { in: productIds } },
+        order: { status: { notIn: ["CANCELLED", "RETURNED"] } },
+      },
+    });
+    const variantProductIds = new Map<string, string>();
+    if (orderItems.length > 0) {
+      const variantIds = orderItems.map(o => o.productVariantId);
+      const variants = await this.prisma.productVariant.findMany({
+        where: { id: { in: variantIds } },
+        select: { id: true, productId: true },
+      });
+      for (const v of variants) variantProductIds.set(v.id, v.productId);
+    }
+    this.productSoldByProductId.clear();
+    for (const item of orderItems) {
+      const productId = variantProductIds.get(item.productVariantId);
+      if (!productId) continue;
+      const current = this.productSoldByProductId.get(productId) ?? 0;
+      this.productSoldByProductId.set(productId, current + (item._sum.quantity ?? 0));
+    }
+  }
+
+  async getProductById(
+    input: z.infer<typeof ProductSchemas.getProductsByIdSchema>,
+  ) {
+    const product = await this.prisma.product.findUnique({
+      where: { id: input.id },
+      include: {
+        ...this.productInclude,
+        reviews: { select: { rating: true } },
+      },
+    });
+
+    if (!product) return null;
+    await this.loadSoldQuantities([product.id]);
+
+    return this.mapProduct(product);
+  }
+
   async getProductBySlug(
     input: z.infer<typeof ProductSchemas.getProductsBySlugSchema>,
   ) {
     const product = await this.prisma.product.findUnique({
       where: { slug: input.slug },
       include: {
-        brand: true,
-        category: true,
-        productImages: true,
-        variants: {
-          include: { variantImages: true },
-        },
+        ...this.productInclude,
+        reviews: { select: { rating: true } },
       },
     });
 
     if (!product) return null;
+    await this.loadSoldQuantities([product.id]);
 
-    // Transform the data to match the output schema - only return expected fields
-    return {
-      id: product.id,
-      name: product.name,
-      description: product.description,
-      slug: product.slug,
-      isFeatured: product.isFeatured,
-      isActive: product.isActive,
-      isBestSeller: product.isBestSeller,
-      isOnSale: product.isOnSale,
-      salePrice: product.salePrice ? Number(product.salePrice) : null,
-      originalPrice: product.originalPrice ? Number(product.originalPrice) : null,
-      discountPercent: product.discountPercent ?? 0,
-      tags: product.tags ?? "",
-      productType: product.productType,
-      categoryId: product.categoryId,
-      brandId: product.brandId,
-      sex: product.sex,
-      category: {
-        id: product.category.id,
-        name: product.category.name,
-        slug: product.category.slug,
-        description: product.category.description,
-      },
-      imagesUrl: product.productImages.map(img => img.url),
-      variants: product.variants.map(variant => ({
-        id: variant.id,
-        price: Number(variant.price),
-        stock: variant.stock,
-        color: variant.color,
-        size: variant.size,
-        imagesUrl: variant.variantImages.map(img => img.url),
-      })),
-    };
+    return this.mapProduct(product);
   }
 
   async getProducts(input: z.infer<typeof ProductSchemas.getProductsSchema>) {
@@ -170,43 +216,56 @@ export class ProductService {
           : false,
         brand: true,
         category: true,
+        _count: { select: { reviews: true } },
+        reviews: { select: { rating: true } },
       },
     });
 
+    await this.loadSoldQuantities(products.map(p => p.id));
+
     // Transform the data to match the output schema
-    return products.map(product => ({
-      id: product.id,
-      name: product.name,
-      description: product.description,
-      slug: product.slug,
-      isFeatured: product.isFeatured,
-      isActive: product.isActive,
-      isBestSeller: product.isBestSeller,
-      isOnSale: product.isOnSale,
-      salePrice: product.salePrice ? Number(product.salePrice) : null,
-      originalPrice: product.originalPrice ? Number(product.originalPrice) : null,
-      discountPercent: product.discountPercent ?? 0,
-      tags: product.tags ?? "",
-      productType: product.productType,
-      categoryId: product.categoryId,
-      brandId: product.brandId,
-      sex: product.sex,
-      category: {
-        id: product.category.id,
-        name: product.category.name,
-        slug: product.category.slug,
-        description: product.category.description,
-      },
-      imagesUrl: product.productImages?.map(img => img.url) || [],
-      variants: product.variants?.map(variant => ({
-        id: variant.id,
-        price: Number(variant.price),
-        stock: variant.stock,
-        color: variant.color,
-        size: variant.size,
-        imagesUrl: (variant as any).variantImages?.map((img: any) => img.url) ?? [],
-      })) ?? [],
-    }));
+    return products.map(product => {
+      const reviews = product.reviews ?? [];
+      const averageRating = reviews.length
+        ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+        : 0;
+      return {
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        slug: product.slug,
+        isFeatured: product.isFeatured,
+        isActive: product.isActive,
+        isBestSeller: product.isBestSeller,
+        isOnSale: product.isOnSale,
+        salePrice: product.salePrice ? Number(product.salePrice) : null,
+        originalPrice: product.originalPrice ? Number(product.originalPrice) : null,
+        discountPercent: product.discountPercent ?? 0,
+        tags: product.tags ?? "",
+        productType: product.productType,
+        categoryId: product.categoryId,
+        brandId: product.brandId,
+        sex: product.sex,
+        totalSold: this.productSoldByProductId.get(product.id) ?? 0,
+        averageRating: Math.round(averageRating * 10) / 10,
+        reviewCount: product._count?.reviews ?? reviews.length,
+        category: {
+          id: product.category.id,
+          name: product.category.name,
+          slug: product.category.slug,
+          description: product.category.description,
+        },
+        imagesUrl: product.productImages?.map(img => img.url) || [],
+        variants: product.variants?.map(variant => ({
+          id: variant.id,
+          price: Number(variant.price),
+          stock: variant.stock,
+          color: variant.color,
+          size: variant.size,
+          imagesUrl: (variant as any).variantImages?.map((img: any) => img.url) ?? [],
+        })) ?? [],
+      };
+    });
   }
 
   async getAllProducts(
@@ -230,43 +289,56 @@ export class ProductService {
         variants: {
           include: { variantImages: true },
         },
+        _count: { select: { reviews: true } },
+        reviews: { select: { rating: true } },
       },
     });
 
+    await this.loadSoldQuantities(products.map(p => p.id));
+
     // Transform the data to match the output schema
-    return products.map(product => ({
-      id: product.id,
-      name: product.name,
-      description: product.description,
-      slug: product.slug,
-      isFeatured: product.isFeatured,
-      isActive: product.isActive,
-      isBestSeller: product.isBestSeller,
-      isOnSale: product.isOnSale,
-      salePrice: product.salePrice ? Number(product.salePrice) : null,
-      originalPrice: product.originalPrice ? Number(product.originalPrice) : null,
-      discountPercent: product.discountPercent ?? 0,
-      tags: product.tags ?? "",
-      productType: product.productType,
-      categoryId: product.categoryId,
-      brandId: product.brandId,
-      sex: product.sex,
-      category: {
-        id: product.category.id,
-        name: product.category.name,
-        slug: product.category.slug,
-        description: product.category.description,
-      },
-      imagesUrl: product.productImages.map(img => img.url),
-      variants: product.variants.map(variant => ({
-        id: variant.id,
-        price: Number(variant.price),
-        stock: variant.stock,
-        color: variant.color,
-        size: variant.size,
-        imagesUrl: variant.variantImages.map(img => img.url),
-      })),
-    }));
+    return products.map(product => {
+      const reviews = product.reviews ?? [];
+      const averageRating = reviews.length
+        ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+        : 0;
+      return {
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        slug: product.slug,
+        isFeatured: product.isFeatured,
+        isActive: product.isActive,
+        isBestSeller: product.isBestSeller,
+        isOnSale: product.isOnSale,
+        salePrice: product.salePrice ? Number(product.salePrice) : null,
+        originalPrice: product.originalPrice ? Number(product.originalPrice) : null,
+        discountPercent: product.discountPercent ?? 0,
+        tags: product.tags ?? "",
+        productType: product.productType,
+        categoryId: product.categoryId,
+        brandId: product.brandId,
+        sex: product.sex,
+        totalSold: this.productSoldByProductId.get(product.id) ?? 0,
+        averageRating: Math.round(averageRating * 10) / 10,
+        reviewCount: product._count?.reviews ?? reviews.length,
+        category: {
+          id: product.category.id,
+          name: product.category.name,
+          slug: product.category.slug,
+          description: product.category.description,
+        },
+        imagesUrl: product.productImages.map(img => img.url),
+        variants: product.variants.map(variant => ({
+          id: variant.id,
+          price: Number(variant.price),
+          stock: variant.stock,
+          color: variant.color,
+          size: variant.size,
+          imagesUrl: variant.variantImages.map(img => img.url),
+        })),
+      };
+    });
   }
 
   async getProductVariantById(

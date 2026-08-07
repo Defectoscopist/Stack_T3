@@ -38,6 +38,60 @@ export default function ProductDetailPage() {
     { enabled: !!product }
   );
 
+  const utils = api.useUtils();
+
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [wishlistLoaded, setWishlistLoaded] = useState(false);
+
+  // Load wishlist status when user is authenticated
+  const { data: inWishlistData } = api.wishlist.isInWishlist.useQuery(
+    { productId: product?.id ?? "" },
+    { enabled: !!product?.id }
+  );
+
+  useEffect(() => {
+    if (inWishlistData !== undefined) {
+      setIsWishlisted(inWishlistData);
+      setWishlistLoaded(true);
+    }
+  }, [inWishlistData]);
+
+  const addToWishlistMutation = api.wishlist.addToWishlist.useMutation({
+    onMutate: async () => {
+      setIsWishlisted(true);
+    },
+    onError: () => {
+      // Roll back on error
+      setIsWishlisted(false);
+    },
+    onSettled: () => {
+      void utils.wishlist.getWishlist.invalidate();
+    },
+  });
+
+  const removeFromWishlistMutation = api.wishlist.removeFromWishlist.useMutation({
+    onMutate: async () => {
+      setIsWishlisted(false);
+    },
+    onError: () => {
+      setIsWishlisted(true);
+    },
+    onSettled: () => {
+      void utils.wishlist.getWishlist.invalidate();
+    },
+  });
+
+  const handleToggleWishlist = () => {
+    if (!product) return;
+    if (!wishlistLoaded) return;
+
+    if (isWishlisted) {
+      removeFromWishlistMutation.mutate({ productId: product.id });
+    } else {
+      addToWishlistMutation.mutate({ productId: product.id });
+    }
+  };
+
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
@@ -61,7 +115,6 @@ export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [activeAccordion, setActiveAccordion] = useState<string | null>("description");
-  const [isWishlisted, setIsWishlisted] = useState(false);
 
   const sizeOptions = useMemo(
     () => product ? Array.from(new Set(product.variants.map(v => v.size))) : [],
@@ -102,6 +155,20 @@ export default function ProductDetailPage() {
     // Fallback to first variant
     return product.variants[0] ?? null;
   }, [product, selectedColor, selectedSize]);
+
+  // Images to display: use variant images (per color) when a variant is selected,
+  // otherwise fall back to the product's main images
+  const displayImages = useMemo(() => {
+    if (currentVariant && currentVariant.imagesUrl.length > 0) {
+      return currentVariant.imagesUrl;
+    }
+    return product?.imagesUrl ?? [];
+  }, [currentVariant, product]);
+
+  // Reset image index when the selected variant (color) changes
+  useEffect(() => {
+    setSelectedImage(0);
+  }, [currentVariant?.id]);
 
   // Check if a specific size is available for the selected color
   const isSizeAvailable = (size: string): boolean => {
@@ -242,11 +309,11 @@ export default function ProductDetailPage() {
   };
 
   const handlePreviousImage = () => {
-    setSelectedImage((prev) => (prev === 0 ? product.imagesUrl.length - 1 : prev - 1));
+    setSelectedImage((prev) => (prev === 0 ? displayImages.length - 1 : prev - 1));
   };
 
   const handleNextImage = () => {
-    setSelectedImage((prev) => (prev === product.imagesUrl.length - 1 ? 0 : prev + 1));
+    setSelectedImage((prev) => (prev === displayImages.length - 1 ? 0 : prev + 1));
   };
 
   // Calculate price display
@@ -282,10 +349,10 @@ export default function ProductDetailPage() {
           <div className="space-y-4 lg:sticky lg:top-24">
             {/* Main Image */}
             <div className="relative bg-neutral-50 rounded-2xl overflow-hidden group">
-              {product.imagesUrl.length > 0 && (
+              {displayImages.length > 0 && (
                 <div className="relative aspect-square">
                   <Image
-                    src={product.imagesUrl[selectedImage]!}
+                    src={displayImages[selectedImage]!}
                     alt={`${product.name} - Image ${selectedImage + 1}`}
                     fill
                     className="object-contain mix-blend-multiply"
@@ -315,7 +382,7 @@ export default function ProductDetailPage() {
               )}
 
               {/* Image Navigation Arrows */}
-              {product.imagesUrl.length > 1 && (
+              {displayImages.length > 1 && (
                 <>
                   <button
                     onClick={handlePreviousImage}
@@ -335,17 +402,17 @@ export default function ProductDetailPage() {
               )}
 
               {/* Image Counter */}
-              {product.imagesUrl.length > 1 && (
+              {displayImages.length > 1 && (
                 <div className="absolute bottom-4 right-4 px-3 py-1.5 bg-black/70 text-white text-xs rounded-full backdrop-blur-sm">
-                  {selectedImage + 1} / {product.imagesUrl.length}
+                  {selectedImage + 1} / {displayImages.length}
                 </div>
               )}
             </div>
 
             {/* Thumbnail Strip */}
-            {product.imagesUrl.length > 1 && (
+            {displayImages.length > 1 && (
               <div className="grid grid-cols-4 gap-3">
-                {product.imagesUrl.map((image, index) => (
+                {displayImages.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
@@ -421,18 +488,26 @@ export default function ProductDetailPage() {
                   <Star
                     key={i}
                     className={`w-5 h-5 ${
-                      i < 5 ? "fill-amber-400 text-amber-400" : "text-neutral-200"
+                      i < Math.round(product.averageRating) ? "fill-amber-400 text-amber-400" : "text-neutral-200"
                     }`}
                   />
                 ))}
               </div>
               <span className="text-neutral-600 text-sm font-medium">
-                5.0 <span className="text-neutral-400">(128 reviews)</span>
+                {product.averageRating.toFixed(1)}{" "}
+                <span className="text-neutral-400">
+                  ({product.reviewCount}{" "}
+                  {product.reviewCount === 1 ? "review" : "reviews"})
+                </span>
               </span>
-              <span className="text-neutral-300">|</span>
-              <span className="text-neutral-600 text-sm font-medium">
-                256 sold
-              </span>
+              {product.totalSold > 0 && (
+                <>
+                  <span className="text-neutral-300">|</span>
+                  <span className="text-neutral-600 text-sm font-medium">
+                    {product.totalSold} sold
+                  </span>
+                </>
+              )}
             </div>
 
             {/* Description */}
@@ -596,12 +671,13 @@ export default function ProductDetailPage() {
                     {currentVariant.stock > 0 ? "Add to Cart" : "Out of Stock"}
                   </button>
                   <button
-                    onClick={() => setIsWishlisted(!isWishlisted)}
+                    onClick={handleToggleWishlist}
+                    aria-pressed={isWishlisted}
                     className={`w-14 h-14 rounded-xl border-2 flex items-center justify-center transition-all ${
                       isWishlisted
                         ? "border-red-500 bg-red-50 text-red-500"
                         : "border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400 hover:text-neutral-900"
-                    }`}
+                    } ${!wishlistLoaded ? "opacity-50 cursor-wait" : ""}`}
                   >
                     <Heart className={`w-5 h-5 ${isWishlisted ? "fill-current" : ""}`} />
                   </button>

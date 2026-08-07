@@ -105,6 +105,9 @@ export const productOutputSchema = z.object({
     categoryId: z.string().min(1),
     brandId: z.string().min(1),
     sex: z.string(),
+    totalSold: z.number().int().min(0).default(0).describe("Total quantity sold for this product"),
+    averageRating: z.number().min(0).max(5).default(0).describe("Average review rating for this product"),
+    reviewCount: z.number().int().min(0).default(0).describe("Total number of reviews for this product"),
     category: z.object({
         id: z.string().min(1),
         name: z.string(),

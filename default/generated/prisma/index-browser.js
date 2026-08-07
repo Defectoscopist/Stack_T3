@@ -199,6 +199,24 @@ exports.Prisma.ProductScalarFieldEnum = {
   sex: 'sex'
 };
 
+exports.Prisma.ReviewScalarFieldEnum = {
+  id: 'id',
+  rating: 'rating',
+  title: 'title',
+  comment: 'comment',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  productId: 'productId'
+};
+
+exports.Prisma.WishlistItemScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  productId: 'productId'
+};
+
 exports.Prisma.ProductVariantScalarFieldEnum = {
   id: 'id',
   price: 'price',
@@ -347,6 +365,20 @@ exports.Prisma.ProductOrderByRelevanceFieldEnum = {
   tags: 'tags'
 };
 
+exports.Prisma.ReviewOrderByRelevanceFieldEnum = {
+  id: 'id',
+  title: 'title',
+  comment: 'comment',
+  userId: 'userId',
+  productId: 'productId'
+};
+
+exports.Prisma.WishlistItemOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  productId: 'productId'
+};
+
 exports.Prisma.ProductVariantOrderByRelevanceFieldEnum = {
   id: 'id',
   productId: 'productId',
@@ -458,6 +490,8 @@ exports.Prisma.ModelName = {
   Category: 'Category',
   Brand: 'Brand',
   Product: 'Product',
+  Review: 'Review',
+  WishlistItem: 'WishlistItem',
   ProductVariant: 'ProductVariant',
   ProductImage: 'ProductImage',
   ProductVariantImage: 'ProductVariantImage',

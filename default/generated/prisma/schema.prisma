@@ -74,6 +74,10 @@ model User {
   cart   Cart?
   orders Order[]
 
+  // Reviews & Wishlist
+  reviews       Review[]
+  wishlistItems WishlistItem[]
+
   // Address relations
   homeAddress    Address?  @relation("HomeAddress", fields: [homeAddressId], references: [id])
   homeAddressId  String?   @unique
@@ -134,6 +138,10 @@ model Product {
   productType     ProductType @default(GENERAL)
   sex             Sex         @default(UNISEX)
 
+  // Reviews & Wishlist
+  reviews       Review[]
+  wishlistItems WishlistItem[]
+
   @@index([slug])
   @@index([categoryId])
   @@index([brandId])
@@ -142,6 +150,39 @@ model Product {
   @@index([isOnSale])
   @@index([productType])
   @@index([sex])
+}
+
+// ===== REVIEWS & WISHLIST =====
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int      @default(5)
+  title     String?
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+
+  @@unique([userId, productId])
+  @@index([productId])
+  @@index([userId])
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+
+  @@unique([userId, productId])
+  @@index([productId])
+  @@index([userId])
 }
 
 model ProductVariant {
