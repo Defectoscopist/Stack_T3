@@ -20,13 +20,18 @@ import {
   Ruler,
 } from "lucide-react";
 import { api } from "~/trpc/react";
+import { useSession } from "next-auth/react";
 import { useCart } from "../../_components/CartContext";
 import { ProductCard } from "../../_components/ProductCard";
 import { SizeGuide } from "../../_components/SizeGuide";
+import { AuthModal } from "../../_components/AuthModal";
 
 export default function ProductDetailPage() {
   const params = useParams();
   const productSlug = params.slug as string;
+  const { status } = useSession();
+  const isAuthenticated = status === "authenticated";
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const { data: product, isLoading, error } = api.product.getBySlug.useQuery(
     { slug: productSlug },
@@ -43,18 +48,23 @@ export default function ProductDetailPage() {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [wishlistLoaded, setWishlistLoaded] = useState(false);
 
-  // Load wishlist status when user is authenticated
+  // Load wishlist status only when user is authenticated
   const { data: inWishlistData } = api.wishlist.isInWishlist.useQuery(
     { productId: product?.id ?? "" },
-    { enabled: !!product?.id }
+    { enabled: !!product?.id && isAuthenticated }
   );
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      setIsWishlisted(false);
+      setWishlistLoaded(false);
+      return;
+    }
     if (inWishlistData !== undefined) {
       setIsWishlisted(inWishlistData);
       setWishlistLoaded(true);
     }
-  }, [inWishlistData]);
+  }, [inWishlistData, isAuthenticated]);
 
   const addToWishlistMutation = api.wishlist.addToWishlist.useMutation({
     onMutate: async () => {
@@ -83,6 +93,12 @@ export default function ProductDetailPage() {
 
   const handleToggleWishlist = () => {
     if (!product) return;
+
+    // If not authenticated, show the auth modal
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+      return;
+    }
     if (!wishlistLoaded) return;
 
     if (isWishlisted) {
@@ -854,6 +870,13 @@ export default function ProductDetailPage() {
       </div>
 
       <SizeGuide isOpen={showSizeGuide} onClose={() => setShowSizeGuide(false)} />
+
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        title="Sign in to save to wishlist"
+        message="Create an account or sign in to save this product to your wishlist."
+      />
     </div>
   );
 }

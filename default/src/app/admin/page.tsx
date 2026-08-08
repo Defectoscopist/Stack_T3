@@ -223,16 +223,16 @@ export default function AdminPage() {
   });
 
   // Mutations
-  const deleteProductMut = api.admin.deleteProduct.useMutation({ onSuccess: () => { refetchProducts(); setDeleteConfirm(null); } });
-  const deleteCategoryMut = api.admin.deleteCategory.useMutation({ onSuccess: () => { refetchCategories(); setDeleteConfirm(null); } });
-  const deleteBrandMut = api.admin.deleteBrand.useMutation({ onSuccess: () => { refetchBrands(); setDeleteConfirm(null); } });
-  const updateOrderStatusMut = api.admin.updateOrderStatus.useMutation({ onSuccess: () => { refetchOrders(); setOrderStatusConfirm(null); } });
-  const updateUserRoleMut = api.admin.updateUserRole.useMutation({ onSuccess: () => { refetchUsers(); setUserRoleConfirm(null); } });
+  const deleteProductMut = api.admin.deleteProduct.useMutation({ onSuccess: () => { void refetchProducts(); setDeleteConfirm(null); } });
+  const deleteCategoryMut = api.admin.deleteCategory.useMutation({ onSuccess: () => { void refetchCategories(); setDeleteConfirm(null); } });
+  const deleteBrandMut = api.admin.deleteBrand.useMutation({ onSuccess: () => { void refetchBrands(); setDeleteConfirm(null); } });
+  const updateOrderStatusMut = api.admin.updateOrderStatus.useMutation({ onSuccess: () => { void refetchOrders(); setOrderStatusConfirm(null); } });
+  const updateUserRoleMut = api.admin.updateUserRole.useMutation({ onSuccess: () => { void refetchUsers(); setUserRoleConfirm(null); } });
 
-  const createProductMut = api.admin.createProduct.useMutation({ onSuccess: () => { refetchProducts(); setShowAddProduct(false); } });
-  const updateProductMut = api.admin.updateProduct.useMutation({ onSuccess: () => { refetchProducts(); setEditingProduct(null); } });
-  const createCategoryMut = api.admin.createCategory.useMutation({ onSuccess: () => { refetchCategories(); setShowAddCategory(false); } });
-  const createBrandMut = api.admin.createBrand.useMutation({ onSuccess: () => { refetchBrands(); setShowAddBrand(false); } });
+  const createProductMut = api.admin.createProduct.useMutation({ onSuccess: () => { void refetchProducts(); setShowAddProduct(false); } });
+  const updateProductMut = api.admin.updateProduct.useMutation({ onSuccess: () => { void refetchProducts(); setEditingProduct(null); } });
+  const createCategoryMut = api.admin.createCategory.useMutation({ onSuccess: () => { void refetchCategories(); setShowAddCategory(false); } });
+  const createBrandMut = api.admin.createBrand.useMutation({ onSuccess: () => { void refetchBrands(); setShowAddBrand(false); } });
 
   const handleConfirmDelete = () => {
     if (!deleteConfirm) return;

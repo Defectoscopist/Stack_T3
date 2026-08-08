@@ -62,7 +62,7 @@ export const orderRouter = createTRPCRouter({
         .mutation(async ({ input, ctx }) => {
             // Only allow cancelling if the order belongs to the user
             const order = await orderService.getOrderById({ id: input.orderId });
-            if (!order || order.userId !== ctx.session.user.id) {
+            if (!order || order?.userId !== ctx.session.user.id) {
                 throw new Error("Order not found or not owned by you");
             }
             if (order.status !== "PENDING" && order.status !== "DELIVERING") {

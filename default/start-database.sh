@@ -82,5 +82,5 @@ $DOCKER_CMD run -d \
   --name $DB_CONTAINER_NAME \
   -e MYSQL_ROOT_PASSWORD="$DB_PASSWORD" \
   -e MYSQL_DATABASE="$DB_NAME" \
-  -p "$DB_PORT":3308 \
+  -p "$DB_PORT":3306 \
   docker.io/mysql && echo "Database container '$DB_CONTAINER_NAME' was successfully created"

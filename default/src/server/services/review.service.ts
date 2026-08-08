@@ -31,7 +31,7 @@ export class ReviewService {
     const review = await this.prisma.review.findUnique({
       where: { id: input.reviewId },
     });
-    if (!review || review.userId !== userId) {
+    if (!review || review?.userId !== userId) {
       throw new Error("Review not found or not owned by you");
     }
 
@@ -52,7 +52,7 @@ export class ReviewService {
     const review = await this.prisma.review.findUnique({
       where: { id: reviewId },
     });
-    if (!review || review.userId !== userId) {
+    if (!review || review?.userId !== userId) {
       throw new Error("Review not found or not owned by you");
     }
 
@@ -86,5 +86,15 @@ export class ReviewService {
         totalReviews: aggregate._count,
       },
     };
+  }
+
+  async getRecentReviews(limit = 8) {
+    return this.prisma.review.findMany({
+      include: {
+        user: { select: { id: true, name: true, image: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+    });
   }
 }

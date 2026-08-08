@@ -5,8 +5,10 @@ import { useState, use, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ProductGrid } from "./_components/ProductGrid";
 import { CategoryCard } from "../../_components/CategoryCard";
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { categories } from "~/lib/categories";
+import { ReviewCard } from "../../_components/ReviewCard";
+import { api } from "~/trpc/react";
 
 interface SexCategoryPageProps {
   params: Promise<{
@@ -19,6 +21,17 @@ const VALID_SEXES = ["men", "women", "kids"];
 export default function SexCategoryPage({ params }: SexCategoryPageProps) {
   const { sex } = use(params);
   const router = useRouter();
+  const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
+
+  const { data: reviews } = api.review.getRecentReviews.useQuery(undefined, {
+    select: (data) =>
+      data.map((review) => ({
+        name: review.user.name,
+        rating: review.rating,
+        review: review.comment,
+      })),
+  });
+  const reviewsList = reviews ?? [];
 
   useEffect(() => {
     if (!VALID_SEXES.includes(sex)) {
@@ -32,57 +45,12 @@ export default function SexCategoryPage({ params }: SexCategoryPageProps) {
 
   const displaySex = sex.charAt(0).toUpperCase() + sex.slice(1);
 
-  const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
-
-  const reviews = [
-    {
-      name: "Sarah Johnson",
-      rating: 5,
-      review: "Absolutely love the quality and style. Fast shipping and great customer service!",
-    },
-    {
-      name: "Mike Chen",
-      rating: 5,
-      review: "Found exactly what I was looking for. The fit is perfect and the material is top-notch.",
-    },
-    {
-      name: "Emma Davis",
-      rating: 4,
-      review: "Great selection and affordable prices. Will definitely shop here again.",
-    },
-    {
-      name: "Alex Rodriguez",
-      rating: 5,
-      review: "The website is easy to navigate and the products are exactly as described.",
-    },
-    {
-      name: "Jessica Brown",
-      rating: 5,
-      review: "Amazing collection! The customer service team was incredibly helpful with sizing questions.",
-    },
-    {
-      name: "David Wilson",
-      rating: 4,
-      review: "Good quality products at reasonable prices. Shipping was a bit slow but overall satisfied.",
-    },
-    {
-      name: "Lisa Anderson",
-      rating: 5,
-      review: "Love the variety and the unique pieces. Definitely my go-to fashion destination now!",
-    },
-    {
-      name: "James Taylor",
-      rating: 5,
-      review: "Excellent quality and fast delivery. The packaging was also very professional.",
-    },
-  ];
-
   const nextReview = () => {
-    setCurrentReviewIndex((prev: number) => (prev + 1) % (reviews.length - 3));
+    setCurrentReviewIndex((prev: number) => (prev + 1) % Math.max(1, reviewsList.length - 3));
   };
 
   const prevReview = () => {
-    setCurrentReviewIndex((prev: number) => (prev - 1 + (reviews.length - 3)) % (reviews.length - 3));
+    setCurrentReviewIndex((prev: number) => (prev - 1 + Math.max(1, reviewsList.length - 3)) % Math.max(1, reviewsList.length - 3));
   };
 
   return (
@@ -167,7 +135,7 @@ export default function SexCategoryPage({ params }: SexCategoryPageProps) {
               <button
                 onClick={nextReview}
                 className="p-2 border border-gray-300 rounded-full hover:border-black transition-colors disabled:opacity-50"
-                disabled={currentReviewIndex >= reviews.length - 4}
+                disabled={currentReviewIndex >= reviewsList.length - 4}
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -178,7 +146,7 @@ export default function SexCategoryPage({ params }: SexCategoryPageProps) {
               className="flex space-x-6 transition-transform duration-300 ease-in-out"
               style={{ transform: `translateX(-${currentReviewIndex * (320 + 24)}px)` }}
             >
-              {reviews.map((review, index) => (
+              {reviewsList.map((review, index) => (
                 <ReviewCard
                   key={index}
                   name={review.name}
@@ -190,30 +158,6 @@ export default function SexCategoryPage({ params }: SexCategoryPageProps) {
           </div>
         </div>
       </section>
-    </div>
-  );
-}
-
-function ReviewCard({ name, rating, review }: { name: string; rating: number; review: string }) {
-  return (
-    <div className="flex-shrink-0 w-80 bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-      <div className="flex items-center mb-4">
-        <div className="w-10 h-10 bg-gray-200 rounded-full mr-3 flex items-center justify-center">
-          <span className="text-gray-600 text-sm">{name[0]}</span>
-        </div>
-        <div>
-          <h4 className="font-semibold text-black">{name}</h4>
-          <div className="flex">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                className={`w-4 h-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-      <p className="text-gray-600">{review}</p>
     </div>
   );
 }

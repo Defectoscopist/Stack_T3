@@ -485,7 +485,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\kuzivanov\\prj\\Repos\\Stack_T3\\default\\generated\\prisma",
+      "value": "c:\\Users\\Dima\\repos\\Stack_T3\\default\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -499,7 +499,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\kuzivanov\\prj\\Repos\\Stack_T3\\default\\prisma\\schema.prisma",
+    "sourceFilePath": "c:\\Users\\Dima\\repos\\Stack_T3\\default\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -513,7 +513,6 @@ const config = {
     "db"
   ],
   "activeProvider": "mysql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {

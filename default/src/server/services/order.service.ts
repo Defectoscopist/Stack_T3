@@ -13,32 +13,30 @@ export class OrderService {
      */
     private async simulateStatusProgression(orderId: string) {
         // After 30 seconds, change to DELIVERING
-        setTimeout(async () => {
-            try {
-                await this.prisma.order.update({
-                    where: { id: orderId },
-                    data: { status: "DELIVERING" },
-                });
-                console.log(`[Order ${orderId}] Status updated to DELIVERING`);
-            } catch (e) {
+        setTimeout(() => {
+            void this.prisma.order.update({
+                where: { id: orderId },
+                data: { status: "DELIVERING" },
+            }).catch(() => {
                 // Order might have been cancelled
-            }
+            });
         }, 30_000);
 
         // After 2 minutes, change to COMPLETED
-        setTimeout(async () => {
-            try {
-                const order = await this.prisma.order.findUnique({ where: { id: orderId } });
-                if (order && order.status !== "CANCELLED" && order.status !== "RETURNING" && order.status !== "RETURNED") {
-                    await this.prisma.order.update({
-                        where: { id: orderId },
-                        data: { status: "COMPLETED" },
-                    });
-                    console.log(`[Order ${orderId}] Status updated to COMPLETED`);
+        setTimeout(() => {
+            void (async () => {
+                try {
+                    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+                    if (order && order.status !== "CANCELLED" && order.status !== "RETURNING" && order.status !== "RETURNED") {
+                        await this.prisma.order.update({
+                            where: { id: orderId },
+                            data: { status: "COMPLETED" },
+                        });
+                    }
+                } catch {
+                    // Order might have been cancelled
                 }
-            } catch (e) {
-                // Order might have been cancelled
-            }
+            })();
         }, 120_000);
     }
 
@@ -111,7 +109,7 @@ export class OrderService {
 
             // Start status progression simulation
             // Don't await — let it run in background
-            this.simulateStatusProgression(order.id).catch(() => {});
+            void this.simulateStatusProgression(order.id).catch(() => undefined);
 
             return order;
         });

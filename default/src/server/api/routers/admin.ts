@@ -1,4 +1,4 @@
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { AdminService } from "~/server/services/admin.service";
 import * as AdminSchemas from "~/server/schemas/admin.schema";

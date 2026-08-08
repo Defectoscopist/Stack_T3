@@ -41,6 +41,10 @@ async function main() {
   console.log('Starting database seed...\n\n');
 
   // Clear existing data (be careful with this in production!)
+  await prisma.review.deleteMany();
+  console.log('Cleared reviews');
+  await prisma.wishlistItem.deleteMany();
+  console.log('Cleared wishlist items');
   await prisma.cartProduct.deleteMany();
   console.log('Cleared cart products');
   await prisma.cart.deleteMany();
@@ -4379,12 +4383,57 @@ async function main() {
     console.log(`✅ Created product: ${product.name}`);
   }
 
+  // Create a demo user and reviews
+  const demoUser = await prisma.user.upsert({
+    where: { email: 'demo@example.com' },
+    update: {},
+    create: {
+      email: 'demo@example.com',
+      name: 'Demo User',
+      role: 'USER',
+    },
+  });
+
+  const products = await prisma.product.findMany({ take: 10 });
+  const reviewTemplates = [
+    { rating: 5, title: 'Excellent quality', comment: 'Absolutely love the quality and style. Fast shipping and great customer service!' },
+    { rating: 5, title: 'Perfect fit', comment: 'Found exactly what I was looking for. The fit is perfect and the material is top-notch.' },
+    { rating: 4, title: 'Great value', comment: 'Great selection and affordable prices. Will definitely shop here again.' },
+    { rating: 5, title: 'Easy to navigate', comment: 'The website is easy to navigate and the products are exactly as described.' },
+    { rating: 5, title: 'Amazing collection', comment: 'Amazing collection! The customer service team was incredibly helpful with sizing questions.' },
+    { rating: 4, title: 'Good quality', comment: 'Good quality products at reasonable prices. Shipping was a bit slow but overall satisfied.' },
+    { rating: 5, title: 'Love the variety', comment: 'Love the variety and the unique pieces. Definitely my go-to fashion destination now!' },
+    { rating: 5, title: 'Fast delivery', comment: 'Excellent quality and fast delivery. The packaging was also very professional.' },
+  ];
+
+  for (let i = 0; i < products.length; i++) {
+    const product = products[i]!;
+    const template = reviewTemplates[i % reviewTemplates.length]!;
+    await prisma.review.upsert({
+      where: {
+        userId_productId: {
+          userId: demoUser.id,
+          productId: product.id,
+        },
+      },
+      update: {},
+      create: {
+        userId: demoUser.id,
+        productId: product.id,
+        rating: template.rating,
+        title: template.title,
+        comment: template.comment,
+      },
+    });
+  }
+
   console.log(`\nSeeding completed`);
   console.log(`Created:`);
   console.log(`   - 2 Brands`);
   console.log(`   - 12 Categories`);
   console.log(`   - 100+ Products`);
   console.log(`   - 300+ Product Variants`);
+  console.log(`   - ${products.length} Reviews`);
 }
 
 main()

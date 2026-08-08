@@ -30,4 +30,8 @@ export const reviewRouter = createTRPCRouter({
     .query(async ({ input }) => {
       return reviewService.getReviewsByProduct(input);
     }),
+
+  getRecentReviews: publicProcedure.query(async () => {
+    return reviewService.getRecentReviews(8);
+  }),
 });

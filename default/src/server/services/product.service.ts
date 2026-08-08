@@ -4,6 +4,37 @@ import type * as ProductSchemas from "../schemas/product.schema";
 import { db } from "~/server/db";
 import type { Prisma, ProductType, Sex } from "generated/prisma";
 
+type ProductWithRelations = {
+  id: string;
+  name: string;
+  description: string;
+  slug: string;
+  isFeatured: boolean;
+  isActive: boolean;
+  isBestSeller: boolean;
+  isOnSale: boolean;
+  salePrice: Prisma.Decimal | null;
+  originalPrice: Prisma.Decimal | null;
+  discountPercent: number | null;
+  tags: string | null;
+  productType: string;
+  categoryId: string;
+  brandId: string;
+  sex: string;
+  category: { id: string; name: string; slug: string; description: string };
+  productImages: { url: string }[];
+  variants: {
+    id: string;
+    price: Prisma.Decimal;
+    stock: number;
+    color: string | null;
+    size: string;
+    variantImages?: { url: string }[] | null;
+  }[];
+  _count?: { reviews: number };
+  reviews?: { rating: number }[];
+};
+
 export class ProductService {
   constructor(private prisma: typeof db) {}
 
@@ -18,38 +49,44 @@ export class ProductService {
     _count: { select: { reviews: true } },
   } as const;
 
+  /** Map of productId -> total quantity sold (from order items) */
+  private productSoldByProductId = new Map<string, number>();
+
+  /** Preload sold quantities for a set of product ids */
+  private async loadSoldQuantities(productIds: string[]) {
+    if (productIds.length === 0) return;
+    const orderItems = await this.prisma.orderItem.groupBy({
+      by: ["productVariantId"],
+      _sum: { quantity: true },
+      where: {
+        productVariant: { productId: { in: productIds } },
+        order: { status: { notIn: ["CANCELLED", "RETURNED"] } },
+      },
+    });
+    const variantProductIds = new Map<string, string>();
+    if (orderItems.length > 0) {
+      const variantIds = orderItems.map((o) => o.productVariantId);
+      const variants = await this.prisma.productVariant.findMany({
+        where: { id: { in: variantIds } },
+        select: { id: true, productId: true },
+      });
+      for (const v of variants) variantProductIds.set(v.id, v.productId);
+    }
+    this.productSoldByProductId.clear();
+    for (const item of orderItems) {
+      const productId = variantProductIds.get(item.productVariantId);
+      if (!productId) continue;
+      const current = this.productSoldByProductId.get(productId) ?? 0;
+      this.productSoldByProductId.set(
+        productId,
+        current + (item._sum.quantity ?? 0),
+      );
+    }
+  }
+
   /** Transform a Prisma product to the output schema shape */
-  private mapProduct(product: {
-    id: string;
-    name: string;
-    description: string;
-    slug: string;
-    isFeatured: boolean;
-    isActive: boolean;
-    isBestSeller: boolean;
-    isOnSale: boolean;
-    salePrice: Prisma.Decimal | null;
-    originalPrice: Prisma.Decimal | null;
-    discountPercent: number | null;
-    tags: string | null;
-    productType: string;
-    categoryId: string;
-    brandId: string;
-    sex: string;
-    category: { id: string; name: string; slug: string; description: string };
-    productImages: { url: string }[];
-    variants: {
-      id: string;
-      price: Prisma.Decimal;
-      stock: number;
-      color: string | null;
-      size: string;
-      variantImages: { url: string }[];
-    }[];
-    _count?: { reviews: number };
-    reviews?: { rating: number }[];
-  }) {
-    const totalSoldAggregate = this.productSoldByProductId.get(product.id) ?? 0;
+  private mapProduct(product: ProductWithRelations) {
+    const totalSold = this.productSoldByProductId.get(product.id) ?? 0;
     const reviews = product.reviews ?? [];
     const averageRating = reviews.length
       ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
@@ -72,7 +109,7 @@ export class ProductService {
       categoryId: product.categoryId,
       brandId: product.brandId,
       sex: product.sex,
-      totalSold: totalSoldAggregate,
+      totalSold,
       averageRating: Math.round(averageRating * 10) / 10,
       reviewCount: product._count?.reviews ?? reviews.length,
       category: {
@@ -81,48 +118,16 @@ export class ProductService {
         slug: product.category.slug,
         description: product.category.description,
       },
-      imagesUrl: product.productImages.map(img => img.url),
-      variants: product.variants.map(variant => ({
+      imagesUrl: product.productImages.map((img) => img.url),
+      variants: product.variants.map((variant) => ({
         id: variant.id,
         price: Number(variant.price),
         stock: variant.stock,
         color: variant.color,
         size: variant.size,
-        imagesUrl: variant.variantImages.map(img => img.url),
+        imagesUrl: variant.variantImages?.map((img) => img.url) ?? [],
       })),
     };
-  }
-
-  /** Map of productId -> total quantity sold (from order items) */
-  private productSoldByProductId = new Map<string, number>();
-
-  /** Preload sold quantities for a set of product ids */
-  private async loadSoldQuantities(productIds: string[]) {
-    if (productIds.length === 0) return;
-    const orderItems = await this.prisma.orderItem.groupBy({
-      by: ["productVariantId"],
-      _sum: { quantity: true },
-      where: {
-        productVariant: { productId: { in: productIds } },
-        order: { status: { notIn: ["CANCELLED", "RETURNED"] } },
-      },
-    });
-    const variantProductIds = new Map<string, string>();
-    if (orderItems.length > 0) {
-      const variantIds = orderItems.map(o => o.productVariantId);
-      const variants = await this.prisma.productVariant.findMany({
-        where: { id: { in: variantIds } },
-        select: { id: true, productId: true },
-      });
-      for (const v of variants) variantProductIds.set(v.id, v.productId);
-    }
-    this.productSoldByProductId.clear();
-    for (const item of orderItems) {
-      const productId = variantProductIds.get(item.productVariantId);
-      if (!productId) continue;
-      const current = this.productSoldByProductId.get(productId) ?? 0;
-      this.productSoldByProductId.set(productId, current + (item._sum.quantity ?? 0));
-    }
   }
 
   async getProductById(
@@ -185,14 +190,16 @@ export class ProductService {
       ...(brandId && { brandId }),
       ...(categoryId && { categoryId }),
       ...(productType && { productType: productType as ProductType }),
-      ...(minPrice !== undefined || maxPrice !== undefined ? {
-        variants: {
-          some: {
-            ...(minPrice !== undefined && { price: { gte: minPrice } }),
-            ...(maxPrice !== undefined && { price: { lte: maxPrice } }),
-          },
-        },
-      } : {}),
+      ...(minPrice !== undefined || maxPrice !== undefined
+        ? {
+            variants: {
+              some: {
+                ...(minPrice !== undefined && { price: { gte: minPrice } }),
+                ...(maxPrice !== undefined && { price: { lte: maxPrice } }),
+              },
+            },
+          }
+        : {}),
       ...(search && {
         OR: [
           { name: { contains: search } },
@@ -221,51 +228,9 @@ export class ProductService {
       },
     });
 
-    await this.loadSoldQuantities(products.map(p => p.id));
+    await this.loadSoldQuantities(products.map((p) => p.id));
 
-    // Transform the data to match the output schema
-    return products.map(product => {
-      const reviews = product.reviews ?? [];
-      const averageRating = reviews.length
-        ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-        : 0;
-      return {
-        id: product.id,
-        name: product.name,
-        description: product.description,
-        slug: product.slug,
-        isFeatured: product.isFeatured,
-        isActive: product.isActive,
-        isBestSeller: product.isBestSeller,
-        isOnSale: product.isOnSale,
-        salePrice: product.salePrice ? Number(product.salePrice) : null,
-        originalPrice: product.originalPrice ? Number(product.originalPrice) : null,
-        discountPercent: product.discountPercent ?? 0,
-        tags: product.tags ?? "",
-        productType: product.productType,
-        categoryId: product.categoryId,
-        brandId: product.brandId,
-        sex: product.sex,
-        totalSold: this.productSoldByProductId.get(product.id) ?? 0,
-        averageRating: Math.round(averageRating * 10) / 10,
-        reviewCount: product._count?.reviews ?? reviews.length,
-        category: {
-          id: product.category.id,
-          name: product.category.name,
-          slug: product.category.slug,
-          description: product.category.description,
-        },
-        imagesUrl: product.productImages?.map(img => img.url) || [],
-        variants: product.variants?.map(variant => ({
-          id: variant.id,
-          price: Number(variant.price),
-          stock: variant.stock,
-          color: variant.color,
-          size: variant.size,
-          imagesUrl: (variant as any).variantImages?.map((img: any) => img.url) ?? [],
-        })) ?? [],
-      };
-    });
+    return products.map((product) => this.mapProduct(product));
   }
 
   async getAllProducts(
@@ -294,51 +259,9 @@ export class ProductService {
       },
     });
 
-    await this.loadSoldQuantities(products.map(p => p.id));
+    await this.loadSoldQuantities(products.map((p) => p.id));
 
-    // Transform the data to match the output schema
-    return products.map(product => {
-      const reviews = product.reviews ?? [];
-      const averageRating = reviews.length
-        ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-        : 0;
-      return {
-        id: product.id,
-        name: product.name,
-        description: product.description,
-        slug: product.slug,
-        isFeatured: product.isFeatured,
-        isActive: product.isActive,
-        isBestSeller: product.isBestSeller,
-        isOnSale: product.isOnSale,
-        salePrice: product.salePrice ? Number(product.salePrice) : null,
-        originalPrice: product.originalPrice ? Number(product.originalPrice) : null,
-        discountPercent: product.discountPercent ?? 0,
-        tags: product.tags ?? "",
-        productType: product.productType,
-        categoryId: product.categoryId,
-        brandId: product.brandId,
-        sex: product.sex,
-        totalSold: this.productSoldByProductId.get(product.id) ?? 0,
-        averageRating: Math.round(averageRating * 10) / 10,
-        reviewCount: product._count?.reviews ?? reviews.length,
-        category: {
-          id: product.category.id,
-          name: product.category.name,
-          slug: product.category.slug,
-          description: product.category.description,
-        },
-        imagesUrl: product.productImages.map(img => img.url),
-        variants: product.variants.map(variant => ({
-          id: variant.id,
-          price: Number(variant.price),
-          stock: variant.stock,
-          color: variant.color,
-          size: variant.size,
-          imagesUrl: variant.variantImages.map(img => img.url),
-        })),
-      };
-    });
+    return products.map((product) => this.mapProduct(product));
   }
 
   async getProductVariantById(
@@ -354,14 +277,13 @@ export class ProductService {
 
     if (!variant) return null;
 
-    // Transform to match schema
     return {
       id: variant.id,
       price: Number(variant.price),
       stock: variant.stock,
       color: variant.color,
       size: variant.size,
-      imagesUrl: variant.variantImages.map(img => img.url),
+      imagesUrl: variant.variantImages.map((img) => img.url),
     };
   }
 
@@ -384,18 +306,17 @@ export class ProductService {
       where,
       include: {
         variantImages: true,
-        product: { include: {brand: true, category: true }},
+        product: { include: { brand: true, category: true } },
       },
     });
 
-    // Transform to match schema
-    return variants.map(variant => ({
+    return variants.map((variant) => ({
       id: variant.id,
       price: Number(variant.price),
       stock: variant.stock,
       color: variant.color,
       size: variant.size,
-      imagesUrl: variant.variantImages.map(img => img.url),
+      imagesUrl: variant.variantImages.map((img) => img.url),
     }));
   }
 }

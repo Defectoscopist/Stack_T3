@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { Search, ShoppingCart, User, Menu, X, ChevronDown, Loader2, Shield } from "lucide-react";
+import { Search, ShoppingCart, User, Menu, X, ChevronDown, Loader2, Heart } from "lucide-react";
 import Image from "next/image";
 import { useCart } from "./CartContext";
 import { categoryGroups } from "~/lib/categories";
@@ -16,7 +16,6 @@ export function Header() {
   const [searchFocused, setSearchFocused] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const { items, removeItem } = useCart();
-  const isAdmin = session?.user?.role === "ADMIN";
 
   const { data: searchResults, isFetching } = api.product.getFiltered.useQuery(
     { search: searchQuery, limit: 6 },
@@ -278,6 +277,11 @@ export function Header() {
               </div>
             </div>
 
+            {/* Wishlist */}
+            <Link href="/wishlist" className="relative text-gray-700 hover:text-black" aria-label="Wishlist">
+              <Heart className="w-5 h-5" />
+            </Link>
+
             {/* Profile */}
             <Link href="/profile" className="text-gray-700 hover:text-black">
               <User className="w-5 h-5" />
@@ -326,6 +330,13 @@ export function Header() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Shop
+              </Link>
+              <Link
+                href="/wishlist"
+                className="block text-gray-700 hover:text-black"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Wishlist
               </Link>
               <Link
                 href="/contact"

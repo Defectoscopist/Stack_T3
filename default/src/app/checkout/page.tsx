@@ -27,7 +27,7 @@ type CheckoutForm = z.infer<typeof checkoutSchema>;
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { items, getTotal, clearCart } = useCart();
