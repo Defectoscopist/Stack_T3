@@ -80,9 +80,9 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               </div>
             )}
 
-            {query.length >= 2 && !isFetching && results && results.length === 0 && (
+            {query.length >= 2 && !isFetching && results?.length === 0 && (
               <div className="px-5 py-10 text-center text-gray-400 text-sm">
-                No products found for "{query}"
+                No products found for &quot;{query}&quot;
               </div>
             )}
 

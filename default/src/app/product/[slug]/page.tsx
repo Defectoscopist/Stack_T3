@@ -294,7 +294,7 @@ export default function ProductDetailPage() {
           <div className="max-w-xl mx-auto text-center">
             <div className="bg-white rounded-2xl p-10 shadow-lg border border-neutral-100">
               <h1 className="text-3xl font-bold text-neutral-900 mb-4">Product Not Found</h1>
-              <p className="text-neutral-600 mb-8">The product you're looking for doesn't exist or may have been removed.</p>
+              <p className="text-neutral-600 mb-8">The product you&apos;re looking for doesn&apos;t exist or may have been removed.</p>
               {error && <p className="text-red-500 mb-6 text-sm">{error.message}</p>}
               <Link
                 href="/"
@@ -484,7 +484,7 @@ export default function ProductDetailPage() {
                 <span className="text-4xl md:text-5xl font-bold text-neutral-900">
                   ${displayPrice?.toFixed(2)}
                 </span>
-                {originalPrice && originalPrice > (displayPrice || 0) && (
+                {originalPrice && originalPrice > (displayPrice ?? 0) && (
                   <>
                     <span className="text-2xl text-neutral-400 line-through">
                       ${originalPrice.toFixed(2)}
@@ -500,11 +500,11 @@ export default function ProductDetailPage() {
             {/* Rating */}
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1">
-                {[...Array(5)].map((_, i) => (
+                {Array.from({ length: 5 }, (_, i) => i).map((starIndex) => (
                   <Star
-                    key={i}
+                    key={starIndex}
                     className={`w-5 h-5 ${
-                      i < Math.round(product.averageRating) ? "fill-amber-400 text-amber-400" : "text-neutral-200"
+                      starIndex < Math.round(product.averageRating) ? "fill-amber-400 text-amber-400" : "text-neutral-200"
                     }`}
                   />
                 ))}
@@ -541,7 +541,7 @@ export default function ProductDetailPage() {
                   <label className="text-sm font-semibold text-neutral-900 uppercase tracking-wide">
                     Color:{" "}
                     <span className="text-neutral-600 font-normal normal-case">
-                      {selectedColor || "Select a color"}
+                      {selectedColor ?? "Select a color"}
                     </span>
                   </label>
                 </div>
@@ -577,7 +577,7 @@ export default function ProductDetailPage() {
                   <label className="text-sm font-semibold text-neutral-900 uppercase tracking-wide">
                     Size:{" "}
                     <span className="text-neutral-600 font-normal normal-case">
-                      {selectedSize || "Select a size"}
+                      {selectedSize ?? "Select a size"}
                     </span>
                   </label>
                   <button
@@ -782,7 +782,7 @@ export default function ProductDetailPage() {
                       <div>
                         <p className="font-medium text-neutral-900 text-sm">Quality Guarantee</p>
                         <p className="text-neutral-600 text-sm">
-                          If you receive a defective item, we'll replace it free of charge.
+                          If you receive a defective item, we&apos;ll replace it free of charge.
                         </p>
                       </div>
                     </div>

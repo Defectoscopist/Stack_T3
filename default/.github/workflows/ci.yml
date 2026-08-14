@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: "20"
+  # Postinstall runs `prisma generate`, which reads the datasource URL from the
+  # schema even without connecting. A harmless valid URL is enough for install.
+  DATABASE_URL: mysql://root:password@localhost:3306/app
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Run ESLint
+        run: npm run lint
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Run typecheck
+        run: npm run typecheck
+
+  unit:
+    name: Unit tests (Vitest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Run unit tests
+        run: npm test
+
+  e2e:
+    name: E2E tests (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      # NOTE: current E2E specs are DB-agnostic smoke tests, so no MySQL
+      # container is needed yet. To test DB-backed flows, add a `services.mysql`
+      # block and run `npx prisma migrate deploy` here.
+      - name: Run E2E tests
+        run: npm run test:e2e
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, unit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build production bundle
+        run: npm run build
+        env:
+          # Build shouldn't require real credentials to validate.
+          SKIP_ENV_VALIDATION: "1"

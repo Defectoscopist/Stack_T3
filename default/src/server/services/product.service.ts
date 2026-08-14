@@ -1,7 +1,7 @@
 import type { z } from "zod";
 import type * as ProductSchemas from "../schemas/product.schema";
 
-import { db } from "~/server/db";
+import type { db } from "~/server/db";
 import type { Prisma, ProductType, Sex } from "generated/prisma";
 
 type ProductWithRelations = {

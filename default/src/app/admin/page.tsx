@@ -89,7 +89,7 @@ function ConfirmDeleteModal({
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
           <p className="text-sm text-gray-500 mb-1">Are you sure you want to delete</p>
-          <p className="text-sm font-semibold text-gray-700 mb-6">"{itemName}"?</p>
+          <p className="text-sm font-semibold text-gray-700 mb-6">&quot;{itemName}&quot;?</p>
           <p className="text-xs text-red-500 mb-6">This action cannot be undone.</p>
           <div className="flex items-center gap-3">
             <button
@@ -710,18 +710,24 @@ export default function AdminPage() {
                     </div>
 
                     <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
-                      <select
-                        value={order.status}
-                        onChange={(e) => setOrderStatusConfirm({ orderId: order.id, status: e.target.value })}
-                        className="text-xs border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-300"
-                      >
-                        <option value="PENDING">Pending</option>
-                        <option value="DELIVERING">Delivering</option>
-                        <option value="COMPLETED">Completed</option>
-                        <option value="CANCELLED">Cancelled</option>
-                        <option value="RETURNING">Returning</option>
-                        <option value="RETURNED">Returned</option>
-                      </select>
+                      {isAdmin ? (
+                        <select
+                          value={order.status}
+                          onChange={(e) => setOrderStatusConfirm({ orderId: order.id, status: e.target.value })}
+                          className="text-xs border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                        >
+                          <option value="PENDING">Pending</option>
+                          <option value="DELIVERING">Delivering</option>
+                          <option value="COMPLETED">Completed</option>
+                          <option value="CANCELLED">Cancelled</option>
+                          <option value="RETURNING">Returning</option>
+                          <option value="RETURNED">Returned</option>
+                        </select>
+                      ) : (
+                        <span className="text-xs font-medium text-gray-600">
+                          Status: {order.status}
+                        </span>
+                      )}
                     </div>
 
                     {order.address && (
@@ -1233,7 +1239,7 @@ function ProductForm({
               placeholder="/images/catalog/[slug]/main.jpg"
               className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
             />
-            <p className="text-[10px] text-gray-400 mt-1">Default: /images/catalog/{slug || "[slug]"}/main.jpg</p>
+            <p className="text-[10px] text-gray-400 mt-1">Default: /images/catalog/{slug ?? "[slug]"}/main.jpg</p>
           </div>
 
           <div className="flex items-center gap-3 pt-4 border-t border-gray-100">

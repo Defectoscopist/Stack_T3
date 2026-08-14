@@ -24,7 +24,7 @@ export function ShippingInfoContent() {
       <div className="p-4 bg-neutral-50 rounded-xl">
         <h4 className="font-semibold text-neutral-900 mb-2">Order Tracking</h4>
         <p className="text-sm text-neutral-600">
-          Once your order ships, you'll receive a tracking number via email. You can also track your order from your account dashboard.
+          Once your order ships, you&apos;ll receive a tracking number via email. You can also track your order from your account dashboard.
         </p>
       </div>
       <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">

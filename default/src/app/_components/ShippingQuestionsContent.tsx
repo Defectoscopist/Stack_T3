@@ -24,7 +24,7 @@ export function ShippingQuestionsContent() {
       <div className="p-4 bg-neutral-50 rounded-xl">
         <h4 className="font-semibold text-neutral-900 mb-2">What if my package is lost?</h4>
         <p className="text-sm text-neutral-600">
-          If your package hasn't arrived within the estimated delivery window, contact our support team. We'll track it down and send a replacement if needed.
+          If your package hasn&apos;t arrived within the estimated delivery window, contact our support team. We&apos;ll track it down and send a replacement if needed.
         </p>
       </div>
       <div className="p-4 bg-neutral-50 rounded-xl">

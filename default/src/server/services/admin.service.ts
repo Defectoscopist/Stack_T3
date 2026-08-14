@@ -1,6 +1,7 @@
 import type { z } from "zod";
 import type * as AdminSchemas from "../schemas/admin.schema";
-import { db } from "~/server/db";
+import type { Prisma, ProductType, Sex, Size, OrderStatus } from "generated/prisma";
+import type { db } from "~/server/db";
 
 export class AdminService {
   constructor(private prisma: typeof db) {}
@@ -124,8 +125,8 @@ export class AdminService {
           originalPrice: input.originalPrice ?? undefined,
           discountPercent: input.discountPercent ?? 0,
           tags: input.tags ?? "",
-          productType: (input.productType as any) ?? "GENERAL",
-          sex: (input.sex as any) ?? "UNISEX",
+          productType: (input.productType as ProductType) ?? "GENERAL",
+          sex: (input.sex as Sex) ?? "UNISEX",
           productImages: input.images
             ? { create: input.images.map((img) => ({ url: img.url, altText: img.altText })) }
             : undefined,
@@ -135,7 +136,7 @@ export class AdminService {
                   price: v.price,
                   stock: v.stock,
                   color: v.color ?? null,
-                  size: (v.size as any) ?? "ONE_SIZE",
+                  size: (v.size as Size) ?? "ONE_SIZE",
                   variantImages: v.images
                     ? { create: v.images.map((img) => ({ url: img.url, altText: img.altText })) }
                     : undefined,
@@ -156,7 +157,7 @@ export class AdminService {
 
   async updateProduct(input: z.infer<typeof AdminSchemas.updateProductSchema>) {
     const { id, ...data } = input;
-    const updateData: Record<string, any> = {};
+    const updateData: Prisma.ProductUncheckedUpdateInput = {};
     if (data.name !== undefined) updateData.name = data.name;
     if (data.description !== undefined) updateData.description = data.description;
     if (data.slug !== undefined) updateData.slug = data.slug;
@@ -170,8 +171,8 @@ export class AdminService {
     if (data.originalPrice !== undefined) updateData.originalPrice = data.originalPrice;
     if (data.discountPercent !== undefined) updateData.discountPercent = data.discountPercent;
     if (data.tags !== undefined) updateData.tags = data.tags;
-    if (data.productType !== undefined) updateData.productType = data.productType;
-    if (data.sex !== undefined) updateData.sex = data.sex;
+    if (data.productType !== undefined) updateData.productType = data.productType as ProductType;
+    if (data.sex !== undefined) updateData.sex = data.sex as Sex;
 
     return this.prisma.product.update({
       where: { id },
@@ -208,7 +209,7 @@ export class AdminService {
 
   async updateCategory(input: z.infer<typeof AdminSchemas.updateCategorySchema>) {
     const { id, ...data } = input;
-    const updateData: Record<string, any> = {};
+    const updateData: Prisma.CategoryUpdateInput = {};
     if (data.name !== undefined) updateData.name = data.name;
     if (data.description !== undefined) updateData.description = data.description;
     if (data.slug !== undefined) updateData.slug = data.slug;
@@ -233,7 +234,7 @@ export class AdminService {
 
   async updateBrand(input: z.infer<typeof AdminSchemas.updateBrandSchema>) {
     const { id, ...data } = input;
-    const updateData: Record<string, any> = {};
+    const updateData: Prisma.BrandUpdateInput = {};
     if (data.name !== undefined) updateData.name = data.name;
     if (data.description !== undefined) updateData.description = data.description;
     if (data.slug !== undefined) updateData.slug = data.slug;
@@ -259,7 +260,7 @@ export class AdminService {
         price: input.price,
         stock: input.stock,
         color: input.color ?? null,
-        size: (input.size as any) ?? "ONE_SIZE",
+        size: (input.size as Size) ?? "ONE_SIZE",
         variantImages: input.images
           ? { create: input.images.map((img) => ({ url: img.url, altText: img.altText })) }
           : undefined,
@@ -270,11 +271,11 @@ export class AdminService {
 
   async updateVariant(input: z.infer<typeof AdminSchemas.updateVariantSchema>) {
     const { id, ...data } = input;
-    const updateData: Record<string, any> = {};
+    const updateData: Prisma.ProductVariantUpdateInput = {};
     if (data.price !== undefined) updateData.price = data.price;
     if (data.stock !== undefined) updateData.stock = data.stock;
     if (data.color !== undefined) updateData.color = data.color;
-    if (data.size !== undefined) updateData.size = data.size;
+    if (data.size !== undefined) updateData.size = data.size as Size;
     return this.prisma.productVariant.update({
       where: { id },
       data: updateData,
@@ -288,9 +289,9 @@ export class AdminService {
 
   // ===== Order Management =====
   async getAllOrders(input: z.infer<typeof AdminSchemas.adminGetOrdersSchema>) {
-    const where: Record<string, any> = {};
+    const where: Prisma.OrderWhereInput = {};
     if (input.status) {
-      where.status = input.status;
+      where.status = input.status as OrderStatus;
     }
     return this.prisma.order.findMany({
       where,
@@ -316,7 +317,7 @@ export class AdminService {
   async updateOrderStatus(input: z.infer<typeof AdminSchemas.adminUpdateOrderStatusSchema>) {
     return this.prisma.order.update({
       where: { id: input.orderId },
-      data: { status: input.status as any },
+      data: { status: input.status },
     });
   }
 
@@ -334,7 +335,7 @@ export class AdminService {
   async updateUserRole(input: z.infer<typeof AdminSchemas.adminUpdateUserRoleSchema>) {
     return this.prisma.user.update({
       where: { id: input.userId },
-      data: { role: input.role as any },
+      data: { role: input.role },
     });
   }
 }

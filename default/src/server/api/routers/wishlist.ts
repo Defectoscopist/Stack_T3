@@ -1,5 +1,4 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { TRPCError } from "@trpc/server";
 import { WishlistService } from "~/server/services/wishlist.service";
 import * as WishlistSchemas from "~/server/schemas/wishlist.schema";
 
@@ -11,27 +10,13 @@ export const wishlistRouter = createTRPCRouter({
   addToWishlist: protectedProcedure
     .input(WishlistSchemas.addToWishlistSchema)
     .mutation(async ({ input, ctx }) => {
-      try {
-        return await wishlistService.addToWishlist(ctx.session.user.id, input);
-      } catch (e) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: (e as Error).message,
-        });
-      }
+      return wishlistService.addToWishlist(ctx.session.user.id, input);
     }),
 
   removeFromWishlist: protectedProcedure
     .input(WishlistSchemas.removeFromWishlistSchema)
     .mutation(async ({ input, ctx }) => {
-      try {
-        return await wishlistService.removeFromWishlist(ctx.session.user.id, input);
-      } catch (e) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: (e as Error).message,
-        });
-      }
+      return wishlistService.removeFromWishlist(ctx.session.user.id, input);
     }),
 
   getWishlist: protectedProcedure

@@ -39,38 +39,47 @@ declare module "@auth/core/adapters" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authConfig = {
+  // Providers are only enabled when their credentials are present, so the app
+  // can be built/run without every OAuth app being configured. Never use
+  // `allowDangerousEmailAccountLinking` — it enables account takeover via email.
   providers: [
-    GitHubProvider ({
-      clientId: env.GITHUB_CLIENT_ID,
-      clientSecret: env.GITHUB_CLIENT_SECRET,
-      allowDangerousEmailAccountLinking: true
-    }),
-    GoogleProvider ({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-      allowDangerousEmailAccountLinking : true
-    }), 
-    VKProvider ({
-      clientId: env.VK_CLIENT_ID,
-      clientSecret: env.VK_CLIENT_SECRET,
-      allowDangerousEmailAccountLinking: true
-    }),
-    YandexProvider ({
-      clientId: env.YANDEX_CLIENT_ID,
-      clientSecret: env.YANDEX_CLIENT_SECRET,
-      allowDangerousEmailAccountLinking: true,
-    }),
+    ...(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET
+      ? [
+          GitHubProvider({
+            clientId: env.GITHUB_CLIENT_ID,
+            clientSecret: env.GITHUB_CLIENT_SECRET,
+          }),
+        ]
+      : []),
+    ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
+      ? [
+          GoogleProvider({
+            clientId: env.GOOGLE_CLIENT_ID,
+            clientSecret: env.GOOGLE_CLIENT_SECRET,
+          }),
+        ]
+      : []),
+    ...(env.VK_CLIENT_ID && env.VK_CLIENT_SECRET
+      ? [
+          VKProvider({
+            clientId: env.VK_CLIENT_ID,
+            clientSecret: env.VK_CLIENT_SECRET,
+          }),
+        ]
+      : []),
+    ...(env.YANDEX_CLIENT_ID && env.YANDEX_CLIENT_SECRET
+      ? [
+          YandexProvider({
+            clientId: env.YANDEX_CLIENT_ID,
+            clientSecret: env.YANDEX_CLIENT_SECRET,
+          }),
+        ]
+      : []),
   ],
   adapter: PrismaAdapter(db),
 
   callbacks: {
-    async signIn({ user, account, profile }) {
-      if (account?.provider === 'yandex') {
-        return true;
-      }
-      return true;
-    },
-    session: ({session, user}) => ({
+    session: ({ session, user }) => ({
       ...session,
       user: {
         ...session.user,
@@ -79,5 +88,4 @@ export const authConfig = {
       },
     }),
   },
-
 } satisfies NextAuthConfig;

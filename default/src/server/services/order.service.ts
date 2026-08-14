@@ -1,7 +1,8 @@
 import type z from "zod";
 import type * as OrderSchemas from "../schemas/order.schema";
 
-import { db } from "~/server/db";
+import { TRPCError } from "@trpc/server";
+import type { db } from "~/server/db";
 import type { Prisma } from "generated/prisma";
 
 export class OrderService {
@@ -59,7 +60,10 @@ export class OrderService {
         const foundIds = new Set(variants.map((variant) => variant.id));
         const missing = productVariantIds.filter((id) => !foundIds.has(id));
         if (missing.length > 0) {
-            throw new Error(`Product variant(s) not found: ${missing.join(", ")}`);
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: `Product variant(s) not found: ${missing.join(", ")}`,
+            });
         }
 
         const variantById = new Map(variants.map((variant) => [variant.id, variant]));
@@ -67,7 +71,10 @@ export class OrderService {
         const orderItems = mergedItems.map((item) => {
             const variant = variantById.get(item.productVariantId)!;
             if (item.quantity > variant.stock) {
-                throw new Error(`Insufficient stock for variant ${variant.id}. Available: ${variant.stock}, requested: ${item.quantity}`);
+                throw new TRPCError({
+                    code: "CONFLICT",
+                    message: `Insufficient stock for variant ${variant.id}. Available: ${variant.stock}, requested: ${item.quantity}`,
+                });
             }
 
             return {
@@ -144,9 +151,13 @@ export class OrderService {
         });
     }
 
-    async getOrderById(input: z.infer<typeof OrderSchemas.getOrderByIdSchema>) {
-        return this.prisma.order.findUnique({
-            where: { id: input.id },
+    /**
+     * Scope order lookup by the requesting user so users can only read their
+     * own orders. Returns `null` if the order doesn't exist or isn't owned.
+     */
+    async getOrderById(input: z.infer<typeof OrderSchemas.getOrderByIdSchema>, userId: string) {
+        return this.prisma.order.findFirst({
+            where: { id: input.id, userId },
             include: {
                 orderItems: {
                     include: {
@@ -166,27 +177,31 @@ export class OrderService {
         });
     }
 
-    async updateOrderStatus(input: z.infer<typeof OrderSchemas.updateOrderStatusSchema>) {
-        const { orderId, status } = input;
-        return this.prisma.order.update({
-            where: { id: orderId },
-            data: { status },
-        });
-    }
-
-    async cancelOrder(input: z.infer<typeof OrderSchemas.cancelOrderSchema>) {
-        const { orderId } = input;
+    async cancelOrder(input: z.infer<typeof OrderSchemas.cancelOrderSchema>, userId: string) {
         return this.prisma.$transaction(async (tx) => {
-            // Get order items to restore stock
-            const order = await tx.order.findUnique({
-                where: { id: orderId },
+            // Get order items to restore stock (scoped to the owner)
+            const order = await tx.order.findFirst({
+                where: { id: input.orderId, userId },
                 include: { orderItems: true },
             });
-            if (!order) throw new Error("Order not found");
+            if (!order) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Order not found or not owned by you",
+                });
+            }
+
+            // Only allow cancelling in cancellable states
+            if (order.status !== "PENDING" && order.status !== "DELIVERING") {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Cannot cancel order in current status",
+                });
+            }
 
             // Cancel the order
             const updated = await tx.order.update({
-                where: { id: orderId },
+                where: { id: input.orderId },
                 data: { status: "CANCELLED" },
             });
 

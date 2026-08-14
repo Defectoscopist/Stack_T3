@@ -1,4 +1,5 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { TRPCError } from "@trpc/server";
 import { OrderService } from "~/server/services/order.service";
 import { AddressService } from "~/server/services/address.service";
 import * as OrderSchemas from "~/server/schemas/order.schema";
@@ -11,8 +12,8 @@ const addressService = new AddressService(db);
 export const orderRouter = createTRPCRouter({
     createOrder: protectedProcedure
         .input(OrderSchemas.createOrderSchema)
-        .mutation(async ({ input }) => {
-            return orderService.createOrder(input);
+        .mutation(async ({ input, ctx }) => {
+            return orderService.createOrder({ ...input, userId: ctx.session.user.id });
         }),
 
     checkout: protectedProcedure
@@ -41,33 +42,34 @@ export const orderRouter = createTRPCRouter({
 
     getOrdersByUserId: protectedProcedure
         .input(OrderSchemas.getOrdersByUserIdSchema)
-        .query(async ({ input }) => {
-            return orderService.getOrdersByUserId(input);
+        .query(async ({ input, ctx }) => {
+            // Ignore the client-provided userId and always scope to the session
+            // user so users can only see their own orders.
+            return orderService.getOrdersByUserId({
+                ...input,
+                userId: ctx.session.user.id,
+            });
         }),
 
     getOrderById: protectedProcedure
         .input(OrderSchemas.getOrderByIdSchema)
-        .query(async ({ input }) => {
-            return orderService.getOrderById(input);
-        }),
-
-    updateOrderStatus: protectedProcedure
-        .input(OrderSchemas.updateOrderStatusSchema)
-        .mutation(async ({ input }) => {
-            return orderService.updateOrderStatus(input);
+        .query(async ({ input, ctx }) => {
+            const order = await orderService.getOrderById(
+                input,
+                ctx.session.user.id,
+            );
+            if (!order) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Order not found or not owned by you",
+                });
+            }
+            return order;
         }),
 
     cancelOrder: protectedProcedure
         .input(OrderSchemas.cancelOrderSchema)
         .mutation(async ({ input, ctx }) => {
-            // Only allow cancelling if the order belongs to the user
-            const order = await orderService.getOrderById({ id: input.orderId });
-            if (!order || order?.userId !== ctx.session.user.id) {
-                throw new Error("Order not found or not owned by you");
-            }
-            if (order.status !== "PENDING" && order.status !== "DELIVERING") {
-                throw new Error("Cannot cancel order in current status");
-            }
-            return orderService.cancelOrder(input);
+            return orderService.cancelOrder(input, ctx.session.user.id);
         }),
 });

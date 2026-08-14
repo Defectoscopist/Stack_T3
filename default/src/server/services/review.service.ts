@@ -1,7 +1,9 @@
 import type z from "zod";
 import type * as ReviewSchemas from "../schemas/review.schema";
 
-import { db } from "~/server/db";
+import { TRPCError } from "@trpc/server";
+import { Prisma } from "generated/prisma";
+import type { db } from "~/server/db";
 
 export class ReviewService {
   constructor(private prisma: typeof db) {}
@@ -10,18 +12,42 @@ export class ReviewService {
     userId: string,
     input: z.infer<typeof ReviewSchemas.createReviewSchema>,
   ) {
-    return this.prisma.review.create({
-      data: {
-        userId,
-        productId: input.productId,
-        rating: input.rating,
-        title: input.title ?? null,
-        comment: input.comment ?? null,
-      },
-      include: {
-        user: { select: { id: true, name: true, image: true } },
-      },
+    const product = await this.prisma.product.findUnique({
+      where: { id: input.productId },
+      select: { id: true },
     });
+    if (!product) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: `Product with ID ${input.productId} not found`,
+      });
+    }
+
+    try {
+      return await this.prisma.review.create({
+        data: {
+          userId,
+          productId: input.productId,
+          rating: input.rating,
+          title: input.title ?? null,
+          comment: input.comment ?? null,
+        },
+        include: {
+          user: { select: { id: true, name: true, image: true } },
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "You have already reviewed this product",
+        });
+      }
+      throw error;
+    }
   }
 
   async updateReview(
@@ -32,7 +58,10 @@ export class ReviewService {
       where: { id: input.reviewId },
     });
     if (!review || review?.userId !== userId) {
-      throw new Error("Review not found or not owned by you");
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Review not found or not owned by you",
+      });
     }
 
     return this.prisma.review.update({
@@ -53,7 +82,10 @@ export class ReviewService {
       where: { id: reviewId },
     });
     if (!review || review?.userId !== userId) {
-      throw new Error("Review not found or not owned by you");
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Review not found or not owned by you",
+      });
     }
 
     return this.prisma.review.delete({ where: { id: reviewId } });

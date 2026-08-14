@@ -22,7 +22,9 @@ const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   });
 });
 
-// Read-only queries — accessible by any logged-in user
+// Read-only queries (dashboard, catalog, orders, users) — visible to any
+// authenticated user. This is a demo pet project, so read access is open to
+// all logged-in clients; only mutations are admin-gated below.
 const viewProcedure = protectedProcedure;
 
 export const adminRouter = createTRPCRouter({
@@ -46,7 +48,7 @@ export const adminRouter = createTRPCRouter({
   }),
 
   getProductById: viewProcedure
-    .input(AdminSchemas.deleteProductSchema)
+    .input(AdminSchemas.getProductByIdSchema)
     .query(async ({ input }) => {
       return adminService.getProductById(input.id);
     }),

@@ -28,7 +28,7 @@ export function ReturnPolicyContent() {
         <div>
           <h4 className="font-semibold text-neutral-900 mb-1">Quality Guarantee</h4>
           <p className="text-sm text-neutral-600">
-            If you receive a defective or incorrect item, we'll replace it free of charge. Contact our support team within 7 days of delivery.
+            If you receive a defective or incorrect item, we&apos;ll replace it free of charge. Contact our support team within 7 days of delivery.
           </p>
         </div>
       </div>

@@ -11,14 +11,17 @@ export const env = createEnv({
       process.env.NODE_ENV === "production"
         ? z.string()
         : z.string().optional(),
-    GITHUB_CLIENT_ID: z.string(),
-    GITHUB_CLIENT_SECRET: z.string(),
-    GOOGLE_CLIENT_ID: z.string(),
-    GOOGLE_CLIENT_SECRET: z.string(),
-    VK_CLIENT_ID: z.string(),
-    VK_CLIENT_SECRET: z.string(),
-    YANDEX_CLIENT_ID: z.string(),
-    YANDEX_CLIENT_SECRET: z.string(),
+    // OAuth provider credentials are optional so the app can be built and run
+    // without every provider being configured. Providers are enabled
+    // conditionally in `src/server/auth/config.ts`.
+    GITHUB_CLIENT_ID: z.string().optional(),
+    GITHUB_CLIENT_SECRET: z.string().optional(),
+    GOOGLE_CLIENT_ID: z.string().optional(),
+    GOOGLE_CLIENT_SECRET: z.string().optional(),
+    VK_CLIENT_ID: z.string().optional(),
+    VK_CLIENT_SECRET: z.string().optional(),
+    YANDEX_CLIENT_ID: z.string().optional(),
+    YANDEX_CLIENT_SECRET: z.string().optional(),
     DATABASE_URL: z.string().url(),
     NODE_ENV: z
       .enum(["development", "test", "production"])

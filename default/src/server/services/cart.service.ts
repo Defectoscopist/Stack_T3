@@ -1,10 +1,22 @@
 import type z from "zod";
 import type * as CartSchemas from "../schemas/cart.schema";
 
-import { db } from "~/server/db";
+import { TRPCError } from "@trpc/server";
+import type { db } from "~/server/db";
 
 export class CartService {
     constructor(private prisma: typeof db) {}
+
+    /**
+     * Load a cart item with its cart so callers can verify ownership.
+     * Returns `null` when the item doesn't exist.
+     */
+    async findCartItemOwnership(cartItemId: string) {
+        return this.prisma.cartProduct.findUnique({
+            where: { id: cartItemId },
+            include: { cart: { select: { userId: true } } },
+        });
+    }
 
     async getCartByUserId(input: z.infer<typeof CartSchemas.getCartByUserIdSchema>) {
         let cart = await this.prisma.cart.findUnique({
@@ -52,7 +64,10 @@ export class CartService {
         });
 
         if (!cartItem) {
-            throw new Error(`Cart item with ID ${input.cartItemId} not found`);
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: `Cart item with ID ${input.cartItemId} not found`,
+            });
         }
 
         if (input.quantity === 0) {
@@ -66,11 +81,17 @@ export class CartService {
         });
 
         if (!productVariant) {
-            throw new Error(`Product variant for the cart item was not found`);
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: `Product variant for the cart item was not found`,
+            });
         }
 
         if (input.quantity > productVariant.stock) {
-            throw new Error(`Insufficient stock. Available: ${productVariant.stock}, requested: ${input.quantity}`);
+            throw new TRPCError({
+                code: "CONFLICT",
+                message: `Insufficient stock. Available: ${productVariant.stock}, requested: ${input.quantity}`,
+            });
         }
 
         return this.prisma.cartProduct.update({
@@ -99,11 +120,17 @@ export class CartService {
         });
 
         if (!productVariant) {
-            throw new Error(`Product variant with ID ${input.productVariantId} not found`);
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: `Product variant with ID ${input.productVariantId} not found`,
+            });
         }
 
         if (productVariant.stock < input.quantity) {
-            throw new Error(`Insufficient stock. Available: ${productVariant.stock}, requested: ${input.quantity}`);
+            throw new TRPCError({
+                code: "CONFLICT",
+                message: `Insufficient stock. Available: ${productVariant.stock}, requested: ${input.quantity}`,
+            });
         }
 
         const existingCartItem = await this.prisma.cartProduct.findFirst({
@@ -116,7 +143,10 @@ export class CartService {
         if (existingCartItem) {
             const newQuantity = existingCartItem.quantity + input.quantity;
             if (newQuantity > productVariant.stock) {
-                throw new Error(`Insufficient stock. Available: ${productVariant.stock}, requested: ${newQuantity}`);
+                throw new TRPCError({
+                    code: "CONFLICT",
+                    message: `Insufficient stock. Available: ${productVariant.stock}, requested: ${newQuantity}`,
+                });
             }
 
             return this.prisma.cartProduct.update({
@@ -162,7 +192,10 @@ export class CartService {
         });
 
         if (!cartItem) {
-            throw new Error(`Cart item with ID ${input.cartItemId} not found`);
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: `Cart item with ID ${input.cartItemId} not found`,
+            });
         }
 
         return this.prisma.cartProduct.delete({

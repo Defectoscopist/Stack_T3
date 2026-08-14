@@ -145,7 +145,7 @@ export function Header() {
             )}
             {searchFocused && searchQuery.length >= 2 && !isFetching && searchResults?.length === 0 && (
               <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg py-6 px-4 text-center text-sm text-gray-400 z-50">
-                No products found for "{searchQuery}"
+                No products found for &quot;{searchQuery}&quot;
               </div>
             )}
           </div>

@@ -1,7 +1,8 @@
 import type z from "zod";
 import type * as WishlistSchemas from "../schemas/wishlist.schema";
 
-import { db } from "~/server/db";
+import { TRPCError } from "@trpc/server";
+import type { db } from "~/server/db";
 import type { Prisma } from "generated/prisma";
 
 type WishlistItemWithProduct = {
@@ -55,7 +56,22 @@ export class WishlistService {
       where: { id: input.productId },
     });
     if (!product) {
-      throw new Error(`Product with ID ${input.productId} not found`);
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: `Product with ID ${input.productId} not found`,
+      });
+    }
+
+    const existing = await this.prisma.wishlistItem.findUnique({
+      where: {
+        userId_productId: { userId, productId: input.productId },
+      },
+    });
+    if (existing) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "Product is already in your wishlist",
+      });
     }
 
     const item = await this.prisma.wishlistItem.create({

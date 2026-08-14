@@ -80,6 +80,10 @@ export const deleteProductSchema = z.object({
   id: z.string().min(1),
 });
 
+export const getProductByIdSchema = z.object({
+  id: z.string().min(1),
+});
+
 // ===== CRUD Category Schemas =====
 export const createCategorySchema = z.object({
   name: z.string().min(1, "Name is required"),

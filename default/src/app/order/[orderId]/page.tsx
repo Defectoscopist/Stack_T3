@@ -82,7 +82,7 @@ export default function OrderDetailPage() {
         <div className="text-center">
           <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Order Not Found</h1>
-          <p className="text-gray-500 mb-6">This order doesn't exist or you don't have access to it.</p>
+          <p className="text-gray-500 mb-6">This order doesn&apos;t exist or you don&apos;t have access to it.</p>
           <Link href="/profile" className="inline-flex items-center gap-2 bg-black text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-gray-800 transition-colors">
             <ArrowLeft className="w-4 h-4" />
             Back to Profile

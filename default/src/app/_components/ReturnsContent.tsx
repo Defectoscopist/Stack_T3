@@ -18,7 +18,7 @@ export function ReturnsContent() {
       <div className="p-4 bg-neutral-50 rounded-xl">
         <h4 className="font-semibold text-neutral-900 mb-2">Exchanges</h4>
         <p className="text-sm text-neutral-600">
-          We offer free size exchanges. Place a new order and return the original item for a full refund — it's the fastest way to get the correct size.
+          We offer free size exchanges. Place a new order and return the original item for a full refund — it&apos;s the fastest way to get the correct size.
         </p>
       </div>
       <div className="p-4 bg-neutral-50 rounded-xl">
