@@ -6,6 +6,7 @@ import { Geist } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import { TRPCReactProvider } from "~/trpc/react";
 import { CartProvider } from "./_components/CartContext";
+import { CookieConsent } from "./_components/CookieConsent";
 import { Header } from "./_components/Header";
 import { Footer } from "./_components/Footer";
 
@@ -39,6 +40,7 @@ export default function RootLayout({
             </CartProvider>
           </TRPCReactProvider>
         </SessionProvider>
+        <CookieConsent />
       </body>
     </html>
   );

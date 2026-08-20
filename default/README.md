@@ -17,8 +17,8 @@ A full-featured fashion e‑commerce web application built with the
 - **Wishlist** — save products for later.
 - **Authentication** — NextAuth v5 with **GitHub / Google / VK / Yandex** (providers are enabled only when their credentials are present).
 - **Admin dashboard** — dashboard stats, product/category/brand/variant CRUD, order status management, user role management.
-- **Tests** — Vitest unit tests + Playwright E2E smoke tests.
-- **CI** — GitHub Actions pipeline: `lint → typecheck → unit → e2e → build`.
+- **Tests** — Vitest unit (schemas, order/payment, mobile Bearer) + Playwright E2E smoke (UI + mobile API).
+- **CI** — GitHub Actions: `lint → typecheck → unit → architecture (depcruise) → e2e → build`.
 
 ---
 
@@ -35,7 +35,7 @@ A full-featured fashion e‑commerce web application built with the
 | Styling | [Tailwind CSS v4](https://tailwindcss.com/) + `prettier-plugin-tailwindcss` |
 | Forms | `react-hook-form` + `@hookform/resolvers` |
 | Tests | [Vitest](https://vitest.dev/) (unit), [Playwright](https://playwright.dev/) (E2E) |
-| CI | GitHub Actions |
+| CI | GitHub Actions (lint, typecheck, unit, depcruise, e2e, build) |
 
 ---
 
@@ -71,10 +71,17 @@ VK_CLIENT_ID=""
 VK_CLIENT_SECRET=""
 YANDEX_CLIENT_ID=""
 YANDEX_CLIENT_SECRET=""
+
+# Stripe — OPTIONAL (checkout falls back to simulated payment when empty)
+STRIPE_SECRET_KEY=""
+STRIPE_WEBHOOK_SECRET=""
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=""
 ```
 
 > All OAuth variables are optional — the app builds and runs without them; only
 > the providers you configure will appear on the sign‑in screen.
+> Stripe is also optional: without keys, checkout uses a simulated payment with
+> the same stock-hold flow.
 
 ### 2. Install dependencies
 
@@ -230,6 +237,9 @@ without a real database.
 3. Point `DATABASE_URL` to a reachable MySQL instance (or a managed provider).
 4. Vercel builds with `npm run build` — set `SKIP_ENV_VALIDATION=1` if needed
    (e.g. for Docker builds), and run `npm run db:migrate` on your DB first.
+5. If you enable Stripe, register the webhook URL `https://<your-app>/api/webhooks/stripe`
+   in the Stripe Dashboard (event `payment_intent.succeeded`) and set `STRIPE_WEBHOOK_SECRET`.
+   Without Stripe keys, checkout runs in simulated mode (same stock‑hold behaviour).
 
 ### Docker
 ```bash

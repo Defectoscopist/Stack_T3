@@ -156,7 +156,16 @@ export function Footer() {
         <div className="mt-8 pt-8 border-t border-gray-200">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-600 text-sm">
-              &copy; 2024 SHOP. All rights reserved.
+              2026 SHOP &mdash; demo project, nothing for sale. Product photos by{" "}
+              <a
+                href="https://unsplash.com"
+                target="_blank"
+                rel="noreferrer"
+                className="underline underline-offset-2 hover:text-black"
+              >
+                Unsplash
+              </a>
+              .
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link href="/terms" className="text-gray-600 hover:text-black text-sm">

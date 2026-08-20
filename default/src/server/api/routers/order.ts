@@ -10,12 +10,6 @@ const orderService = new OrderService(db);
 const addressService = new AddressService(db);
 
 export const orderRouter = createTRPCRouter({
-    createOrder: protectedProcedure
-        .input(OrderSchemas.createOrderSchema)
-        .mutation(async ({ input, ctx }) => {
-            return orderService.createOrder({ ...input, userId: ctx.session.user.id });
-        }),
-
     checkout: protectedProcedure
         .input(OrderSchemas.checkoutSchema)
         .mutation(async ({ input, ctx }) => {
@@ -32,19 +26,19 @@ export const orderRouter = createTRPCRouter({
                 phone: input.phone,
                 userId,
             });
-            // 2. Create order with the address
-            return orderService.createOrder({
-                userId,
-                addressId: address.id,
-                items: input.items,
-            });
+            // 2. Create order + hold stock + payment intent
+            return orderService.checkout(input, userId, address.id);
+        }),
+
+    confirmCheckout: protectedProcedure
+        .input(OrderSchemas.cancelOrderSchema) // { orderId }
+        .mutation(async ({ input, ctx }) => {
+            return orderService.confirmOrder(input.orderId, ctx.session.user.id);
         }),
 
     getOrdersByUserId: protectedProcedure
         .input(OrderSchemas.getOrdersByUserIdSchema)
         .query(async ({ input, ctx }) => {
-            // Ignore the client-provided userId and always scope to the session
-            // user so users can only see their own orders.
             return orderService.getOrdersByUserId({
                 ...input,
                 userId: ctx.session.user.id,
@@ -54,10 +48,7 @@ export const orderRouter = createTRPCRouter({
     getOrderById: protectedProcedure
         .input(OrderSchemas.getOrderByIdSchema)
         .query(async ({ input, ctx }) => {
-            const order = await orderService.getOrderById(
-                input,
-                ctx.session.user.id,
-            );
+            const order = await orderService.getOrderById(input.id, ctx.session.user.id);
             if (!order) {
                 throw new TRPCError({
                     code: "NOT_FOUND",
@@ -70,6 +61,6 @@ export const orderRouter = createTRPCRouter({
     cancelOrder: protectedProcedure
         .input(OrderSchemas.cancelOrderSchema)
         .mutation(async ({ input, ctx }) => {
-            return orderService.cancelOrder(input, ctx.session.user.id);
+            return orderService.cancelOrder(input.orderId, ctx.session.user.id);
         }),
 });

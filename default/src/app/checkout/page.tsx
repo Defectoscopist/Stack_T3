@@ -33,9 +33,9 @@ export default function CheckoutPage() {
   const { items, getTotal, clearCart } = useCart();
 
   const checkoutMutation = api.order.checkout.useMutation({
-    onSuccess: (order) => {
+    onSuccess: (result) => {
       clearCart();
-      router.push(`/order/${order.id}`);
+      router.push(`/order/${result.order.id}`);
     },
     onError: (error) => {
       alert(error.message || "Failed to place order. Please try again.");
@@ -51,12 +51,12 @@ export default function CheckoutPage() {
     resolver: zodResolver(checkoutSchema),
   });
 
-  const onSubmit = async (data: CheckoutForm) => {
+  const onSubmit = (data: CheckoutForm) => {
     if (items.length === 0) {
       alert("Your cart is empty");
       return;
     }
-
+    if (isSubmitting) return;
     setIsSubmitting(true);
 
     checkoutMutation.mutate({

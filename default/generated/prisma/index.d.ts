@@ -34,6 +34,11 @@ export type VerificationToken = $Result.DefaultSelection<Prisma.$VerificationTok
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
+ * Model MobileToken
+ * 
+ */
+export type MobileToken = $Result.DefaultSelection<Prisma.$MobileTokenPayload>
+/**
  * Model Category
  * 
  */
@@ -156,6 +161,7 @@ export type Sex = (typeof Sex)[keyof typeof Sex]
 
 export const OrderStatus: {
   PENDING: 'PENDING',
+  PAID: 'PAID',
   DELIVERING: 'DELIVERING',
   COMPLETED: 'COMPLETED',
   CANCELLED: 'CANCELLED',
@@ -164,6 +170,16 @@ export const OrderStatus: {
 };
 
 export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
+
+
+export const PaymentStatus: {
+  PENDING_PAYMENT: 'PENDING_PAYMENT',
+  PAID: 'PAID',
+  FAILED: 'FAILED',
+  REFUNDED: 'REFUNDED'
+};
+
+export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
 
 }
 
@@ -186,6 +202,10 @@ export const Sex: typeof $Enums.Sex
 export type OrderStatus = $Enums.OrderStatus
 
 export const OrderStatus: typeof $Enums.OrderStatus
+
+export type PaymentStatus = $Enums.PaymentStatus
+
+export const PaymentStatus: typeof $Enums.PaymentStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -344,6 +364,16 @@ export class PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.mobileToken`: Exposes CRUD operations for the **MobileToken** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MobileTokens
+    * const mobileTokens = await prisma.mobileToken.findMany()
+    * ```
+    */
+  get mobileToken(): Prisma.MobileTokenDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.category`: Exposes CRUD operations for the **Category** model.
@@ -919,6 +949,7 @@ export namespace Prisma {
     Session: 'Session',
     VerificationToken: 'VerificationToken',
     User: 'User',
+    MobileToken: 'MobileToken',
     Category: 'Category',
     Brand: 'Brand',
     Product: 'Product',
@@ -950,7 +981,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "account" | "session" | "verificationToken" | "user" | "category" | "brand" | "product" | "review" | "wishlistItem" | "productVariant" | "productImage" | "productVariantImage" | "cart" | "cartProduct" | "order" | "orderItem" | "address"
+      modelProps: "account" | "session" | "verificationToken" | "user" | "mobileToken" | "category" | "brand" | "product" | "review" | "wishlistItem" | "productVariant" | "productImage" | "productVariantImage" | "cart" | "cartProduct" | "order" | "orderItem" | "address"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1215,6 +1246,72 @@ export namespace Prisma {
           count: {
             args: Prisma.UserCountArgs<ExtArgs>
             result: $Utils.Optional<UserCountAggregateOutputType> | number
+          }
+        }
+      }
+      MobileToken: {
+        payload: Prisma.$MobileTokenPayload<ExtArgs>
+        fields: Prisma.MobileTokenFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MobileTokenFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MobileTokenPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MobileTokenFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MobileTokenPayload>
+          }
+          findFirst: {
+            args: Prisma.MobileTokenFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MobileTokenPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MobileTokenFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MobileTokenPayload>
+          }
+          findMany: {
+            args: Prisma.MobileTokenFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MobileTokenPayload>[]
+          }
+          create: {
+            args: Prisma.MobileTokenCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MobileTokenPayload>
+          }
+          createMany: {
+            args: Prisma.MobileTokenCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.MobileTokenDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MobileTokenPayload>
+          }
+          update: {
+            args: Prisma.MobileTokenUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MobileTokenPayload>
+          }
+          deleteMany: {
+            args: Prisma.MobileTokenDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MobileTokenUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.MobileTokenUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MobileTokenPayload>
+          }
+          aggregate: {
+            args: Prisma.MobileTokenAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMobileToken>
+          }
+          groupBy: {
+            args: Prisma.MobileTokenGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MobileTokenGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MobileTokenCountArgs<ExtArgs>
+            result: $Utils.Optional<MobileTokenCountAggregateOutputType> | number
           }
         }
       }
@@ -2176,6 +2273,7 @@ export namespace Prisma {
     session?: SessionOmit
     verificationToken?: VerificationTokenOmit
     user?: UserOmit
+    mobileToken?: MobileTokenOmit
     category?: CategoryOmit
     brand?: BrandOmit
     product?: ProductOmit
@@ -2271,6 +2369,7 @@ export namespace Prisma {
   export type UserCountOutputType = {
     accounts: number
     sessions: number
+    mobileTokens: number
     orders: number
     reviews: number
     wishlistItems: number
@@ -2280,6 +2379,7 @@ export namespace Prisma {
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
+    mobileTokens?: boolean | UserCountOutputTypeCountMobileTokensArgs
     orders?: boolean | UserCountOutputTypeCountOrdersArgs
     reviews?: boolean | UserCountOutputTypeCountReviewsArgs
     wishlistItems?: boolean | UserCountOutputTypeCountWishlistItemsArgs
@@ -2309,6 +2409,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SessionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountMobileTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MobileTokenWhereInput
   }
 
   /**
@@ -5621,6 +5728,7 @@ export namespace Prisma {
     homeAddressId?: boolean
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
+    mobileTokens?: boolean | User$mobileTokensArgs<ExtArgs>
     cart?: boolean | User$cartArgs<ExtArgs>
     orders?: boolean | User$ordersArgs<ExtArgs>
     reviews?: boolean | User$reviewsArgs<ExtArgs>
@@ -5646,6 +5754,7 @@ export namespace Prisma {
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
+    mobileTokens?: boolean | User$mobileTokensArgs<ExtArgs>
     cart?: boolean | User$cartArgs<ExtArgs>
     orders?: boolean | User$ordersArgs<ExtArgs>
     reviews?: boolean | User$reviewsArgs<ExtArgs>
@@ -5660,6 +5769,7 @@ export namespace Prisma {
     objects: {
       accounts: Prisma.$AccountPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
+      mobileTokens: Prisma.$MobileTokenPayload<ExtArgs>[]
       cart: Prisma.$CartPayload<ExtArgs> | null
       orders: Prisma.$OrderPayload<ExtArgs>[]
       reviews: Prisma.$ReviewPayload<ExtArgs>[]
@@ -6017,6 +6127,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    mobileTokens<T extends User$mobileTokensArgs<ExtArgs> = {}>(args?: Subset<T, User$mobileTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MobileTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     cart<T extends User$cartArgs<ExtArgs> = {}>(args?: Subset<T, User$cartArgs<ExtArgs>>): Prisma__CartClient<$Result.GetResult<Prisma.$CartPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     orders<T extends User$ordersArgs<ExtArgs> = {}>(args?: Subset<T, User$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reviews<T extends User$reviewsArgs<ExtArgs> = {}>(args?: Subset<T, User$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -6450,6 +6561,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.mobileTokens
+   */
+  export type User$mobileTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MobileToken
+     */
+    select?: MobileTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MobileToken
+     */
+    omit?: MobileTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MobileTokenInclude<ExtArgs> | null
+    where?: MobileTokenWhereInput
+    orderBy?: MobileTokenOrderByWithRelationInput | MobileTokenOrderByWithRelationInput[]
+    cursor?: MobileTokenWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MobileTokenScalarFieldEnum | MobileTokenScalarFieldEnum[]
+  }
+
+  /**
    * User.cart
    */
   export type User$cartArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6599,6 +6734,935 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model MobileToken
+   */
+
+  export type AggregateMobileToken = {
+    _count: MobileTokenCountAggregateOutputType | null
+    _min: MobileTokenMinAggregateOutputType | null
+    _max: MobileTokenMaxAggregateOutputType | null
+  }
+
+  export type MobileTokenMinAggregateOutputType = {
+    id: string | null
+    tokenHash: string | null
+    expiresAt: Date | null
+    userId: string | null
+    createdAt: Date | null
+  }
+
+  export type MobileTokenMaxAggregateOutputType = {
+    id: string | null
+    tokenHash: string | null
+    expiresAt: Date | null
+    userId: string | null
+    createdAt: Date | null
+  }
+
+  export type MobileTokenCountAggregateOutputType = {
+    id: number
+    tokenHash: number
+    expiresAt: number
+    userId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type MobileTokenMinAggregateInputType = {
+    id?: true
+    tokenHash?: true
+    expiresAt?: true
+    userId?: true
+    createdAt?: true
+  }
+
+  export type MobileTokenMaxAggregateInputType = {
+    id?: true
+    tokenHash?: true
+    expiresAt?: true
+    userId?: true
+    createdAt?: true
+  }
+
+  export type MobileTokenCountAggregateInputType = {
+    id?: true
+    tokenHash?: true
+    expiresAt?: true
+    userId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type MobileTokenAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MobileToken to aggregate.
+     */
+    where?: MobileTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MobileTokens to fetch.
+     */
+    orderBy?: MobileTokenOrderByWithRelationInput | MobileTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MobileTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MobileTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MobileTokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MobileTokens
+    **/
+    _count?: true | MobileTokenCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MobileTokenMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MobileTokenMaxAggregateInputType
+  }
+
+  export type GetMobileTokenAggregateType<T extends MobileTokenAggregateArgs> = {
+        [P in keyof T & keyof AggregateMobileToken]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMobileToken[P]>
+      : GetScalarType<T[P], AggregateMobileToken[P]>
+  }
+
+
+
+
+  export type MobileTokenGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MobileTokenWhereInput
+    orderBy?: MobileTokenOrderByWithAggregationInput | MobileTokenOrderByWithAggregationInput[]
+    by: MobileTokenScalarFieldEnum[] | MobileTokenScalarFieldEnum
+    having?: MobileTokenScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MobileTokenCountAggregateInputType | true
+    _min?: MobileTokenMinAggregateInputType
+    _max?: MobileTokenMaxAggregateInputType
+  }
+
+  export type MobileTokenGroupByOutputType = {
+    id: string
+    tokenHash: string
+    expiresAt: Date
+    userId: string
+    createdAt: Date
+    _count: MobileTokenCountAggregateOutputType | null
+    _min: MobileTokenMinAggregateOutputType | null
+    _max: MobileTokenMaxAggregateOutputType | null
+  }
+
+  type GetMobileTokenGroupByPayload<T extends MobileTokenGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MobileTokenGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MobileTokenGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MobileTokenGroupByOutputType[P]>
+            : GetScalarType<T[P], MobileTokenGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MobileTokenSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tokenHash?: boolean
+    expiresAt?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mobileToken"]>
+
+
+
+  export type MobileTokenSelectScalar = {
+    id?: boolean
+    tokenHash?: boolean
+    expiresAt?: boolean
+    userId?: boolean
+    createdAt?: boolean
+  }
+
+  export type MobileTokenOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tokenHash" | "expiresAt" | "userId" | "createdAt", ExtArgs["result"]["mobileToken"]>
+  export type MobileTokenInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $MobileTokenPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MobileToken"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tokenHash: string
+      expiresAt: Date
+      userId: string
+      createdAt: Date
+    }, ExtArgs["result"]["mobileToken"]>
+    composites: {}
+  }
+
+  type MobileTokenGetPayload<S extends boolean | null | undefined | MobileTokenDefaultArgs> = $Result.GetResult<Prisma.$MobileTokenPayload, S>
+
+  type MobileTokenCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MobileTokenFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MobileTokenCountAggregateInputType | true
+    }
+
+  export interface MobileTokenDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MobileToken'], meta: { name: 'MobileToken' } }
+    /**
+     * Find zero or one MobileToken that matches the filter.
+     * @param {MobileTokenFindUniqueArgs} args - Arguments to find a MobileToken
+     * @example
+     * // Get one MobileToken
+     * const mobileToken = await prisma.mobileToken.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MobileTokenFindUniqueArgs>(args: SelectSubset<T, MobileTokenFindUniqueArgs<ExtArgs>>): Prisma__MobileTokenClient<$Result.GetResult<Prisma.$MobileTokenPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one MobileToken that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MobileTokenFindUniqueOrThrowArgs} args - Arguments to find a MobileToken
+     * @example
+     * // Get one MobileToken
+     * const mobileToken = await prisma.mobileToken.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MobileTokenFindUniqueOrThrowArgs>(args: SelectSubset<T, MobileTokenFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MobileTokenClient<$Result.GetResult<Prisma.$MobileTokenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MobileToken that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MobileTokenFindFirstArgs} args - Arguments to find a MobileToken
+     * @example
+     * // Get one MobileToken
+     * const mobileToken = await prisma.mobileToken.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MobileTokenFindFirstArgs>(args?: SelectSubset<T, MobileTokenFindFirstArgs<ExtArgs>>): Prisma__MobileTokenClient<$Result.GetResult<Prisma.$MobileTokenPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MobileToken that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MobileTokenFindFirstOrThrowArgs} args - Arguments to find a MobileToken
+     * @example
+     * // Get one MobileToken
+     * const mobileToken = await prisma.mobileToken.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MobileTokenFindFirstOrThrowArgs>(args?: SelectSubset<T, MobileTokenFindFirstOrThrowArgs<ExtArgs>>): Prisma__MobileTokenClient<$Result.GetResult<Prisma.$MobileTokenPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MobileTokens that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MobileTokenFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MobileTokens
+     * const mobileTokens = await prisma.mobileToken.findMany()
+     * 
+     * // Get first 10 MobileTokens
+     * const mobileTokens = await prisma.mobileToken.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const mobileTokenWithIdOnly = await prisma.mobileToken.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MobileTokenFindManyArgs>(args?: SelectSubset<T, MobileTokenFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MobileTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a MobileToken.
+     * @param {MobileTokenCreateArgs} args - Arguments to create a MobileToken.
+     * @example
+     * // Create one MobileToken
+     * const MobileToken = await prisma.mobileToken.create({
+     *   data: {
+     *     // ... data to create a MobileToken
+     *   }
+     * })
+     * 
+     */
+    create<T extends MobileTokenCreateArgs>(args: SelectSubset<T, MobileTokenCreateArgs<ExtArgs>>): Prisma__MobileTokenClient<$Result.GetResult<Prisma.$MobileTokenPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many MobileTokens.
+     * @param {MobileTokenCreateManyArgs} args - Arguments to create many MobileTokens.
+     * @example
+     * // Create many MobileTokens
+     * const mobileToken = await prisma.mobileToken.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MobileTokenCreateManyArgs>(args?: SelectSubset<T, MobileTokenCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a MobileToken.
+     * @param {MobileTokenDeleteArgs} args - Arguments to delete one MobileToken.
+     * @example
+     * // Delete one MobileToken
+     * const MobileToken = await prisma.mobileToken.delete({
+     *   where: {
+     *     // ... filter to delete one MobileToken
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MobileTokenDeleteArgs>(args: SelectSubset<T, MobileTokenDeleteArgs<ExtArgs>>): Prisma__MobileTokenClient<$Result.GetResult<Prisma.$MobileTokenPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one MobileToken.
+     * @param {MobileTokenUpdateArgs} args - Arguments to update one MobileToken.
+     * @example
+     * // Update one MobileToken
+     * const mobileToken = await prisma.mobileToken.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MobileTokenUpdateArgs>(args: SelectSubset<T, MobileTokenUpdateArgs<ExtArgs>>): Prisma__MobileTokenClient<$Result.GetResult<Prisma.$MobileTokenPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more MobileTokens.
+     * @param {MobileTokenDeleteManyArgs} args - Arguments to filter MobileTokens to delete.
+     * @example
+     * // Delete a few MobileTokens
+     * const { count } = await prisma.mobileToken.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MobileTokenDeleteManyArgs>(args?: SelectSubset<T, MobileTokenDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MobileTokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MobileTokenUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MobileTokens
+     * const mobileToken = await prisma.mobileToken.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MobileTokenUpdateManyArgs>(args: SelectSubset<T, MobileTokenUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one MobileToken.
+     * @param {MobileTokenUpsertArgs} args - Arguments to update or create a MobileToken.
+     * @example
+     * // Update or create a MobileToken
+     * const mobileToken = await prisma.mobileToken.upsert({
+     *   create: {
+     *     // ... data to create a MobileToken
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MobileToken we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MobileTokenUpsertArgs>(args: SelectSubset<T, MobileTokenUpsertArgs<ExtArgs>>): Prisma__MobileTokenClient<$Result.GetResult<Prisma.$MobileTokenPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of MobileTokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MobileTokenCountArgs} args - Arguments to filter MobileTokens to count.
+     * @example
+     * // Count the number of MobileTokens
+     * const count = await prisma.mobileToken.count({
+     *   where: {
+     *     // ... the filter for the MobileTokens we want to count
+     *   }
+     * })
+    **/
+    count<T extends MobileTokenCountArgs>(
+      args?: Subset<T, MobileTokenCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MobileTokenCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MobileToken.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MobileTokenAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MobileTokenAggregateArgs>(args: Subset<T, MobileTokenAggregateArgs>): Prisma.PrismaPromise<GetMobileTokenAggregateType<T>>
+
+    /**
+     * Group by MobileToken.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MobileTokenGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MobileTokenGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MobileTokenGroupByArgs['orderBy'] }
+        : { orderBy?: MobileTokenGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MobileTokenGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMobileTokenGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MobileToken model
+   */
+  readonly fields: MobileTokenFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MobileToken.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MobileTokenClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MobileToken model
+   */
+  interface MobileTokenFieldRefs {
+    readonly id: FieldRef<"MobileToken", 'String'>
+    readonly tokenHash: FieldRef<"MobileToken", 'String'>
+    readonly expiresAt: FieldRef<"MobileToken", 'DateTime'>
+    readonly userId: FieldRef<"MobileToken", 'String'>
+    readonly createdAt: FieldRef<"MobileToken", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MobileToken findUnique
+   */
+  export type MobileTokenFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MobileToken
+     */
+    select?: MobileTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MobileToken
+     */
+    omit?: MobileTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MobileTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which MobileToken to fetch.
+     */
+    where: MobileTokenWhereUniqueInput
+  }
+
+  /**
+   * MobileToken findUniqueOrThrow
+   */
+  export type MobileTokenFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MobileToken
+     */
+    select?: MobileTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MobileToken
+     */
+    omit?: MobileTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MobileTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which MobileToken to fetch.
+     */
+    where: MobileTokenWhereUniqueInput
+  }
+
+  /**
+   * MobileToken findFirst
+   */
+  export type MobileTokenFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MobileToken
+     */
+    select?: MobileTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MobileToken
+     */
+    omit?: MobileTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MobileTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which MobileToken to fetch.
+     */
+    where?: MobileTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MobileTokens to fetch.
+     */
+    orderBy?: MobileTokenOrderByWithRelationInput | MobileTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MobileTokens.
+     */
+    cursor?: MobileTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MobileTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MobileTokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MobileTokens.
+     */
+    distinct?: MobileTokenScalarFieldEnum | MobileTokenScalarFieldEnum[]
+  }
+
+  /**
+   * MobileToken findFirstOrThrow
+   */
+  export type MobileTokenFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MobileToken
+     */
+    select?: MobileTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MobileToken
+     */
+    omit?: MobileTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MobileTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which MobileToken to fetch.
+     */
+    where?: MobileTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MobileTokens to fetch.
+     */
+    orderBy?: MobileTokenOrderByWithRelationInput | MobileTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MobileTokens.
+     */
+    cursor?: MobileTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MobileTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MobileTokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MobileTokens.
+     */
+    distinct?: MobileTokenScalarFieldEnum | MobileTokenScalarFieldEnum[]
+  }
+
+  /**
+   * MobileToken findMany
+   */
+  export type MobileTokenFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MobileToken
+     */
+    select?: MobileTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MobileToken
+     */
+    omit?: MobileTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MobileTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which MobileTokens to fetch.
+     */
+    where?: MobileTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MobileTokens to fetch.
+     */
+    orderBy?: MobileTokenOrderByWithRelationInput | MobileTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MobileTokens.
+     */
+    cursor?: MobileTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MobileTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MobileTokens.
+     */
+    skip?: number
+    distinct?: MobileTokenScalarFieldEnum | MobileTokenScalarFieldEnum[]
+  }
+
+  /**
+   * MobileToken create
+   */
+  export type MobileTokenCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MobileToken
+     */
+    select?: MobileTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MobileToken
+     */
+    omit?: MobileTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MobileTokenInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MobileToken.
+     */
+    data: XOR<MobileTokenCreateInput, MobileTokenUncheckedCreateInput>
+  }
+
+  /**
+   * MobileToken createMany
+   */
+  export type MobileTokenCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MobileTokens.
+     */
+    data: MobileTokenCreateManyInput | MobileTokenCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MobileToken update
+   */
+  export type MobileTokenUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MobileToken
+     */
+    select?: MobileTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MobileToken
+     */
+    omit?: MobileTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MobileTokenInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MobileToken.
+     */
+    data: XOR<MobileTokenUpdateInput, MobileTokenUncheckedUpdateInput>
+    /**
+     * Choose, which MobileToken to update.
+     */
+    where: MobileTokenWhereUniqueInput
+  }
+
+  /**
+   * MobileToken updateMany
+   */
+  export type MobileTokenUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MobileTokens.
+     */
+    data: XOR<MobileTokenUpdateManyMutationInput, MobileTokenUncheckedUpdateManyInput>
+    /**
+     * Filter which MobileTokens to update
+     */
+    where?: MobileTokenWhereInput
+    /**
+     * Limit how many MobileTokens to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MobileToken upsert
+   */
+  export type MobileTokenUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MobileToken
+     */
+    select?: MobileTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MobileToken
+     */
+    omit?: MobileTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MobileTokenInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MobileToken to update in case it exists.
+     */
+    where: MobileTokenWhereUniqueInput
+    /**
+     * In case the MobileToken found by the `where` argument doesn't exist, create a new MobileToken with this data.
+     */
+    create: XOR<MobileTokenCreateInput, MobileTokenUncheckedCreateInput>
+    /**
+     * In case the MobileToken was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MobileTokenUpdateInput, MobileTokenUncheckedUpdateInput>
+  }
+
+  /**
+   * MobileToken delete
+   */
+  export type MobileTokenDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MobileToken
+     */
+    select?: MobileTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MobileToken
+     */
+    omit?: MobileTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MobileTokenInclude<ExtArgs> | null
+    /**
+     * Filter which MobileToken to delete.
+     */
+    where: MobileTokenWhereUniqueInput
+  }
+
+  /**
+   * MobileToken deleteMany
+   */
+  export type MobileTokenDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MobileTokens to delete
+     */
+    where?: MobileTokenWhereInput
+    /**
+     * Limit how many MobileTokens to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * MobileToken without action
+   */
+  export type MobileTokenDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MobileToken
+     */
+    select?: MobileTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MobileToken
+     */
+    omit?: MobileTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MobileTokenInclude<ExtArgs> | null
   }
 
 
@@ -11703,17 +12767,20 @@ export namespace Prisma {
   export type ProductVariantAvgAggregateOutputType = {
     price: Decimal | null
     stock: number | null
+    stockReserved: number | null
   }
 
   export type ProductVariantSumAggregateOutputType = {
     price: Decimal | null
     stock: number | null
+    stockReserved: number | null
   }
 
   export type ProductVariantMinAggregateOutputType = {
     id: string | null
     price: Decimal | null
     stock: number | null
+    stockReserved: number | null
     productId: string | null
     color: string | null
     size: $Enums.Size | null
@@ -11725,6 +12792,7 @@ export namespace Prisma {
     id: string | null
     price: Decimal | null
     stock: number | null
+    stockReserved: number | null
     productId: string | null
     color: string | null
     size: $Enums.Size | null
@@ -11736,6 +12804,7 @@ export namespace Prisma {
     id: number
     price: number
     stock: number
+    stockReserved: number
     productId: number
     color: number
     size: number
@@ -11748,17 +12817,20 @@ export namespace Prisma {
   export type ProductVariantAvgAggregateInputType = {
     price?: true
     stock?: true
+    stockReserved?: true
   }
 
   export type ProductVariantSumAggregateInputType = {
     price?: true
     stock?: true
+    stockReserved?: true
   }
 
   export type ProductVariantMinAggregateInputType = {
     id?: true
     price?: true
     stock?: true
+    stockReserved?: true
     productId?: true
     color?: true
     size?: true
@@ -11770,6 +12842,7 @@ export namespace Prisma {
     id?: true
     price?: true
     stock?: true
+    stockReserved?: true
     productId?: true
     color?: true
     size?: true
@@ -11781,6 +12854,7 @@ export namespace Prisma {
     id?: true
     price?: true
     stock?: true
+    stockReserved?: true
     productId?: true
     color?: true
     size?: true
@@ -11879,6 +12953,7 @@ export namespace Prisma {
     id: string
     price: Decimal
     stock: number
+    stockReserved: number
     productId: string
     color: string | null
     size: $Enums.Size
@@ -11909,6 +12984,7 @@ export namespace Prisma {
     id?: boolean
     price?: boolean
     stock?: boolean
+    stockReserved?: boolean
     productId?: boolean
     color?: boolean
     size?: boolean
@@ -11927,6 +13003,7 @@ export namespace Prisma {
     id?: boolean
     price?: boolean
     stock?: boolean
+    stockReserved?: boolean
     productId?: boolean
     color?: boolean
     size?: boolean
@@ -11934,7 +13011,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ProductVariantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "price" | "stock" | "productId" | "color" | "size" | "createdAt" | "updatedAt", ExtArgs["result"]["productVariant"]>
+  export type ProductVariantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "price" | "stock" | "stockReserved" | "productId" | "color" | "size" | "createdAt" | "updatedAt", ExtArgs["result"]["productVariant"]>
   export type ProductVariantInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
     cartProducts?: boolean | ProductVariant$cartProductsArgs<ExtArgs>
@@ -11955,6 +13032,7 @@ export namespace Prisma {
       id: string
       price: Prisma.Decimal
       stock: number
+      stockReserved: number
       productId: string
       color: string | null
       size: $Enums.Size
@@ -12336,6 +13414,7 @@ export namespace Prisma {
     readonly id: FieldRef<"ProductVariant", 'String'>
     readonly price: FieldRef<"ProductVariant", 'Decimal'>
     readonly stock: FieldRef<"ProductVariant", 'Int'>
+    readonly stockReserved: FieldRef<"ProductVariant", 'Int'>
     readonly productId: FieldRef<"ProductVariant", 'String'>
     readonly color: FieldRef<"ProductVariant", 'String'>
     readonly size: FieldRef<"ProductVariant", 'Size'>
@@ -16604,6 +17683,9 @@ export namespace Prisma {
     id: string | null
     status: $Enums.OrderStatus | null
     total: Decimal | null
+    paymentStatus: $Enums.PaymentStatus | null
+    paymentIntentId: string | null
+    holdExpiresAt: Date | null
     userId: string | null
     addressId: string | null
     createdAt: Date | null
@@ -16614,6 +17696,9 @@ export namespace Prisma {
     id: string | null
     status: $Enums.OrderStatus | null
     total: Decimal | null
+    paymentStatus: $Enums.PaymentStatus | null
+    paymentIntentId: string | null
+    holdExpiresAt: Date | null
     userId: string | null
     addressId: string | null
     createdAt: Date | null
@@ -16624,6 +17709,9 @@ export namespace Prisma {
     id: number
     status: number
     total: number
+    paymentStatus: number
+    paymentIntentId: number
+    holdExpiresAt: number
     userId: number
     addressId: number
     createdAt: number
@@ -16644,6 +17732,9 @@ export namespace Prisma {
     id?: true
     status?: true
     total?: true
+    paymentStatus?: true
+    paymentIntentId?: true
+    holdExpiresAt?: true
     userId?: true
     addressId?: true
     createdAt?: true
@@ -16654,6 +17745,9 @@ export namespace Prisma {
     id?: true
     status?: true
     total?: true
+    paymentStatus?: true
+    paymentIntentId?: true
+    holdExpiresAt?: true
     userId?: true
     addressId?: true
     createdAt?: true
@@ -16664,6 +17758,9 @@ export namespace Prisma {
     id?: true
     status?: true
     total?: true
+    paymentStatus?: true
+    paymentIntentId?: true
+    holdExpiresAt?: true
     userId?: true
     addressId?: true
     createdAt?: true
@@ -16761,6 +17858,9 @@ export namespace Prisma {
     id: string
     status: $Enums.OrderStatus
     total: Decimal
+    paymentStatus: $Enums.PaymentStatus | null
+    paymentIntentId: string | null
+    holdExpiresAt: Date | null
     userId: string
     addressId: string
     createdAt: Date
@@ -16790,6 +17890,9 @@ export namespace Prisma {
     id?: boolean
     status?: boolean
     total?: boolean
+    paymentStatus?: boolean
+    paymentIntentId?: boolean
+    holdExpiresAt?: boolean
     userId?: boolean
     addressId?: boolean
     createdAt?: boolean
@@ -16806,13 +17909,16 @@ export namespace Prisma {
     id?: boolean
     status?: boolean
     total?: boolean
+    paymentStatus?: boolean
+    paymentIntentId?: boolean
+    holdExpiresAt?: boolean
     userId?: boolean
     addressId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "total" | "userId" | "addressId" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "total" | "paymentStatus" | "paymentIntentId" | "holdExpiresAt" | "userId" | "addressId" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItems?: boolean | Order$orderItemsArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -16831,6 +17937,9 @@ export namespace Prisma {
       id: string
       status: $Enums.OrderStatus
       total: Prisma.Decimal
+      paymentStatus: $Enums.PaymentStatus | null
+      paymentIntentId: string | null
+      holdExpiresAt: Date | null
       userId: string
       addressId: string
       createdAt: Date
@@ -17210,6 +18319,9 @@ export namespace Prisma {
     readonly id: FieldRef<"Order", 'String'>
     readonly status: FieldRef<"Order", 'OrderStatus'>
     readonly total: FieldRef<"Order", 'Decimal'>
+    readonly paymentStatus: FieldRef<"Order", 'PaymentStatus'>
+    readonly paymentIntentId: FieldRef<"Order", 'String'>
+    readonly holdExpiresAt: FieldRef<"Order", 'DateTime'>
     readonly userId: FieldRef<"Order", 'String'>
     readonly addressId: FieldRef<"Order", 'String'>
     readonly createdAt: FieldRef<"Order", 'DateTime'>
@@ -17613,17 +18725,20 @@ export namespace Prisma {
 
   export type OrderItemAvgAggregateOutputType = {
     quantity: number | null
+    reserved: number | null
     price: Decimal | null
   }
 
   export type OrderItemSumAggregateOutputType = {
     quantity: number | null
+    reserved: number | null
     price: Decimal | null
   }
 
   export type OrderItemMinAggregateOutputType = {
     id: string | null
     quantity: number | null
+    reserved: number | null
     price: Decimal | null
     orderId: string | null
     productVariantId: string | null
@@ -17635,6 +18750,7 @@ export namespace Prisma {
   export type OrderItemMaxAggregateOutputType = {
     id: string | null
     quantity: number | null
+    reserved: number | null
     price: Decimal | null
     orderId: string | null
     productVariantId: string | null
@@ -17646,6 +18762,7 @@ export namespace Prisma {
   export type OrderItemCountAggregateOutputType = {
     id: number
     quantity: number
+    reserved: number
     price: number
     orderId: number
     productVariantId: number
@@ -17658,17 +18775,20 @@ export namespace Prisma {
 
   export type OrderItemAvgAggregateInputType = {
     quantity?: true
+    reserved?: true
     price?: true
   }
 
   export type OrderItemSumAggregateInputType = {
     quantity?: true
+    reserved?: true
     price?: true
   }
 
   export type OrderItemMinAggregateInputType = {
     id?: true
     quantity?: true
+    reserved?: true
     price?: true
     orderId?: true
     productVariantId?: true
@@ -17680,6 +18800,7 @@ export namespace Prisma {
   export type OrderItemMaxAggregateInputType = {
     id?: true
     quantity?: true
+    reserved?: true
     price?: true
     orderId?: true
     productVariantId?: true
@@ -17691,6 +18812,7 @@ export namespace Prisma {
   export type OrderItemCountAggregateInputType = {
     id?: true
     quantity?: true
+    reserved?: true
     price?: true
     orderId?: true
     productVariantId?: true
@@ -17789,6 +18911,7 @@ export namespace Prisma {
   export type OrderItemGroupByOutputType = {
     id: string
     quantity: number
+    reserved: number
     price: Decimal
     orderId: string
     productVariantId: string
@@ -17819,6 +18942,7 @@ export namespace Prisma {
   export type OrderItemSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     quantity?: boolean
+    reserved?: boolean
     price?: boolean
     orderId?: boolean
     productVariantId?: boolean
@@ -17834,6 +18958,7 @@ export namespace Prisma {
   export type OrderItemSelectScalar = {
     id?: boolean
     quantity?: boolean
+    reserved?: boolean
     price?: boolean
     orderId?: boolean
     productVariantId?: boolean
@@ -17842,7 +18967,7 @@ export namespace Prisma {
     deletedAt?: boolean
   }
 
-  export type OrderItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "quantity" | "price" | "orderId" | "productVariantId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["orderItem"]>
+  export type OrderItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "quantity" | "reserved" | "price" | "orderId" | "productVariantId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["orderItem"]>
   export type OrderItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | OrderDefaultArgs<ExtArgs>
     productVariant?: boolean | ProductVariantDefaultArgs<ExtArgs>
@@ -17857,6 +18982,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       quantity: number
+      reserved: number
       price: Prisma.Decimal
       orderId: string
       productVariantId: string
@@ -18236,6 +19362,7 @@ export namespace Prisma {
   interface OrderItemFieldRefs {
     readonly id: FieldRef<"OrderItem", 'String'>
     readonly quantity: FieldRef<"OrderItem", 'Int'>
+    readonly reserved: FieldRef<"OrderItem", 'Int'>
     readonly price: FieldRef<"OrderItem", 'Decimal'>
     readonly orderId: FieldRef<"OrderItem", 'String'>
     readonly productVariantId: FieldRef<"OrderItem", 'String'>
@@ -19746,6 +20873,17 @@ export namespace Prisma {
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+  export const MobileTokenScalarFieldEnum: {
+    id: 'id',
+    tokenHash: 'tokenHash',
+    expiresAt: 'expiresAt',
+    userId: 'userId',
+    createdAt: 'createdAt'
+  };
+
+  export type MobileTokenScalarFieldEnum = (typeof MobileTokenScalarFieldEnum)[keyof typeof MobileTokenScalarFieldEnum]
+
+
   export const CategoryScalarFieldEnum: {
     id: 'id',
     name: 'name',
@@ -19822,6 +20960,7 @@ export namespace Prisma {
     id: 'id',
     price: 'price',
     stock: 'stock',
+    stockReserved: 'stockReserved',
     productId: 'productId',
     color: 'color',
     size: 'size',
@@ -19882,6 +21021,9 @@ export namespace Prisma {
     id: 'id',
     status: 'status',
     total: 'total',
+    paymentStatus: 'paymentStatus',
+    paymentIntentId: 'paymentIntentId',
+    holdExpiresAt: 'holdExpiresAt',
     userId: 'userId',
     addressId: 'addressId',
     createdAt: 'createdAt',
@@ -19894,6 +21036,7 @@ export namespace Prisma {
   export const OrderItemScalarFieldEnum: {
     id: 'id',
     quantity: 'quantity',
+    reserved: 'reserved',
     price: 'price',
     orderId: 'orderId',
     productVariantId: 'productVariantId',
@@ -19982,6 +21125,15 @@ export namespace Prisma {
   };
 
   export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
+  export const MobileTokenOrderByRelevanceFieldEnum: {
+    id: 'id',
+    tokenHash: 'tokenHash',
+    userId: 'userId'
+  };
+
+  export type MobileTokenOrderByRelevanceFieldEnum = (typeof MobileTokenOrderByRelevanceFieldEnum)[keyof typeof MobileTokenOrderByRelevanceFieldEnum]
 
 
   export const CategoryOrderByRelevanceFieldEnum: {
@@ -20085,6 +21237,7 @@ export namespace Prisma {
 
   export const OrderOrderByRelevanceFieldEnum: {
     id: 'id',
+    paymentIntentId: 'paymentIntentId',
     userId: 'userId',
     addressId: 'addressId'
   };
@@ -20189,6 +21342,13 @@ export namespace Prisma {
    * Reference to a field of type 'OrderStatus'
    */
   export type EnumOrderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrderStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'PaymentStatus'
+   */
+  export type EnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus'>
     
 
 
@@ -20409,6 +21569,7 @@ export namespace Prisma {
     homeAddressId?: StringNullableFilter<"User"> | string | null
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
+    mobileTokens?: MobileTokenListRelationFilter
     cart?: XOR<CartNullableScalarRelationFilter, CartWhereInput> | null
     orders?: OrderListRelationFilter
     reviews?: ReviewListRelationFilter
@@ -20427,6 +21588,7 @@ export namespace Prisma {
     homeAddressId?: SortOrderInput | SortOrder
     accounts?: AccountOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
+    mobileTokens?: MobileTokenOrderByRelationAggregateInput
     cart?: CartOrderByWithRelationInput
     orders?: OrderOrderByRelationAggregateInput
     reviews?: ReviewOrderByRelationAggregateInput
@@ -20449,6 +21611,7 @@ export namespace Prisma {
     role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
+    mobileTokens?: MobileTokenListRelationFilter
     cart?: XOR<CartNullableScalarRelationFilter, CartWhereInput> | null
     orders?: OrderListRelationFilter
     reviews?: ReviewListRelationFilter
@@ -20481,6 +21644,62 @@ export namespace Prisma {
     image?: StringNullableWithAggregatesFilter<"User"> | string | null
     role?: EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
     homeAddressId?: StringNullableWithAggregatesFilter<"User"> | string | null
+  }
+
+  export type MobileTokenWhereInput = {
+    AND?: MobileTokenWhereInput | MobileTokenWhereInput[]
+    OR?: MobileTokenWhereInput[]
+    NOT?: MobileTokenWhereInput | MobileTokenWhereInput[]
+    id?: StringFilter<"MobileToken"> | string
+    tokenHash?: StringFilter<"MobileToken"> | string
+    expiresAt?: DateTimeFilter<"MobileToken"> | Date | string
+    userId?: StringFilter<"MobileToken"> | string
+    createdAt?: DateTimeFilter<"MobileToken"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type MobileTokenOrderByWithRelationInput = {
+    id?: SortOrder
+    tokenHash?: SortOrder
+    expiresAt?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    _relevance?: MobileTokenOrderByRelevanceInput
+  }
+
+  export type MobileTokenWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    tokenHash?: string
+    AND?: MobileTokenWhereInput | MobileTokenWhereInput[]
+    OR?: MobileTokenWhereInput[]
+    NOT?: MobileTokenWhereInput | MobileTokenWhereInput[]
+    expiresAt?: DateTimeFilter<"MobileToken"> | Date | string
+    userId?: StringFilter<"MobileToken"> | string
+    createdAt?: DateTimeFilter<"MobileToken"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "tokenHash">
+
+  export type MobileTokenOrderByWithAggregationInput = {
+    id?: SortOrder
+    tokenHash?: SortOrder
+    expiresAt?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    _count?: MobileTokenCountOrderByAggregateInput
+    _max?: MobileTokenMaxOrderByAggregateInput
+    _min?: MobileTokenMinOrderByAggregateInput
+  }
+
+  export type MobileTokenScalarWhereWithAggregatesInput = {
+    AND?: MobileTokenScalarWhereWithAggregatesInput | MobileTokenScalarWhereWithAggregatesInput[]
+    OR?: MobileTokenScalarWhereWithAggregatesInput[]
+    NOT?: MobileTokenScalarWhereWithAggregatesInput | MobileTokenScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MobileToken"> | string
+    tokenHash?: StringWithAggregatesFilter<"MobileToken"> | string
+    expiresAt?: DateTimeWithAggregatesFilter<"MobileToken"> | Date | string
+    userId?: StringWithAggregatesFilter<"MobileToken"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"MobileToken"> | Date | string
   }
 
   export type CategoryWhereInput = {
@@ -20882,6 +22101,7 @@ export namespace Prisma {
     id?: StringFilter<"ProductVariant"> | string
     price?: DecimalFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string
     stock?: IntFilter<"ProductVariant"> | number
+    stockReserved?: IntFilter<"ProductVariant"> | number
     productId?: StringFilter<"ProductVariant"> | string
     color?: StringNullableFilter<"ProductVariant"> | string | null
     size?: EnumSizeFilter<"ProductVariant"> | $Enums.Size
@@ -20897,6 +22117,7 @@ export namespace Prisma {
     id?: SortOrder
     price?: SortOrder
     stock?: SortOrder
+    stockReserved?: SortOrder
     productId?: SortOrder
     color?: SortOrderInput | SortOrder
     size?: SortOrder
@@ -20916,6 +22137,7 @@ export namespace Prisma {
     NOT?: ProductVariantWhereInput | ProductVariantWhereInput[]
     price?: DecimalFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string
     stock?: IntFilter<"ProductVariant"> | number
+    stockReserved?: IntFilter<"ProductVariant"> | number
     productId?: StringFilter<"ProductVariant"> | string
     color?: StringNullableFilter<"ProductVariant"> | string | null
     size?: EnumSizeFilter<"ProductVariant"> | $Enums.Size
@@ -20931,6 +22153,7 @@ export namespace Prisma {
     id?: SortOrder
     price?: SortOrder
     stock?: SortOrder
+    stockReserved?: SortOrder
     productId?: SortOrder
     color?: SortOrderInput | SortOrder
     size?: SortOrder
@@ -20950,6 +22173,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"ProductVariant"> | string
     price?: DecimalWithAggregatesFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string
     stock?: IntWithAggregatesFilter<"ProductVariant"> | number
+    stockReserved?: IntWithAggregatesFilter<"ProductVariant"> | number
     productId?: StringWithAggregatesFilter<"ProductVariant"> | string
     color?: StringNullableWithAggregatesFilter<"ProductVariant"> | string | null
     size?: EnumSizeWithAggregatesFilter<"ProductVariant"> | $Enums.Size
@@ -21207,6 +22431,9 @@ export namespace Prisma {
     id?: StringFilter<"Order"> | string
     status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
     total?: DecimalFilter<"Order"> | Decimal | DecimalJsLike | number | string
+    paymentStatus?: EnumPaymentStatusNullableFilter<"Order"> | $Enums.PaymentStatus | null
+    paymentIntentId?: StringNullableFilter<"Order"> | string | null
+    holdExpiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     userId?: StringFilter<"Order"> | string
     addressId?: StringFilter<"Order"> | string
     createdAt?: DateTimeFilter<"Order"> | Date | string
@@ -21220,6 +22447,9 @@ export namespace Prisma {
     id?: SortOrder
     status?: SortOrder
     total?: SortOrder
+    paymentStatus?: SortOrderInput | SortOrder
+    paymentIntentId?: SortOrderInput | SortOrder
+    holdExpiresAt?: SortOrderInput | SortOrder
     userId?: SortOrder
     addressId?: SortOrder
     createdAt?: SortOrder
@@ -21237,6 +22467,9 @@ export namespace Prisma {
     NOT?: OrderWhereInput | OrderWhereInput[]
     status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
     total?: DecimalFilter<"Order"> | Decimal | DecimalJsLike | number | string
+    paymentStatus?: EnumPaymentStatusNullableFilter<"Order"> | $Enums.PaymentStatus | null
+    paymentIntentId?: StringNullableFilter<"Order"> | string | null
+    holdExpiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     userId?: StringFilter<"Order"> | string
     addressId?: StringFilter<"Order"> | string
     createdAt?: DateTimeFilter<"Order"> | Date | string
@@ -21250,6 +22483,9 @@ export namespace Prisma {
     id?: SortOrder
     status?: SortOrder
     total?: SortOrder
+    paymentStatus?: SortOrderInput | SortOrder
+    paymentIntentId?: SortOrderInput | SortOrder
+    holdExpiresAt?: SortOrderInput | SortOrder
     userId?: SortOrder
     addressId?: SortOrder
     createdAt?: SortOrder
@@ -21268,6 +22504,9 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Order"> | string
     status?: EnumOrderStatusWithAggregatesFilter<"Order"> | $Enums.OrderStatus
     total?: DecimalWithAggregatesFilter<"Order"> | Decimal | DecimalJsLike | number | string
+    paymentStatus?: EnumPaymentStatusNullableWithAggregatesFilter<"Order"> | $Enums.PaymentStatus | null
+    paymentIntentId?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    holdExpiresAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
     userId?: StringWithAggregatesFilter<"Order"> | string
     addressId?: StringWithAggregatesFilter<"Order"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
@@ -21280,6 +22519,7 @@ export namespace Prisma {
     NOT?: OrderItemWhereInput | OrderItemWhereInput[]
     id?: StringFilter<"OrderItem"> | string
     quantity?: IntFilter<"OrderItem"> | number
+    reserved?: IntFilter<"OrderItem"> | number
     price?: DecimalFilter<"OrderItem"> | Decimal | DecimalJsLike | number | string
     orderId?: StringFilter<"OrderItem"> | string
     productVariantId?: StringFilter<"OrderItem"> | string
@@ -21293,6 +22533,7 @@ export namespace Prisma {
   export type OrderItemOrderByWithRelationInput = {
     id?: SortOrder
     quantity?: SortOrder
+    reserved?: SortOrder
     price?: SortOrder
     orderId?: SortOrder
     productVariantId?: SortOrder
@@ -21310,6 +22551,7 @@ export namespace Prisma {
     OR?: OrderItemWhereInput[]
     NOT?: OrderItemWhereInput | OrderItemWhereInput[]
     quantity?: IntFilter<"OrderItem"> | number
+    reserved?: IntFilter<"OrderItem"> | number
     price?: DecimalFilter<"OrderItem"> | Decimal | DecimalJsLike | number | string
     orderId?: StringFilter<"OrderItem"> | string
     productVariantId?: StringFilter<"OrderItem"> | string
@@ -21323,6 +22565,7 @@ export namespace Prisma {
   export type OrderItemOrderByWithAggregationInput = {
     id?: SortOrder
     quantity?: SortOrder
+    reserved?: SortOrder
     price?: SortOrder
     orderId?: SortOrder
     productVariantId?: SortOrder
@@ -21342,6 +22585,7 @@ export namespace Prisma {
     NOT?: OrderItemScalarWhereWithAggregatesInput | OrderItemScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"OrderItem"> | string
     quantity?: IntWithAggregatesFilter<"OrderItem"> | number
+    reserved?: IntWithAggregatesFilter<"OrderItem"> | number
     price?: DecimalWithAggregatesFilter<"OrderItem"> | Decimal | DecimalJsLike | number | string
     orderId?: StringWithAggregatesFilter<"OrderItem"> | string
     productVariantId?: StringWithAggregatesFilter<"OrderItem"> | string
@@ -21657,6 +22901,7 @@ export namespace Prisma {
     role?: $Enums.UserRole
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedOneWithoutUserInput
     orders?: OrderCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
@@ -21675,6 +22920,7 @@ export namespace Prisma {
     homeAddressId?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenUncheckedCreateNestedManyWithoutUserInput
     cart?: CartUncheckedCreateNestedOneWithoutUserInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
@@ -21691,6 +22937,7 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUpdateManyWithoutUserNestedInput
     cart?: CartUpdateOneWithoutUserNestedInput
     orders?: OrderUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
@@ -21709,6 +22956,7 @@ export namespace Prisma {
     homeAddressId?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUncheckedUpdateManyWithoutUserNestedInput
     cart?: CartUncheckedUpdateOneWithoutUserNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
@@ -21743,6 +22991,61 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     homeAddressId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type MobileTokenCreateInput = {
+    id?: string
+    tokenHash: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutMobileTokensInput
+  }
+
+  export type MobileTokenUncheckedCreateInput = {
+    id?: string
+    tokenHash: string
+    expiresAt: Date | string
+    userId: string
+    createdAt?: Date | string
+  }
+
+  export type MobileTokenUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutMobileTokensNestedInput
+  }
+
+  export type MobileTokenUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MobileTokenCreateManyInput = {
+    id?: string
+    tokenHash: string
+    expiresAt: Date | string
+    userId: string
+    createdAt?: Date | string
+  }
+
+  export type MobileTokenUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MobileTokenUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CategoryCreateInput = {
@@ -22166,6 +23469,7 @@ export namespace Prisma {
     id?: string
     price: Decimal | DecimalJsLike | number | string
     stock?: number
+    stockReserved?: number
     color?: string | null
     size?: $Enums.Size
     createdAt?: Date | string
@@ -22180,6 +23484,7 @@ export namespace Prisma {
     id?: string
     price: Decimal | DecimalJsLike | number | string
     stock?: number
+    stockReserved?: number
     productId: string
     color?: string | null
     size?: $Enums.Size
@@ -22194,6 +23499,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
+    stockReserved?: IntFieldUpdateOperationsInput | number
     color?: NullableStringFieldUpdateOperationsInput | string | null
     size?: EnumSizeFieldUpdateOperationsInput | $Enums.Size
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22208,6 +23514,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
+    stockReserved?: IntFieldUpdateOperationsInput | number
     productId?: StringFieldUpdateOperationsInput | string
     color?: NullableStringFieldUpdateOperationsInput | string | null
     size?: EnumSizeFieldUpdateOperationsInput | $Enums.Size
@@ -22222,6 +23529,7 @@ export namespace Prisma {
     id?: string
     price: Decimal | DecimalJsLike | number | string
     stock?: number
+    stockReserved?: number
     productId: string
     color?: string | null
     size?: $Enums.Size
@@ -22233,6 +23541,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
+    stockReserved?: IntFieldUpdateOperationsInput | number
     color?: NullableStringFieldUpdateOperationsInput | string | null
     size?: EnumSizeFieldUpdateOperationsInput | $Enums.Size
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22243,6 +23552,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
+    stockReserved?: IntFieldUpdateOperationsInput | number
     productId?: StringFieldUpdateOperationsInput | string
     color?: NullableStringFieldUpdateOperationsInput | string | null
     size?: EnumSizeFieldUpdateOperationsInput | $Enums.Size
@@ -22491,6 +23801,9 @@ export namespace Prisma {
     id?: string
     status?: $Enums.OrderStatus
     total: Decimal | DecimalJsLike | number | string
+    paymentStatus?: $Enums.PaymentStatus | null
+    paymentIntentId?: string | null
+    holdExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orderItems?: OrderItemCreateNestedManyWithoutOrderInput
@@ -22502,6 +23815,9 @@ export namespace Prisma {
     id?: string
     status?: $Enums.OrderStatus
     total: Decimal | DecimalJsLike | number | string
+    paymentStatus?: $Enums.PaymentStatus | null
+    paymentIntentId?: string | null
+    holdExpiresAt?: Date | string | null
     userId: string
     addressId: string
     createdAt?: Date | string
@@ -22513,6 +23829,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentStatus?: NullableEnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus | null
+    paymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    holdExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUpdateManyWithoutOrderNestedInput
@@ -22524,6 +23843,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentStatus?: NullableEnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus | null
+    paymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    holdExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userId?: StringFieldUpdateOperationsInput | string
     addressId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22535,6 +23857,9 @@ export namespace Prisma {
     id?: string
     status?: $Enums.OrderStatus
     total: Decimal | DecimalJsLike | number | string
+    paymentStatus?: $Enums.PaymentStatus | null
+    paymentIntentId?: string | null
+    holdExpiresAt?: Date | string | null
     userId: string
     addressId: string
     createdAt?: Date | string
@@ -22545,6 +23870,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentStatus?: NullableEnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus | null
+    paymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    holdExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22553,6 +23881,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentStatus?: NullableEnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus | null
+    paymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    holdExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userId?: StringFieldUpdateOperationsInput | string
     addressId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22562,6 +23893,7 @@ export namespace Prisma {
   export type OrderItemCreateInput = {
     id?: string
     quantity?: number
+    reserved?: number
     price: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -22573,6 +23905,7 @@ export namespace Prisma {
   export type OrderItemUncheckedCreateInput = {
     id?: string
     quantity?: number
+    reserved?: number
     price: Decimal | DecimalJsLike | number | string
     orderId: string
     productVariantId: string
@@ -22584,6 +23917,7 @@ export namespace Prisma {
   export type OrderItemUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    reserved?: IntFieldUpdateOperationsInput | number
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22595,6 +23929,7 @@ export namespace Prisma {
   export type OrderItemUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    reserved?: IntFieldUpdateOperationsInput | number
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     orderId?: StringFieldUpdateOperationsInput | string
     productVariantId?: StringFieldUpdateOperationsInput | string
@@ -22606,6 +23941,7 @@ export namespace Prisma {
   export type OrderItemCreateManyInput = {
     id?: string
     quantity?: number
+    reserved?: number
     price: Decimal | DecimalJsLike | number | string
     orderId: string
     productVariantId: string
@@ -22617,6 +23953,7 @@ export namespace Prisma {
   export type OrderItemUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    reserved?: IntFieldUpdateOperationsInput | number
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22626,6 +23963,7 @@ export namespace Prisma {
   export type OrderItemUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    reserved?: IntFieldUpdateOperationsInput | number
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     orderId?: StringFieldUpdateOperationsInput | string
     productVariantId?: StringFieldUpdateOperationsInput | string
@@ -23029,6 +24367,12 @@ export namespace Prisma {
     none?: SessionWhereInput
   }
 
+  export type MobileTokenListRelationFilter = {
+    every?: MobileTokenWhereInput
+    some?: MobileTokenWhereInput
+    none?: MobileTokenWhereInput
+  }
+
   export type CartNullableScalarRelationFilter = {
     is?: CartWhereInput | null
     isNot?: CartWhereInput | null
@@ -23068,6 +24412,10 @@ export namespace Prisma {
   }
 
   export type SessionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type MobileTokenOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -23145,6 +24493,36 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumUserRoleFilter<$PrismaModel>
     _max?: NestedEnumUserRoleFilter<$PrismaModel>
+  }
+
+  export type MobileTokenOrderByRelevanceInput = {
+    fields: MobileTokenOrderByRelevanceFieldEnum | MobileTokenOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
+  export type MobileTokenCountOrderByAggregateInput = {
+    id?: SortOrder
+    tokenHash?: SortOrder
+    expiresAt?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type MobileTokenMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tokenHash?: SortOrder
+    expiresAt?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type MobileTokenMinOrderByAggregateInput = {
+    id?: SortOrder
+    tokenHash?: SortOrder
+    expiresAt?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type ProductListRelationFilter = {
@@ -23582,6 +24960,7 @@ export namespace Prisma {
     id?: SortOrder
     price?: SortOrder
     stock?: SortOrder
+    stockReserved?: SortOrder
     productId?: SortOrder
     color?: SortOrder
     size?: SortOrder
@@ -23592,12 +24971,14 @@ export namespace Prisma {
   export type ProductVariantAvgOrderByAggregateInput = {
     price?: SortOrder
     stock?: SortOrder
+    stockReserved?: SortOrder
   }
 
   export type ProductVariantMaxOrderByAggregateInput = {
     id?: SortOrder
     price?: SortOrder
     stock?: SortOrder
+    stockReserved?: SortOrder
     productId?: SortOrder
     color?: SortOrder
     size?: SortOrder
@@ -23609,6 +24990,7 @@ export namespace Prisma {
     id?: SortOrder
     price?: SortOrder
     stock?: SortOrder
+    stockReserved?: SortOrder
     productId?: SortOrder
     color?: SortOrder
     size?: SortOrder
@@ -23619,6 +25001,7 @@ export namespace Prisma {
   export type ProductVariantSumOrderByAggregateInput = {
     price?: SortOrder
     stock?: SortOrder
+    stockReserved?: SortOrder
   }
 
   export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
@@ -23803,6 +25186,13 @@ export namespace Prisma {
     not?: NestedEnumOrderStatusFilter<$PrismaModel> | $Enums.OrderStatus
   }
 
+  export type EnumPaymentStatusNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentStatus | EnumPaymentStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.PaymentStatus[] | null
+    notIn?: $Enums.PaymentStatus[] | null
+    not?: NestedEnumPaymentStatusNullableFilter<$PrismaModel> | $Enums.PaymentStatus | null
+  }
+
   export type AddressScalarRelationFilter = {
     is?: AddressWhereInput
     isNot?: AddressWhereInput
@@ -23818,6 +25208,9 @@ export namespace Prisma {
     id?: SortOrder
     status?: SortOrder
     total?: SortOrder
+    paymentStatus?: SortOrder
+    paymentIntentId?: SortOrder
+    holdExpiresAt?: SortOrder
     userId?: SortOrder
     addressId?: SortOrder
     createdAt?: SortOrder
@@ -23832,6 +25225,9 @@ export namespace Prisma {
     id?: SortOrder
     status?: SortOrder
     total?: SortOrder
+    paymentStatus?: SortOrder
+    paymentIntentId?: SortOrder
+    holdExpiresAt?: SortOrder
     userId?: SortOrder
     addressId?: SortOrder
     createdAt?: SortOrder
@@ -23842,6 +25238,9 @@ export namespace Prisma {
     id?: SortOrder
     status?: SortOrder
     total?: SortOrder
+    paymentStatus?: SortOrder
+    paymentIntentId?: SortOrder
+    holdExpiresAt?: SortOrder
     userId?: SortOrder
     addressId?: SortOrder
     createdAt?: SortOrder
@@ -23862,6 +25261,16 @@ export namespace Prisma {
     _max?: NestedEnumOrderStatusFilter<$PrismaModel>
   }
 
+  export type EnumPaymentStatusNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentStatus | EnumPaymentStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.PaymentStatus[] | null
+    notIn?: $Enums.PaymentStatus[] | null
+    not?: NestedEnumPaymentStatusNullableWithAggregatesFilter<$PrismaModel> | $Enums.PaymentStatus | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumPaymentStatusNullableFilter<$PrismaModel>
+    _max?: NestedEnumPaymentStatusNullableFilter<$PrismaModel>
+  }
+
   export type OrderScalarRelationFilter = {
     is?: OrderWhereInput
     isNot?: OrderWhereInput
@@ -23876,6 +25285,7 @@ export namespace Prisma {
   export type OrderItemCountOrderByAggregateInput = {
     id?: SortOrder
     quantity?: SortOrder
+    reserved?: SortOrder
     price?: SortOrder
     orderId?: SortOrder
     productVariantId?: SortOrder
@@ -23886,12 +25296,14 @@ export namespace Prisma {
 
   export type OrderItemAvgOrderByAggregateInput = {
     quantity?: SortOrder
+    reserved?: SortOrder
     price?: SortOrder
   }
 
   export type OrderItemMaxOrderByAggregateInput = {
     id?: SortOrder
     quantity?: SortOrder
+    reserved?: SortOrder
     price?: SortOrder
     orderId?: SortOrder
     productVariantId?: SortOrder
@@ -23903,6 +25315,7 @@ export namespace Prisma {
   export type OrderItemMinOrderByAggregateInput = {
     id?: SortOrder
     quantity?: SortOrder
+    reserved?: SortOrder
     price?: SortOrder
     orderId?: SortOrder
     productVariantId?: SortOrder
@@ -23913,6 +25326,7 @@ export namespace Prisma {
 
   export type OrderItemSumOrderByAggregateInput = {
     quantity?: SortOrder
+    reserved?: SortOrder
     price?: SortOrder
   }
 
@@ -24034,6 +25448,13 @@ export namespace Prisma {
     connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
   }
 
+  export type MobileTokenCreateNestedManyWithoutUserInput = {
+    create?: XOR<MobileTokenCreateWithoutUserInput, MobileTokenUncheckedCreateWithoutUserInput> | MobileTokenCreateWithoutUserInput[] | MobileTokenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MobileTokenCreateOrConnectWithoutUserInput | MobileTokenCreateOrConnectWithoutUserInput[]
+    createMany?: MobileTokenCreateManyUserInputEnvelope
+    connect?: MobileTokenWhereUniqueInput | MobileTokenWhereUniqueInput[]
+  }
+
   export type CartCreateNestedOneWithoutUserInput = {
     create?: XOR<CartCreateWithoutUserInput, CartUncheckedCreateWithoutUserInput>
     connectOrCreate?: CartCreateOrConnectWithoutUserInput
@@ -24086,6 +25507,13 @@ export namespace Prisma {
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
     createMany?: SessionCreateManyUserInputEnvelope
     connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+  }
+
+  export type MobileTokenUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<MobileTokenCreateWithoutUserInput, MobileTokenUncheckedCreateWithoutUserInput> | MobileTokenCreateWithoutUserInput[] | MobileTokenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MobileTokenCreateOrConnectWithoutUserInput | MobileTokenCreateOrConnectWithoutUserInput[]
+    createMany?: MobileTokenCreateManyUserInputEnvelope
+    connect?: MobileTokenWhereUniqueInput | MobileTokenWhereUniqueInput[]
   }
 
   export type CartUncheckedCreateNestedOneWithoutUserInput = {
@@ -24156,6 +25584,20 @@ export namespace Prisma {
     update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
+  }
+
+  export type MobileTokenUpdateManyWithoutUserNestedInput = {
+    create?: XOR<MobileTokenCreateWithoutUserInput, MobileTokenUncheckedCreateWithoutUserInput> | MobileTokenCreateWithoutUserInput[] | MobileTokenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MobileTokenCreateOrConnectWithoutUserInput | MobileTokenCreateOrConnectWithoutUserInput[]
+    upsert?: MobileTokenUpsertWithWhereUniqueWithoutUserInput | MobileTokenUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: MobileTokenCreateManyUserInputEnvelope
+    set?: MobileTokenWhereUniqueInput | MobileTokenWhereUniqueInput[]
+    disconnect?: MobileTokenWhereUniqueInput | MobileTokenWhereUniqueInput[]
+    delete?: MobileTokenWhereUniqueInput | MobileTokenWhereUniqueInput[]
+    connect?: MobileTokenWhereUniqueInput | MobileTokenWhereUniqueInput[]
+    update?: MobileTokenUpdateWithWhereUniqueWithoutUserInput | MobileTokenUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: MobileTokenUpdateManyWithWhereWithoutUserInput | MobileTokenUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: MobileTokenScalarWhereInput | MobileTokenScalarWhereInput[]
   }
 
   export type CartUpdateOneWithoutUserNestedInput = {
@@ -24262,6 +25704,20 @@ export namespace Prisma {
     deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
   }
 
+  export type MobileTokenUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<MobileTokenCreateWithoutUserInput, MobileTokenUncheckedCreateWithoutUserInput> | MobileTokenCreateWithoutUserInput[] | MobileTokenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MobileTokenCreateOrConnectWithoutUserInput | MobileTokenCreateOrConnectWithoutUserInput[]
+    upsert?: MobileTokenUpsertWithWhereUniqueWithoutUserInput | MobileTokenUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: MobileTokenCreateManyUserInputEnvelope
+    set?: MobileTokenWhereUniqueInput | MobileTokenWhereUniqueInput[]
+    disconnect?: MobileTokenWhereUniqueInput | MobileTokenWhereUniqueInput[]
+    delete?: MobileTokenWhereUniqueInput | MobileTokenWhereUniqueInput[]
+    connect?: MobileTokenWhereUniqueInput | MobileTokenWhereUniqueInput[]
+    update?: MobileTokenUpdateWithWhereUniqueWithoutUserInput | MobileTokenUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: MobileTokenUpdateManyWithWhereWithoutUserInput | MobileTokenUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: MobileTokenScalarWhereInput | MobileTokenScalarWhereInput[]
+  }
+
   export type CartUncheckedUpdateOneWithoutUserNestedInput = {
     create?: XOR<CartCreateWithoutUserInput, CartUncheckedCreateWithoutUserInput>
     connectOrCreate?: CartCreateOrConnectWithoutUserInput
@@ -24326,6 +25782,20 @@ export namespace Prisma {
     update?: AddressUpdateWithWhereUniqueWithoutUserOtherAddressesInput | AddressUpdateWithWhereUniqueWithoutUserOtherAddressesInput[]
     updateMany?: AddressUpdateManyWithWhereWithoutUserOtherAddressesInput | AddressUpdateManyWithWhereWithoutUserOtherAddressesInput[]
     deleteMany?: AddressScalarWhereInput | AddressScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutMobileTokensInput = {
+    create?: XOR<UserCreateWithoutMobileTokensInput, UserUncheckedCreateWithoutMobileTokensInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMobileTokensInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutMobileTokensNestedInput = {
+    create?: XOR<UserCreateWithoutMobileTokensInput, UserUncheckedCreateWithoutMobileTokensInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMobileTokensInput
+    upsert?: UserUpsertWithoutMobileTokensInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMobileTokensInput, UserUpdateWithoutMobileTokensInput>, UserUncheckedUpdateWithoutMobileTokensInput>
   }
 
   export type ProductCreateNestedManyWithoutCategoryInput = {
@@ -24986,6 +26456,10 @@ export namespace Prisma {
     set?: $Enums.OrderStatus
   }
 
+  export type NullableEnumPaymentStatusFieldUpdateOperationsInput = {
+    set?: $Enums.PaymentStatus | null
+  }
+
   export type OrderItemUpdateManyWithoutOrderNestedInput = {
     create?: XOR<OrderItemCreateWithoutOrderInput, OrderItemUncheckedCreateWithoutOrderInput> | OrderItemCreateWithoutOrderInput[] | OrderItemUncheckedCreateWithoutOrderInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutOrderInput | OrderItemCreateOrConnectWithoutOrderInput[]
@@ -25482,6 +26956,13 @@ export namespace Prisma {
     not?: NestedEnumOrderStatusFilter<$PrismaModel> | $Enums.OrderStatus
   }
 
+  export type NestedEnumPaymentStatusNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentStatus | EnumPaymentStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.PaymentStatus[] | null
+    notIn?: $Enums.PaymentStatus[] | null
+    not?: NestedEnumPaymentStatusNullableFilter<$PrismaModel> | $Enums.PaymentStatus | null
+  }
+
   export type NestedEnumOrderStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.OrderStatus | EnumOrderStatusFieldRefInput<$PrismaModel>
     in?: $Enums.OrderStatus[]
@@ -25492,6 +26973,16 @@ export namespace Prisma {
     _max?: NestedEnumOrderStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumPaymentStatusNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentStatus | EnumPaymentStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.PaymentStatus[] | null
+    notIn?: $Enums.PaymentStatus[] | null
+    not?: NestedEnumPaymentStatusNullableWithAggregatesFilter<$PrismaModel> | $Enums.PaymentStatus | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumPaymentStatusNullableFilter<$PrismaModel>
+    _max?: NestedEnumPaymentStatusNullableFilter<$PrismaModel>
+  }
+
   export type UserCreateWithoutAccountsInput = {
     id?: string
     name?: string | null
@@ -25500,6 +26991,7 @@ export namespace Prisma {
     image?: string | null
     role?: $Enums.UserRole
     sessions?: SessionCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedOneWithoutUserInput
     orders?: OrderCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
@@ -25517,6 +27009,7 @@ export namespace Prisma {
     role?: $Enums.UserRole
     homeAddressId?: string | null
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenUncheckedCreateNestedManyWithoutUserInput
     cart?: CartUncheckedCreateNestedOneWithoutUserInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
@@ -25548,6 +27041,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUpdateManyWithoutUserNestedInput
     cart?: CartUpdateOneWithoutUserNestedInput
     orders?: OrderUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
@@ -25565,6 +27059,7 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     homeAddressId?: NullableStringFieldUpdateOperationsInput | string | null
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUncheckedUpdateManyWithoutUserNestedInput
     cart?: CartUncheckedUpdateOneWithoutUserNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
@@ -25580,6 +27075,7 @@ export namespace Prisma {
     image?: string | null
     role?: $Enums.UserRole
     accounts?: AccountCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedOneWithoutUserInput
     orders?: OrderCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
@@ -25597,6 +27093,7 @@ export namespace Prisma {
     role?: $Enums.UserRole
     homeAddressId?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenUncheckedCreateNestedManyWithoutUserInput
     cart?: CartUncheckedCreateNestedOneWithoutUserInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
@@ -25628,6 +27125,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUpdateManyWithoutUserNestedInput
     cart?: CartUpdateOneWithoutUserNestedInput
     orders?: OrderUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
@@ -25645,6 +27143,7 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     homeAddressId?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUncheckedUpdateManyWithoutUserNestedInput
     cart?: CartUncheckedUpdateOneWithoutUserNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
@@ -25714,6 +27213,30 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type MobileTokenCreateWithoutUserInput = {
+    id?: string
+    tokenHash: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type MobileTokenUncheckedCreateWithoutUserInput = {
+    id?: string
+    tokenHash: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type MobileTokenCreateOrConnectWithoutUserInput = {
+    where: MobileTokenWhereUniqueInput
+    create: XOR<MobileTokenCreateWithoutUserInput, MobileTokenUncheckedCreateWithoutUserInput>
+  }
+
+  export type MobileTokenCreateManyUserInputEnvelope = {
+    data: MobileTokenCreateManyUserInput | MobileTokenCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type CartCreateWithoutUserInput = {
     id?: string
     createdAt?: Date | string
@@ -25737,6 +27260,9 @@ export namespace Prisma {
     id?: string
     status?: $Enums.OrderStatus
     total: Decimal | DecimalJsLike | number | string
+    paymentStatus?: $Enums.PaymentStatus | null
+    paymentIntentId?: string | null
+    holdExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orderItems?: OrderItemCreateNestedManyWithoutOrderInput
@@ -25747,6 +27273,9 @@ export namespace Prisma {
     id?: string
     status?: $Enums.OrderStatus
     total: Decimal | DecimalJsLike | number | string
+    paymentStatus?: $Enums.PaymentStatus | null
+    paymentIntentId?: string | null
+    holdExpiresAt?: Date | string | null
     addressId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -25955,6 +27484,33 @@ export namespace Prisma {
     expires?: DateTimeFilter<"Session"> | Date | string
   }
 
+  export type MobileTokenUpsertWithWhereUniqueWithoutUserInput = {
+    where: MobileTokenWhereUniqueInput
+    update: XOR<MobileTokenUpdateWithoutUserInput, MobileTokenUncheckedUpdateWithoutUserInput>
+    create: XOR<MobileTokenCreateWithoutUserInput, MobileTokenUncheckedCreateWithoutUserInput>
+  }
+
+  export type MobileTokenUpdateWithWhereUniqueWithoutUserInput = {
+    where: MobileTokenWhereUniqueInput
+    data: XOR<MobileTokenUpdateWithoutUserInput, MobileTokenUncheckedUpdateWithoutUserInput>
+  }
+
+  export type MobileTokenUpdateManyWithWhereWithoutUserInput = {
+    where: MobileTokenScalarWhereInput
+    data: XOR<MobileTokenUpdateManyMutationInput, MobileTokenUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type MobileTokenScalarWhereInput = {
+    AND?: MobileTokenScalarWhereInput | MobileTokenScalarWhereInput[]
+    OR?: MobileTokenScalarWhereInput[]
+    NOT?: MobileTokenScalarWhereInput | MobileTokenScalarWhereInput[]
+    id?: StringFilter<"MobileToken"> | string
+    tokenHash?: StringFilter<"MobileToken"> | string
+    expiresAt?: DateTimeFilter<"MobileToken"> | Date | string
+    userId?: StringFilter<"MobileToken"> | string
+    createdAt?: DateTimeFilter<"MobileToken"> | Date | string
+  }
+
   export type CartUpsertWithoutUserInput = {
     update: XOR<CartUpdateWithoutUserInput, CartUncheckedUpdateWithoutUserInput>
     create: XOR<CartCreateWithoutUserInput, CartUncheckedCreateWithoutUserInput>
@@ -26003,6 +27559,9 @@ export namespace Prisma {
     id?: StringFilter<"Order"> | string
     status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
     total?: DecimalFilter<"Order"> | Decimal | DecimalJsLike | number | string
+    paymentStatus?: EnumPaymentStatusNullableFilter<"Order"> | $Enums.PaymentStatus | null
+    paymentIntentId?: StringNullableFilter<"Order"> | string | null
+    holdExpiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     userId?: StringFilter<"Order"> | string
     addressId?: StringFilter<"Order"> | string
     createdAt?: DateTimeFilter<"Order"> | Date | string
@@ -26140,6 +27699,90 @@ export namespace Prisma {
     userId?: StringNullableFilter<"Address"> | string | null
     createdAt?: DateTimeFilter<"Address"> | Date | string
     updatedAt?: DateTimeFilter<"Address"> | Date | string
+  }
+
+  export type UserCreateWithoutMobileTokensInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    role?: $Enums.UserRole
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    cart?: CartCreateNestedOneWithoutUserInput
+    orders?: OrderCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutUserInput
+    wishlistItems?: WishlistItemCreateNestedManyWithoutUserInput
+    homeAddress?: AddressCreateNestedOneWithoutUserHomeAddressInput
+    otherAddresses?: AddressCreateNestedManyWithoutUserOtherAddressesInput
+  }
+
+  export type UserUncheckedCreateWithoutMobileTokensInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    role?: $Enums.UserRole
+    homeAddressId?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    cart?: CartUncheckedCreateNestedOneWithoutUserInput
+    orders?: OrderUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
+    wishlistItems?: WishlistItemUncheckedCreateNestedManyWithoutUserInput
+    otherAddresses?: AddressUncheckedCreateNestedManyWithoutUserOtherAddressesInput
+  }
+
+  export type UserCreateOrConnectWithoutMobileTokensInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutMobileTokensInput, UserUncheckedCreateWithoutMobileTokensInput>
+  }
+
+  export type UserUpsertWithoutMobileTokensInput = {
+    update: XOR<UserUpdateWithoutMobileTokensInput, UserUncheckedUpdateWithoutMobileTokensInput>
+    create: XOR<UserCreateWithoutMobileTokensInput, UserUncheckedCreateWithoutMobileTokensInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutMobileTokensInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutMobileTokensInput, UserUncheckedUpdateWithoutMobileTokensInput>
+  }
+
+  export type UserUpdateWithoutMobileTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    cart?: CartUpdateOneWithoutUserNestedInput
+    orders?: OrderUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutUserNestedInput
+    wishlistItems?: WishlistItemUpdateManyWithoutUserNestedInput
+    homeAddress?: AddressUpdateOneWithoutUserHomeAddressNestedInput
+    otherAddresses?: AddressUpdateManyWithoutUserOtherAddressesNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutMobileTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    homeAddressId?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    cart?: CartUncheckedUpdateOneWithoutUserNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
+    wishlistItems?: WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+    otherAddresses?: AddressUncheckedUpdateManyWithoutUserOtherAddressesNestedInput
   }
 
   export type ProductCreateWithoutCategoryInput = {
@@ -26318,6 +27961,7 @@ export namespace Prisma {
     id?: string
     price: Decimal | DecimalJsLike | number | string
     stock?: number
+    stockReserved?: number
     color?: string | null
     size?: $Enums.Size
     createdAt?: Date | string
@@ -26331,6 +27975,7 @@ export namespace Prisma {
     id?: string
     price: Decimal | DecimalJsLike | number | string
     stock?: number
+    stockReserved?: number
     color?: string | null
     size?: $Enums.Size
     createdAt?: Date | string
@@ -26497,6 +28142,7 @@ export namespace Prisma {
     id?: StringFilter<"ProductVariant"> | string
     price?: DecimalFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string
     stock?: IntFilter<"ProductVariant"> | number
+    stockReserved?: IntFilter<"ProductVariant"> | number
     productId?: StringFilter<"ProductVariant"> | string
     color?: StringNullableFilter<"ProductVariant"> | string | null
     size?: EnumSizeFilter<"ProductVariant"> | $Enums.Size
@@ -26631,6 +28277,7 @@ export namespace Prisma {
     role?: $Enums.UserRole
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedOneWithoutUserInput
     orders?: OrderCreateNestedManyWithoutUserInput
     wishlistItems?: WishlistItemCreateNestedManyWithoutUserInput
@@ -26648,6 +28295,7 @@ export namespace Prisma {
     homeAddressId?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenUncheckedCreateNestedManyWithoutUserInput
     cart?: CartUncheckedCreateNestedOneWithoutUserInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     wishlistItems?: WishlistItemUncheckedCreateNestedManyWithoutUserInput
@@ -26732,6 +28380,7 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUpdateManyWithoutUserNestedInput
     cart?: CartUpdateOneWithoutUserNestedInput
     orders?: OrderUpdateManyWithoutUserNestedInput
     wishlistItems?: WishlistItemUpdateManyWithoutUserNestedInput
@@ -26749,6 +28398,7 @@ export namespace Prisma {
     homeAddressId?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUncheckedUpdateManyWithoutUserNestedInput
     cart?: CartUncheckedUpdateOneWithoutUserNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     wishlistItems?: WishlistItemUncheckedUpdateManyWithoutUserNestedInput
@@ -26823,6 +28473,7 @@ export namespace Prisma {
     role?: $Enums.UserRole
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedOneWithoutUserInput
     orders?: OrderCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
@@ -26840,6 +28491,7 @@ export namespace Prisma {
     homeAddressId?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenUncheckedCreateNestedManyWithoutUserInput
     cart?: CartUncheckedCreateNestedOneWithoutUserInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
@@ -26924,6 +28576,7 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUpdateManyWithoutUserNestedInput
     cart?: CartUpdateOneWithoutUserNestedInput
     orders?: OrderUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
@@ -26941,6 +28594,7 @@ export namespace Prisma {
     homeAddressId?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUncheckedUpdateManyWithoutUserNestedInput
     cart?: CartUncheckedUpdateOneWithoutUserNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
@@ -27088,6 +28742,7 @@ export namespace Prisma {
   export type OrderItemCreateWithoutProductVariantInput = {
     id?: string
     quantity?: number
+    reserved?: number
     price: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27098,6 +28753,7 @@ export namespace Prisma {
   export type OrderItemUncheckedCreateWithoutProductVariantInput = {
     id?: string
     quantity?: number
+    reserved?: number
     price: Decimal | DecimalJsLike | number | string
     orderId: string
     createdAt?: Date | string
@@ -27250,6 +28906,7 @@ export namespace Prisma {
     NOT?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
     id?: StringFilter<"OrderItem"> | string
     quantity?: IntFilter<"OrderItem"> | number
+    reserved?: IntFilter<"OrderItem"> | number
     price?: DecimalFilter<"OrderItem"> | Decimal | DecimalJsLike | number | string
     orderId?: StringFilter<"OrderItem"> | string
     productVariantId?: StringFilter<"OrderItem"> | string
@@ -27402,6 +29059,7 @@ export namespace Prisma {
     id?: string
     price: Decimal | DecimalJsLike | number | string
     stock?: number
+    stockReserved?: number
     color?: string | null
     size?: $Enums.Size
     createdAt?: Date | string
@@ -27415,6 +29073,7 @@ export namespace Prisma {
     id?: string
     price: Decimal | DecimalJsLike | number | string
     stock?: number
+    stockReserved?: number
     productId: string
     color?: string | null
     size?: $Enums.Size
@@ -27444,6 +29103,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
+    stockReserved?: IntFieldUpdateOperationsInput | number
     color?: NullableStringFieldUpdateOperationsInput | string | null
     size?: EnumSizeFieldUpdateOperationsInput | $Enums.Size
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27457,6 +29117,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
+    stockReserved?: IntFieldUpdateOperationsInput | number
     productId?: StringFieldUpdateOperationsInput | string
     color?: NullableStringFieldUpdateOperationsInput | string | null
     size?: EnumSizeFieldUpdateOperationsInput | $Enums.Size
@@ -27475,6 +29136,7 @@ export namespace Prisma {
     role?: $Enums.UserRole
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenCreateNestedManyWithoutUserInput
     orders?: OrderCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
     wishlistItems?: WishlistItemCreateNestedManyWithoutUserInput
@@ -27492,6 +29154,7 @@ export namespace Prisma {
     homeAddressId?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenUncheckedCreateNestedManyWithoutUserInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     wishlistItems?: WishlistItemUncheckedCreateNestedManyWithoutUserInput
@@ -27549,6 +29212,7 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUpdateManyWithoutUserNestedInput
     orders?: OrderUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     wishlistItems?: WishlistItemUpdateManyWithoutUserNestedInput
@@ -27566,6 +29230,7 @@ export namespace Prisma {
     homeAddressId?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUncheckedUpdateManyWithoutUserNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     wishlistItems?: WishlistItemUncheckedUpdateManyWithoutUserNestedInput
@@ -27611,6 +29276,7 @@ export namespace Prisma {
     id?: string
     price: Decimal | DecimalJsLike | number | string
     stock?: number
+    stockReserved?: number
     color?: string | null
     size?: $Enums.Size
     createdAt?: Date | string
@@ -27624,6 +29290,7 @@ export namespace Prisma {
     id?: string
     price: Decimal | DecimalJsLike | number | string
     stock?: number
+    stockReserved?: number
     productId: string
     color?: string | null
     size?: $Enums.Size
@@ -27678,6 +29345,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
+    stockReserved?: IntFieldUpdateOperationsInput | number
     color?: NullableStringFieldUpdateOperationsInput | string | null
     size?: EnumSizeFieldUpdateOperationsInput | $Enums.Size
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27691,6 +29359,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
+    stockReserved?: IntFieldUpdateOperationsInput | number
     productId?: StringFieldUpdateOperationsInput | string
     color?: NullableStringFieldUpdateOperationsInput | string | null
     size?: EnumSizeFieldUpdateOperationsInput | $Enums.Size
@@ -27703,6 +29372,7 @@ export namespace Prisma {
   export type OrderItemCreateWithoutOrderInput = {
     id?: string
     quantity?: number
+    reserved?: number
     price: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27713,6 +29383,7 @@ export namespace Prisma {
   export type OrderItemUncheckedCreateWithoutOrderInput = {
     id?: string
     quantity?: number
+    reserved?: number
     price: Decimal | DecimalJsLike | number | string
     productVariantId: string
     createdAt?: Date | string
@@ -27739,6 +29410,7 @@ export namespace Prisma {
     role?: $Enums.UserRole
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedOneWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
     wishlistItems?: WishlistItemCreateNestedManyWithoutUserInput
@@ -27756,6 +29428,7 @@ export namespace Prisma {
     homeAddressId?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenUncheckedCreateNestedManyWithoutUserInput
     cart?: CartUncheckedCreateNestedOneWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     wishlistItems?: WishlistItemUncheckedCreateNestedManyWithoutUserInput
@@ -27840,6 +29513,7 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUpdateManyWithoutUserNestedInput
     cart?: CartUpdateOneWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     wishlistItems?: WishlistItemUpdateManyWithoutUserNestedInput
@@ -27857,6 +29531,7 @@ export namespace Prisma {
     homeAddressId?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUncheckedUpdateManyWithoutUserNestedInput
     cart?: CartUncheckedUpdateOneWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     wishlistItems?: WishlistItemUncheckedUpdateManyWithoutUserNestedInput
@@ -27910,6 +29585,9 @@ export namespace Prisma {
     id?: string
     status?: $Enums.OrderStatus
     total: Decimal | DecimalJsLike | number | string
+    paymentStatus?: $Enums.PaymentStatus | null
+    paymentIntentId?: string | null
+    holdExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutOrdersInput
@@ -27920,6 +29598,9 @@ export namespace Prisma {
     id?: string
     status?: $Enums.OrderStatus
     total: Decimal | DecimalJsLike | number | string
+    paymentStatus?: $Enums.PaymentStatus | null
+    paymentIntentId?: string | null
+    holdExpiresAt?: Date | string | null
     userId: string
     addressId: string
     createdAt?: Date | string
@@ -27935,6 +29616,7 @@ export namespace Prisma {
     id?: string
     price: Decimal | DecimalJsLike | number | string
     stock?: number
+    stockReserved?: number
     color?: string | null
     size?: $Enums.Size
     createdAt?: Date | string
@@ -27948,6 +29630,7 @@ export namespace Prisma {
     id?: string
     price: Decimal | DecimalJsLike | number | string
     stock?: number
+    stockReserved?: number
     productId: string
     color?: string | null
     size?: $Enums.Size
@@ -27977,6 +29660,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentStatus?: NullableEnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus | null
+    paymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    holdExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
@@ -27987,6 +29673,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentStatus?: NullableEnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus | null
+    paymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    holdExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userId?: StringFieldUpdateOperationsInput | string
     addressId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28008,6 +29697,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
+    stockReserved?: IntFieldUpdateOperationsInput | number
     color?: NullableStringFieldUpdateOperationsInput | string | null
     size?: EnumSizeFieldUpdateOperationsInput | $Enums.Size
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28021,6 +29711,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
+    stockReserved?: IntFieldUpdateOperationsInput | number
     productId?: StringFieldUpdateOperationsInput | string
     color?: NullableStringFieldUpdateOperationsInput | string | null
     size?: EnumSizeFieldUpdateOperationsInput | $Enums.Size
@@ -28034,6 +29725,9 @@ export namespace Prisma {
     id?: string
     status?: $Enums.OrderStatus
     total: Decimal | DecimalJsLike | number | string
+    paymentStatus?: $Enums.PaymentStatus | null
+    paymentIntentId?: string | null
+    holdExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orderItems?: OrderItemCreateNestedManyWithoutOrderInput
@@ -28044,6 +29738,9 @@ export namespace Prisma {
     id?: string
     status?: $Enums.OrderStatus
     total: Decimal | DecimalJsLike | number | string
+    paymentStatus?: $Enums.PaymentStatus | null
+    paymentIntentId?: string | null
+    holdExpiresAt?: Date | string | null
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28069,6 +29766,7 @@ export namespace Prisma {
     role?: $Enums.UserRole
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedOneWithoutUserInput
     orders?: OrderCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
@@ -28085,6 +29783,7 @@ export namespace Prisma {
     role?: $Enums.UserRole
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenUncheckedCreateNestedManyWithoutUserInput
     cart?: CartUncheckedCreateNestedOneWithoutUserInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
@@ -28106,6 +29805,7 @@ export namespace Prisma {
     role?: $Enums.UserRole
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenCreateNestedManyWithoutUserInput
     cart?: CartCreateNestedOneWithoutUserInput
     orders?: OrderCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
@@ -28123,6 +29823,7 @@ export namespace Prisma {
     homeAddressId?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    mobileTokens?: MobileTokenUncheckedCreateNestedManyWithoutUserInput
     cart?: CartUncheckedCreateNestedOneWithoutUserInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
@@ -28170,6 +29871,7 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUpdateManyWithoutUserNestedInput
     cart?: CartUpdateOneWithoutUserNestedInput
     orders?: OrderUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
@@ -28186,6 +29888,7 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUncheckedUpdateManyWithoutUserNestedInput
     cart?: CartUncheckedUpdateOneWithoutUserNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
@@ -28213,6 +29916,7 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUpdateManyWithoutUserNestedInput
     cart?: CartUpdateOneWithoutUserNestedInput
     orders?: OrderUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
@@ -28230,6 +29934,7 @@ export namespace Prisma {
     homeAddressId?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    mobileTokens?: MobileTokenUncheckedUpdateManyWithoutUserNestedInput
     cart?: CartUncheckedUpdateOneWithoutUserNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
@@ -28257,10 +29962,20 @@ export namespace Prisma {
     expires: Date | string
   }
 
+  export type MobileTokenCreateManyUserInput = {
+    id?: string
+    tokenHash: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
   export type OrderCreateManyUserInput = {
     id?: string
     status?: $Enums.OrderStatus
     total: Decimal | DecimalJsLike | number | string
+    paymentStatus?: $Enums.PaymentStatus | null
+    paymentIntentId?: string | null
+    holdExpiresAt?: Date | string | null
     addressId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28359,10 +30074,34 @@ export namespace Prisma {
     expires?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MobileTokenUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MobileTokenUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MobileTokenUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type OrderUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentStatus?: NullableEnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus | null
+    paymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    holdExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUpdateManyWithoutOrderNestedInput
@@ -28373,6 +30112,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentStatus?: NullableEnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus | null
+    paymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    holdExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     addressId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28383,6 +30125,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentStatus?: NullableEnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus | null
+    paymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    holdExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     addressId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28662,6 +30407,7 @@ export namespace Prisma {
     id?: string
     price: Decimal | DecimalJsLike | number | string
     stock?: number
+    stockReserved?: number
     color?: string | null
     size?: $Enums.Size
     createdAt?: Date | string
@@ -28696,6 +30442,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
+    stockReserved?: IntFieldUpdateOperationsInput | number
     color?: NullableStringFieldUpdateOperationsInput | string | null
     size?: EnumSizeFieldUpdateOperationsInput | $Enums.Size
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28709,6 +30456,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
+    stockReserved?: IntFieldUpdateOperationsInput | number
     color?: NullableStringFieldUpdateOperationsInput | string | null
     size?: EnumSizeFieldUpdateOperationsInput | $Enums.Size
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28722,6 +30470,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
+    stockReserved?: IntFieldUpdateOperationsInput | number
     color?: NullableStringFieldUpdateOperationsInput | string | null
     size?: EnumSizeFieldUpdateOperationsInput | $Enums.Size
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28811,6 +30560,7 @@ export namespace Prisma {
   export type OrderItemCreateManyProductVariantInput = {
     id?: string
     quantity?: number
+    reserved?: number
     price: Decimal | DecimalJsLike | number | string
     orderId: string
     createdAt?: Date | string
@@ -28853,6 +30603,7 @@ export namespace Prisma {
   export type OrderItemUpdateWithoutProductVariantInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    reserved?: IntFieldUpdateOperationsInput | number
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28863,6 +30614,7 @@ export namespace Prisma {
   export type OrderItemUncheckedUpdateWithoutProductVariantInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    reserved?: IntFieldUpdateOperationsInput | number
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     orderId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28873,6 +30625,7 @@ export namespace Prisma {
   export type OrderItemUncheckedUpdateManyWithoutProductVariantInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    reserved?: IntFieldUpdateOperationsInput | number
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     orderId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28939,6 +30692,7 @@ export namespace Prisma {
   export type OrderItemCreateManyOrderInput = {
     id?: string
     quantity?: number
+    reserved?: number
     price: Decimal | DecimalJsLike | number | string
     productVariantId: string
     createdAt?: Date | string
@@ -28949,6 +30703,7 @@ export namespace Prisma {
   export type OrderItemUpdateWithoutOrderInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    reserved?: IntFieldUpdateOperationsInput | number
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28959,6 +30714,7 @@ export namespace Prisma {
   export type OrderItemUncheckedUpdateWithoutOrderInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    reserved?: IntFieldUpdateOperationsInput | number
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     productVariantId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28969,6 +30725,7 @@ export namespace Prisma {
   export type OrderItemUncheckedUpdateManyWithoutOrderInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    reserved?: IntFieldUpdateOperationsInput | number
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     productVariantId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28980,6 +30737,9 @@ export namespace Prisma {
     id?: string
     status?: $Enums.OrderStatus
     total: Decimal | DecimalJsLike | number | string
+    paymentStatus?: $Enums.PaymentStatus | null
+    paymentIntentId?: string | null
+    holdExpiresAt?: Date | string | null
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28989,6 +30749,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentStatus?: NullableEnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus | null
+    paymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    holdExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUpdateManyWithoutOrderNestedInput
@@ -28999,6 +30762,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentStatus?: NullableEnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus | null
+    paymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    holdExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29009,6 +30775,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentStatus?: NullableEnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus | null
+    paymentIntentId?: NullableStringFieldUpdateOperationsInput | string | null
+    holdExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

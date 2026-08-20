@@ -77,84 +77,141 @@
 
 ---
 
-## 4. Тесты (Задание 2) — выполнено ✅
+## 4. Тесты (Задание 2) — выполнено и расширено ✅
 
-### Unit-тесты — Vitest
-- Конфиг: `vitest.config.ts` (алиас `~/` → `./src`, env `DATABASE_URL` для модулей, импортящих `db`).
-- Формат: `src/**/*.test.ts` (Vitest), запуск — `npm test` / `npm run test:watch` / `npm run test:coverage`.
-- Покрыты схемы валидации (Zod): `product.schema`, `cart.schema`, `order.schema` — дефолты, валидные/невалидные входы, enum-размеры, обязательные поля.
-- Покрыт сервис `OrderService.createOrder` с **мокнутым Prisma**: расчёт суммы из цены сервера, списание стока в транзакции, объединение позиций, ошибки `CONFLICT`/`NOT_FOUND`.
-- Итого: **34 теста**, проходят.
+### Unit — Vitest
+- Конфиг: `vitest.config.ts` (алиас `~/` → `./src`, dummy `DATABASE_URL`).
+- Паттерн: `src/**/*.test.ts`. Команды: `npm test` / `test:watch` / `test:coverage`.
+- Покрытие:
+  - Zod-схемы: `product` / `cart` / `order` (валидные/невалидные входы, defaults, enums).
+  - `OrderService.checkout` + payment-flow (hold-сток, finalize, идемпотентность) — **мок Prisma**.
+  - Mobile Bearer: `parseBearer`, `createMobileToken` (hash-only storage), `getMobileUserId` (expired cleanup).
+- **Итого: 44 unit-теста, 5 файлов — зелёные.**
 
 ### E2E — Playwright
-- Конфиг: `playwright.config.ts` (Chromium, `webServer` сам поднимает `npm run dev`).
-- Спеки: `e2e/smoke.spec.ts` — главная страница (шапка/подвал), переход по CTA «Shop Now» → `/shop`, навигация по категории. Тесты не зависят от данных БД.
-- Запуск: `npm run test:e2e` / `npm run test:e2e:ui`. Браузер: `npx playwright install chromium`.
-- Итого: **3 теста**, проходят.
+- Конфиг: `playwright.config.ts` (Chromium, `webServer` → `npm run dev`).
+- `e2e/smoke.spec.ts`:
+  - UI: home/header/footer, CTA → `/shop`, category nav, static legal pages (200), 404 UI.
+  - API: `GET /api/mobile/products` → 401 без Bearer; `POST /api/mobile/auth/token` → 400 на пустое body.
+- Запуск: `npx playwright install chromium` → `npm run test:e2e`.
+- Smoke **DB-agnostic** (не требуют seed); бизнес-flow checkout/E2E с MySQL — следующий шаг.
 
 ### Инфраструктура
-- Deps (dev): `vitest`, `@vitest/coverage-v8`, `@playwright/test`.
-- Артефакты тестов (`test-results/`, `playwright-report/`, `blob-report/`) добавлены в `.gitignore`.
-- ⚠️ E2E требуют локально поднятой БД (`DATABASE_URL` в `.env`) — dev-сервер стартует, но tRPC-запросы к БД упадут без неё; smoke-тесты к БД не обращаются.
+- devDeps: `vitest`, `@vitest/coverage-v8`, `@playwright/test`.
+- Артефакты в `.gitignore`: `test-results/`, `playwright-report/`, `coverage/`.
 
 ---
 
-## 6. Оценка проекта глазами рекрутера / техсобесующего
+## 5. CI/CD (Задание 3) — выполнено и усилено ✅
 
-> Трезвая внешняя оценка (без самолюбия). Цель — понять, чего не хватает до «мидл»
-> и что спросят/найдут на собеседовании.
+Файл: `.github/workflows/ci.yml`
 
-### Текущий уровень
-**Крепкий junior → junior+/ранний middle.** Проект по сути CRUD-приложение на современном
-стеке. Для пет-проекта — хорошо, но до «мидл» не хватает **глубины** и **прод-механизмов**.
+| Job | Что делает |
+|---|---|
+| **lint** | `npm run lint` |
+| **typecheck** | `npm run typecheck` |
+| **unit** | `npm test` + informational `test:coverage` |
+| **architecture** | `npm run depcruise` (границы слоёв) |
+| **e2e** | Playwright Chromium + upload report on failure |
+| **build** | `npm run build` (needs lint/typecheck/unit) |
 
-### Сильные стороны (засчитываются в плюс)
-- Современный стек (T3) и разделение `routers → services → schemas`.
-- Сквозная типизация tRPC + Zod.
-- Гигиена: линт (зелёный), typecheck, unit (Vitest), E2E (Playwright), CI, dependency-cruiser.
-- Базовая безопасность закрыта: убран `allowDangerousEmailAccountLinking`, права на заказы скоупены, `TRPCError`.
-- Документирование (`README`, `ANALYSIS.md`, `BRIDGE.md`).
+Триггеры: `push` на `main`/`master`, все `pull_request`.
+Concurrency group по ref с cancel-in-progress.
+Env: dummy `DATABASE_URL`, `AUTH_SECRET`, `SKIP_ENV_VALIDATION=1` — без реальной БД для lint/type/unit/build.
+E2E поднимает dev-server; smoke не ходит в MySQL. Для DB-backed E2E — добавить `services.mysql` + `prisma migrate deploy`.
 
-### Чего не хватает (о чём спросят на собесе)
-1. **Нет деплоя / живой ссылки**; CI ещё не запушен (реальный запуск на GitHub не проверен).
-2. **Нет нетривиальной задачи с trade-off'ами** — единственное, что вытаскивает на собесе.
-3. **Нет прод-инженерии:**
-   - фоновые задачи/очереди (сейчас затычка на `setTimeout` — красный флаг);
-   - кэширование (Redis);
-   - оплата (Stripe) + идемпотентность;
-   - наблюдаемость (логи, мониторинг, Sentry);
-   - Docker/`docker-compose`;
-   - rate-limiting, пагинация/кэширование чтения.
-4. **Корзина в localStorage** (нет синхронизации/серверной; stock в UI захардкожен − мок).
-5. **`admin/page.tsx` — 1300 строк, много `any`** (скрыто ESLint-override).
-6. **Нет мобильного клиента** (а цель — web + mobile с одним бэкендом).
-7. **E2E только smoke**; нет покрытия бизнес-сценариев (корзина → оплата → заказ).
-8. **Нет i18n**, интерфейс смешан.
+---
 
-### Реальные уязвимости / болевые точки (проверено)
-- **`npm audit`: 12 уязвимостей (1 low, 8 high, 3 critical)** — postcss (XSS через `</style>`,
-  path traversal через `sourceMappingURL`) и sharp (CVE в libvips). Первый шаг — `npm audit fix`
-  (часть может потребовать обновления Next).
-- **`getAllUsers` / `getAllOrders` отдают ПДн всех пользователей любому авторизованному**
-  (осознанное демо-решение; для прода сильно сузить).
-- **Нет rate-limiting** на auth-эндпоинтах (брутфорс незащищён).
-- **`simulateStatusProgression` на `setTimeout`** — рассинхронизация статусов на serverless.
-- **Корзина: `stock` захардкожен (`stock: 999`)** — не отображает реальный остаток.
-- **Нет явной `session.strategy`** (дефолт NextAuth — JWT; стоит осознавать trade-off JWT vs DB-sessions).
+## 6. Оценка «глазами middle» (углублённый разбор)
 
-### Что НЕ уязвимо (хорошо)
-- Нет `dangerouslySetInnerHTML` в исходниках (XSS закрыт экранированием React).
-- Нет SQL-инъекций (Prisma параметризует).
-- Нет секретов в git (`.env` в `.gitignore`).
-- CSRF закрывает NextAuth.
+> Цель: не «CRUD на T3», а проект, за который не стыдно на собесе middle: trade-offs, безопасность,
+> деньги/сток, контракт для mobile, тесты, CI, честный долг.
 
-### Направление «web + mobile с одним бэкендом» — существует ✓
-Типовой вариант: **Next.js (web) + Expo/React Native (mobile)** + общий backend.
-⚠️ **tRPC заточен под web** — для мобильного клиента удобнее **REST/OpenAPI** (codegen, кэш)
-или GraphQL; либо оставить tRPC для web и добавить тонкий OpenAPI-слой для mobile,
-либо backend на NestJS/REST/OpenAPI.
+### Итоговый уровень (после доработок)
+**Junior+ → устойчивый early/mid middle** на пет-проекте.
 
-### Дорожная карта до «мидл» + «я умею web+mobile»
-- **Этап 1 (продукт):** задеплоить (Vercel) + CI зелёный; `npm audit fix`; сузить ПДн-эндпоинты + rate-limit; очередь/cron вместо `setTimeout`.
-- **Этап 2 (глубина):** одна нетривиальная фича с разбором trade-off — лучшее: **чекаут с конкуренцией стока и идемпотентной оплатой (Stripe test)**. Декомпозировать `admin/page.tsx`.
-- **Этап 3 (web+mobile):** Expo/React Native-клиент на том же backend; решить вопрос контракта (OpenAPI или общий пакет типов). Показать общий login/каталог/корзину на web + mobile.
+Что поднимает оценку:
+1. **Слоистая архитектура** `routers → services → schemas` + dependency-cruiser в CI.
+2. **Нетривиальная фича оплаты:** hold-сток → PaymentIntent → webhook finalize + идемпотентность + unit-покрытие.
+3. **AuthZ:** owner-scope на заказах/корзине; admin mutations за `adminProcedure`.
+4. **Dual contract:** web = tRPC; mobile = REST `/api/mobile/*` + Bearer (hash в `MobileToken`).
+5. **Тесты + CI:** 44 unit, расширенный smoke E2E, pipeline lint/type/unit/arch/e2e/build.
+
+Что ещё отделяет от «уверенного middle / senior-ready»:
+
+| Пробел | Почему важно | Минимальный next step |
+|---|---|---|
+| Нет live-деплоя | Рекрутер не кликнет | Vercel + prod MySQL + webhook Stripe |
+| `setTimeout` статусов заказа | Serverless убьёт таймер | cron job / queue |
+| Cart в localStorage | Нет multi-device / stock truth | server cart или sync |
+| admin monolit 1300 LOC + any-warn | Maintainability | split tabs/forms, убрать override |
+| ПДн в admin reads | Privacy | admin-only reads |
+| E2E без checkout | Регресс денег | MySQL service + 1 happy-path |
+| Mobile UI (Expo) | web+mobile story | scaffold + catalog |
+| Observability | Prod ops | structured logs + Sentry |
+| Rate limit auth/mobile token | Abuse | middleware / Upstash |
+
+### Архитектура (as-is)
+
+```
+src/app          UI + Route Handlers (webhooks, /api/mobile/*)
+src/server/api   tRPC routers (thin)
+src/server/services  business rules (Order/Product/Cart/...)
+src/server/schemas   Zod I/O
+src/server/mobile    Bearer token helpers
+src/server/auth      NextAuth config
+prisma/              schema + migrations
+e2e/                 Playwright
+```
+
+**Сильные trade-offs (можно рассказать на собесе):**
+- **Цена только с сервера** в checkout — клиент не диктует total.
+- **Hold vs decrement:** резерв `stockReserved` до webhook; release expired holds.
+- **Stripe optional:** без ключей — simulated payment (local/demo), с ключами — real PI + webhook.
+- **Mobile token:** raw token один раз клиенту, в БД только SHA-256; TTL 30d; expired → delete.
+- **Admin read-open / write-admin:** осознанный demo-компромисс (задокументирован).
+
+### Безопасность (чеклист middle)
+
+| Тема | Статус |
+|---|---|
+| OAuth account linking dangerous flag | ✅ убран |
+| IDOR заказов | ✅ owner scope |
+| TRPCError codes | ✅ вместо сырых Error |
+| CSRF (cookie session web) | ✅ NextAuth |
+| SQL injection | ✅ Prisma |
+| XSS (dangerouslySetInnerHTML) | ✅ не используется в app src |
+| Secrets in git | ✅ `.env` ignored |
+| Mobile Bearer storage | ✅ hash-only |
+| Rate limiting | ❌ нет |
+| Admin PII leak to any authed user | ⚠️ demo |
+| npm audit CVEs | ⚠️ проверять периодически |
+
+### Качество кода / DX
+- `npm run check` = lint + tsc.
+- Strict TypeScript; admin page — documented ESLint soften for legacy `any`.
+- Seed + migrations (в т.ч. payment_hold, mobile_token).
+- BRIDGE.md — handoff между сессиями.
+
+### Что показать на собесе (скрипт 3 мин)
+1. Архитектура слоёв + почему tRPC web / REST mobile.
+2. Checkout: race stock, hold, webhook idempotency (и unit-тест).
+3. Security fixes (IDOR, linking).
+4. CI green path + что ещё не в проде.
+5. Честный backlog (queue, deploy, Expo APK).
+
+### Дорожная карта (приоритет)
+1. **Задеплоить** + применить миграции + Stripe webhook endpoint.
+2. **Expo scaffold** на `/api/mobile/*`.
+3. **Cron** release holds / status progression.
+4. **Сузить admin reads** + rate limit token endpoint.
+5. **E2E checkout** с MySQL в CI.
+6. Декомпозиция admin UI.
+
+### Статус на 20.08.2026
+- ✅ ANALYSIS доведён до middle-разбора (этот раздел).
+- ✅ Unit **44/44** (schemas + order + mobile token).
+- ✅ E2E smoke расширен (UI + mobile API 401/400).
+- ✅ CI: lint, typecheck, unit(+coverage info), depcruise, e2e, build; secrets/env для CI.
+- ⚠️ Локально Windows: `next build` / Playwright runner могут флейкать (среда); **источник истины — GitHub Actions Ubuntu**.
+- 🔲 Не сделано: live deploy, Expo app, DB-backed E2E, rate limit.

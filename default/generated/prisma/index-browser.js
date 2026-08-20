@@ -160,6 +160,14 @@ exports.Prisma.UserScalarFieldEnum = {
   homeAddressId: 'homeAddressId'
 };
 
+exports.Prisma.MobileTokenScalarFieldEnum = {
+  id: 'id',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  userId: 'userId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.CategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -221,6 +229,7 @@ exports.Prisma.ProductVariantScalarFieldEnum = {
   id: 'id',
   price: 'price',
   stock: 'stock',
+  stockReserved: 'stockReserved',
   productId: 'productId',
   color: 'color',
   size: 'size',
@@ -266,6 +275,9 @@ exports.Prisma.OrderScalarFieldEnum = {
   id: 'id',
   status: 'status',
   total: 'total',
+  paymentStatus: 'paymentStatus',
+  paymentIntentId: 'paymentIntentId',
+  holdExpiresAt: 'holdExpiresAt',
   userId: 'userId',
   addressId: 'addressId',
   createdAt: 'createdAt',
@@ -275,6 +287,7 @@ exports.Prisma.OrderScalarFieldEnum = {
 exports.Prisma.OrderItemScalarFieldEnum = {
   id: 'id',
   quantity: 'quantity',
+  reserved: 'reserved',
   price: 'price',
   orderId: 'orderId',
   productVariantId: 'productVariantId',
@@ -339,6 +352,12 @@ exports.Prisma.UserOrderByRelevanceFieldEnum = {
   email: 'email',
   image: 'image',
   homeAddressId: 'homeAddressId'
+};
+
+exports.Prisma.MobileTokenOrderByRelevanceFieldEnum = {
+  id: 'id',
+  tokenHash: 'tokenHash',
+  userId: 'userId'
 };
 
 exports.Prisma.CategoryOrderByRelevanceFieldEnum = {
@@ -412,6 +431,7 @@ exports.Prisma.CartProductOrderByRelevanceFieldEnum = {
 
 exports.Prisma.OrderOrderByRelevanceFieldEnum = {
   id: 'id',
+  paymentIntentId: 'paymentIntentId',
   userId: 'userId',
   addressId: 'addressId'
 };
@@ -475,6 +495,7 @@ exports.Size = exports.$Enums.Size = {
 
 exports.OrderStatus = exports.$Enums.OrderStatus = {
   PENDING: 'PENDING',
+  PAID: 'PAID',
   DELIVERING: 'DELIVERING',
   COMPLETED: 'COMPLETED',
   CANCELLED: 'CANCELLED',
@@ -482,11 +503,19 @@ exports.OrderStatus = exports.$Enums.OrderStatus = {
   RETURNED: 'RETURNED'
 };
 
+exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  PENDING_PAYMENT: 'PENDING_PAYMENT',
+  PAID: 'PAID',
+  FAILED: 'FAILED',
+  REFUNDED: 'REFUNDED'
+};
+
 exports.Prisma.ModelName = {
   Account: 'Account',
   Session: 'Session',
   VerificationToken: 'VerificationToken',
   User: 'User',
+  MobileToken: 'MobileToken',
   Category: 'Category',
   Brand: 'Brand',
   Product: 'Product',

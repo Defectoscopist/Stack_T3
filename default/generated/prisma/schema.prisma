@@ -70,6 +70,9 @@ model User {
   accounts Account[]
   sessions Session[]
 
+  // Mobile API token (RN/Expo client)
+  mobileTokens MobileToken[]
+
   // E-commerce relations
   cart   Cart?
   orders Order[]
@@ -82,6 +85,22 @@ model User {
   homeAddress    Address?  @relation("HomeAddress", fields: [homeAddressId], references: [id])
   homeAddressId  String?   @unique
   otherAddresses Address[] @relation("OtherAddresses")
+}
+
+// Bearer token for the mobile (Expo) client. Store only the hash, never raw.
+model MobileToken {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  // ISO date string; checked server-side
+  expiresAt DateTime
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  createdAt DateTime @default(now())
+
+  @@index([tokenHash])
+  @@index([userId])
 }
 
 // ===== PRODUCT CATALOG MODELS =====
@@ -186,9 +205,12 @@ model WishlistItem {
 }
 
 model ProductVariant {
-  id    String  @id @default(cuid())
-  price Decimal @db.Decimal(10, 2)
-  stock Int     @default(0)
+  id            String  @id @default(cuid())
+  price         Decimal @db.Decimal(10, 2)
+  stock         Int     @default(0)
+  // Quantity currently reserved by unpaid orders (holds). Available =
+  // stock - stockReserved.
+  stockReserved Int     @default(0)
 
   product       Product               @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId     String
@@ -298,6 +320,7 @@ enum Sex {
 // ===== ORDER MODELS =====
 enum OrderStatus {
   PENDING
+  PAID
   DELIVERING
   COMPLETED
   CANCELLED
@@ -305,11 +328,25 @@ enum OrderStatus {
   RETURNED
 }
 
+enum PaymentStatus {
+  // Order created, stock held (reserved), payment not yet completed.
+  PENDING_PAYMENT
+  PAID
+  FAILED
+  REFUNDED
+}
+
 model Order {
   id         String      @id @default(cuid())
   status     OrderStatus @default(PENDING)
   total      Decimal     @db.Decimal(10, 2)
   orderItems OrderItem[]
+
+  // Payment fields
+  paymentStatus   PaymentStatus? @default(PENDING_PAYMENT)
+  paymentIntentId String?
+  // When the stock hold expires if payment is not completed.
+  holdExpiresAt   DateTime?
 
   user      User    @relation(fields: [userId], references: [id])
   userId    String
@@ -322,11 +359,14 @@ model Order {
   @@index([userId])
   @@index([addressId])
   @@index([status])
+  @@index([paymentStatus])
 }
 
 model OrderItem {
   id       String  @id @default(cuid())
   quantity Int     @default(1)
+  // How many units were reserved for this item (same as quantity while held).
+  reserved Int     @default(0)
   price    Decimal @db.Decimal(10, 2) // Price at time of purchase (frozen)
 
   order            Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
