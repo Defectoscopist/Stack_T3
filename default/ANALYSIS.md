@@ -215,3 +215,42 @@ e2e/                 Playwright
 - ✅ CI: lint, typecheck, unit(+coverage info), depcruise, e2e, build; secrets/env для CI.
 - ⚠️ Локально Windows: `next build` / Playwright runner могут флейкать (среда); **источник истины — GitHub Actions Ubuntu**.
 - 🔲 Не сделано: live deploy, Expo app, DB-backed E2E, rate limit.
+
+### Статус на 21.08.2026 — Mobile milestone
+- ✅ Исправлены две `unsafe-return` lint-ошибки в `src/server/mobile/token.test.ts`; mobile token tests и общий unit-набор снова зелёные (**44/44**).
+- ✅ Добавлены mobile orders endpoints: `GET /api/mobile/orders` (Bearer-auth, owner scope, пагинация/фильтр `status`) и `POST /api/mobile/orders` (Zod checkout, адрес пользователя, серверный total, hold стока и payment intent через `OrderService`).
+- ✅ Создан отдельный Expo SDK 57 + TypeScript проект в `mobile/`; добавлены web-зависимости для локальной проверки на Windows.
+- ✅ Реализован первый mobile slice: каталог из `GET /api/mobile/products`, состояния loading/error/empty, pull-to-refresh, вкладки «Каталог» и «Заказы».
+- ⚠️ Mobile UI пока не является пиксельной копией web: это осознанный mobile-first scaffold с общей цветовой интонацией SHOP. Дальше нужны detail/cart/checkout/profile и реальная auth-flow.
+- 🔲 Не сделано: подключение checkout к Expo UI, profile, полноценная auth-flow, Android APK, live deploy, DB-backed E2E, rate limit.
+
+### Mobile UI milestone — 21.08.2026
+- ✅ Каталог стал интерактивным: нажатие на карточку открывает detail товара.
+- ✅ Detail показывает изображение, описание, цену и доступные варианты/размеры; недоступные варианты отключены.
+- ✅ Добавлена локальная корзина с объединением одинаковых вариантов, ограничением по stock, количеством и total.
+- ⚠️ Корзина пока хранится только в состоянии Expo-приложения; после перезапуска очищается. Следующий шаг — checkout-форма и отправка в `POST /api/mobile/orders`.
+- ✅ Checkout-форма подключена к `POST /api/mobile/orders`: адресные поля валидируются backend Zod-схемой, клиент отправляет только `variantId` и `quantity`, сервер остаётся источником цены. После успеха корзина очищается, приложение открывает историю заказов.
+- ⚠️ Реальный Stripe UI пока не добавлен: backend возвращает payment intent/demo-результат, следующий шаг — полноценная auth/token flow и подтверждение платежа.
+- ✅ Добавлен token onboarding: пользователь вводит Bearer-токен, приложение проверяет его через `GET /api/mobile/products`, native хранит токен в SecureStore, Web использует localStorage fallback.
+- ⚠️ Это ещё не полноценная авторизация: текущий backend token endpoint выдаёт токен по `userId` как demo-упрощение. Для продукта нужен OAuth/device login и профиль.
+- ✅ Добавлен профиль mobile-клиента: показывает активную Bearer-сессию и позволяет выйти, удаляя сохранённый токен. Токен, заданный через `EXPO_PUBLIC_MOBILE_TOKEN`, намеренно не удаляется из UI.
+- ✅ Expo Web export проходит после добавления profile flow; backend unit остаётся **44/44**.
+- ✅ Добавлен `GET /api/mobile/profile`: endpoint проверяет Bearer-токен и возвращает только `id/name/email/image/role` текущего пользователя; unauthenticated 401 покрыт smoke-тестом.
+- 🔲 Следующий auth-шаг: заменить demo `POST /api/mobile/auth/token` с `userId` в body на OAuth/device login, который сам устанавливает identity пользователя.
+- ✅ Добавлен session exchange: `POST /api/mobile/auth/token` использует `auth()` и выпускает токен для уже проверенного `session.user.id`; в production запрос без сессии получает `401`.
+- ⚠️ Development fallback по `userId` сохранён для локального demo и smoke-сценариев, но не является production-аутентификацией.
+- ✅ Локальная корзина сохраняется через AsyncStorage, восстанавливается после перезапуска и очищается при logout; Web export также проходит.
+- ⚠️ Это всё ещё client-side cart snapshot: server остаётся источником истины stock/price на checkout, но multi-device корзина не реализована.
+- ✅ Mobile MVP подготовлен к Android: Expo config (`SHOP Mobile`, `com.shop.mobile`), Android emulator API default, EAS preview APK profile и инструкции запуска добавлены.
+- 🔲 APK фактически не собран: нужен EAS account/signing и сетевой build; iOS остаётся вне Windows-среды.
+- ✅ В корзине появились +/- и удаление позиции; UI ограничивает quantity локальным stock, а checkout всё равно повторно проверяется сервером.
+- ✅ Checkout дополнен клиентской валидацией обязательных полей, индекса и телефона; backend Zod остаётся второй линией защиты.
+- ✅ Добавлен mobile payment confirm endpoint с owner scope и idempotency; в simulated режиме Expo вызывает его после создания заказа, поэтому demo-заказы становятся `PAID` и резерв stock финализируется.
+- ⚠️ При реальном Stripe mobile checkout пока создаёт `PaymentIntent`, но ждёт отдельного payment UI/webhook; авто-confirm для real payment не выполняется.
+- ✅ Mobile order lifecycle расширен `DELETE /api/mobile/orders/:id`: owner scope, допустимые payment statuses и освобождение reserved stock делегированы `OrderService.cancelOrder`; UI показывает отмену в истории.
+
+### Диагностика `product.getAll` — 21.08.2026
+- Причина HTTP 500: Prisma Client запрашивал колонку `ProductVariant.stockReserved`, отсутствующую в локальной MySQL-базе.
+- Статус миграций показал две неприменённые миграции: `20260818000000_payment_hold` и `20260818010000_mobile_token`.
+- Выполнен `npx prisma migrate deploy` без сброса данных. Повторный прямой вызов tRPC `product.getAll({ limit: 12 })` вернул HTTP 200.
+- Вывод: проблема была в рассинхронизации схемы БД и Prisma, а не в компоненте `/shop` или router `product.getAll`.

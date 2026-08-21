@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "~/server/db";
+import { auth } from "~/server/auth";
 import { createMobileToken } from "~/server/mobile/token";
 
 const bodySchema = z.object({
@@ -11,6 +12,16 @@ const bodySchema = z.object({
 });
 
 export async function POST(req: Request) {
+  const session = await auth();
+  if (session?.user?.id) {
+    const { token, expiresAt } = await createMobileToken(session.user.id);
+    return NextResponse.json({ token, expiresAt, source: "session" });
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  }
+
   let body: unknown;
   try {
     body = await req.json();

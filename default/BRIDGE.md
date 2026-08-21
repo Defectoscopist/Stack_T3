@@ -69,6 +69,8 @@
 >
 > Итог: **код зелёный по lint/typecheck/unit; локальные build/E2E-сбои — средовые, не из-за кода.** Рекомендация — прогнать на CI (Ubuntu/Vercel), где это стабильно.
 >
+> 21.08.2026: локальная причина падения `product.getAll` найдена и устранена — Prisma Client ожидал `ProductVariant.stockReserved`, но миграции `payment_hold` и `mobile_token` не были применены к MySQL. Выполнен `npx prisma migrate deploy`, после чего tRPC `product.getAll({ limit: 12 })` вернул HTTP 200.
+>
 > Базовый статус:
 - `npm run check` (lint + typecheck) → exit 0
 - Unit-тесты (Vitest) → 36/36 (4 файла)
@@ -104,14 +106,27 @@
 **Этап 3 — Mobile («установщик», НЕ сторы):**
 - [x] **Решение по Stripe-WIP (вариант B доделан по коду)** — теперь можно стартовать мобилку.
 - [x] **Контракт**: web на tRPC; для мобилки — **REST/OpenAPI** (`/api/mobile/*`) поверх тех же сервисов + **Bearer-токен** (опц. вместо cookie). Реализовано: хелперы `src/server/mobile/token.ts` (SHA-256-хэш токена в `MobileToken`, TTL 30д), `POST /api/mobile/auth/token`, `GET /api/mobile/products`, `GET /api/mobile/products/:slug` (Bearer-проверка).
-- [ ] Backend (продолжить): REST `POST /api/mobile/orders` (чекаут), `GET /api/mobile/orders`, статусы — на базе `OrderService`.
-- [ ] Expo-приложение (каталог/товар/корзина/чекаут/заказы/профиль), авторизация по токену.
-- [ ] Собрать **Android `.apk`** (sideload). iOS `.ipa` — требует Mac+Xcode+Apple Dev (99$/yr) — вне этого Windows-окружения.
+- [x] Backend: `GET /api/mobile/orders` (owner-scoped, пагинация, фильтр статуса) на базе `OrderService`.
+- [x] Expo scaffold в `mobile/` (SDK 57, TypeScript): mobile-first каталог, вкладки «Каталог»/«Заказы», Bearer-запросы, состояния загрузки/ошибки/пустого списка, pull-to-refresh. Web-проверка доступна через `npm run web` (порт 8081).
+- [x] Backend: REST `POST /api/mobile/orders` (валидация checkout, создание адреса, hold-сток + payment intent через `OrderService`), `GET` истории и статусы чтения готовы.
+- [x] Expo UI: экран товара, выбор варианта, локальная корзина с количеством/итогом и отдельной вкладкой «Корзина».
+- [x] Expo checkout UI: адресная форма, отправка позиций в `POST /api/mobile/orders`, обработка ошибок/loading, очистка корзины и переход к заказам после успеха.
+- [x] Mobile payment confirmation: `POST /api/mobile/orders/:id/confirm` owner-scoped и идемпотентный через `OrderService.confirmOrder`; simulated Expo checkout вызывает его автоматически.
+- [x] Mobile order cancellation: `DELETE /api/mobile/orders/:id` owner-scoped через `OrderService.cancelOrder`; Expo показывает отмену для `PENDING_PAYMENT`/`PAID`.
+- [x] Expo checkout validation: обязательные поля, индекс минимум 5 символов и телефон минимум 10 цифр проверяются до сетевого запроса.
+- [x] Expo token onboarding: экран подключения Bearer-токена, проверка через products API, SecureStore на native и `localStorage` fallback для Web.
+- [x] Expo UI: вкладка «Профиль» со статусом сессии и отключением токена; SecureStore/localStorage очищаются при выходе.
+- [x] Mobile profile API: `GET /api/mobile/profile` возвращает только данные текущего Bearer-пользователя; добавлен smoke 401 без токена.
+- [x] Expo cart persistence: корзина сохраняется через AsyncStorage и восстанавливается после перезапуска; logout очищает её.
+- [x] Expo cart controls: изменение количества, удаление позиции и ограничение количества по текущему stock.
+- [x] Mobile auth bridge: `POST /api/mobile/auth/token` сначала обменивает авторизованную NextAuth web-сессию на Bearer-токен; `userId` fallback оставлен только для development.
+- [ ] Expo-приложение: полноценная выдача токена через OAuth/device login без ручной вставки.
+- [ ] Собрать **Android `.apk`** (sideload): Expo/EAS config готов (`mobile/eas.json`, preview APK profile), остался запуск EAS с аккаунтом/signing. iOS `.ipa` — требует Mac+Xcode+Apple Dev (99$/yr) — вне этого Windows-окружения.
 - [ ] Обновить README/mobile + BRIDGE/ANALYSIS.
 
 **Хвосты / техдолг:**
 - [ ] (низкий/опц.) Русская версия README (сейчас англ.).
-- [x] Джоба dependency-cruiser в CI (job `architecture`).
+- [ ] Убрать Джобу dependency-cruiser в CI (job `architecture`).
 - [x] Расширены unit (mobile token) + E2E smoke (legal/404 + mobile API 401/400).
 - [ ] (опц.) Доп. тесты: сервисы `cart/review/wishlist` + E2E «корзина → чекаут» (нужен MySQL в CI).
 - [ ] (низкий) Убрать из репо `Снимок экрана ...png`.
@@ -137,6 +152,21 @@
 | 18.08.2026 | Начата «нетривиальная фича» (Stripe + hold‑сток) — прервано на середине, код несобран. Решено: переключиться на Mobile (React Native + Expo, установщик). Обновлён план в разделе 5 | Решить судьбу Stripe-WIP (откат или доделать) → вернуть дерево в зелёное → исходный Expo‑scaffold + REST/token-слой |
 | 18.08.2026 | **Вариант B (Stripe‑фича) завершён по коду**: hold‑сток → PaymentIntent (с фолбэк-симуляцией) → webhook `/api/webhooks/stripe`; unit 36/36 (payment-тесты), typecheck ok; Stripe-переменные документированы. Осталось применить миграцию к БД | Далее: Mobile — старт REST/OpenAPI + Bearer-слой (после применения миграции и CI-прогона) |
 | 20.08.2026 | **Задания 1–3 усилены до middle-уровня:** ANALYSIS §6 (trade-offs, security checklist, roadmap); unit **44/44** (+ mobile token); E2E smoke расширен (legal/404 + mobile API); CI: +architecture(depcruise), coverage info, AUTH_SECRET/SKIP_ENV, branches main/master | Запушить → проверить Actions; далее Expo или deploy |
+| 21.08.2026 | Исправлены 2 lint-ошибки в mobile token tests; добавлен `GET /api/mobile/orders`; создан `mobile/` на Expo SDK 57, подключён Expo Web, сделан mobile-first каталог и вкладка заказов с Bearer API | Продолжить mobile: REST checkout → экран товара/корзина → Android APK; затем обновить README |
+| 21.08.2026 | Добавлен Bearer-защищённый `POST /api/mobile/orders`: Zod checkout, адрес пользователя, серверный расчёт цены, hold стока и payment intent через общий `OrderService`; lint и unit **44/44** зелёные | Подключить checkout к Expo UI: detail → cart → address/payment → подтверждение; затем полноценная auth-flow и APK |
+| 21.08.2026 | Исправлен runtime-сбой сайта `product.getAll`: применены неприменённые миграции `20260818000000_payment_hold` и `20260818010000_mobile_token`; запрос проверен напрямую через tRPC, HTTP 200 | Продолжить mobile UI; при смене БД сначала выполнять `npx prisma migrate deploy` |
+| 21.08.2026 | Expo-клиент расширен: интерактивные карточки, detail товара, выбор размера/варианта, локальная корзина, итоговая сумма и отдельная вкладка корзины; `mobile` TypeScript зелёный | Подключить checkout-форму к `POST /api/mobile/orders`, затем auth/profile и APK |
+| 21.08.2026 | Checkout подключён к mobile REST: форма адреса отправляет серверу только адрес и variant IDs/quantity, показывает loading/error, после успеха очищает корзину и открывает заказы; mobile TypeScript и unit **44/44** зелёные | Добавить профиль/token flow, затем ручная проверка полного заказа и APK |
+| 21.08.2026 | Добавлен token onboarding в Expo: Bearer вводится и проверяется запросом каталога, хранится через SecureStore на Android/iOS; для Expo Web добавлен localStorage fallback, web bundle проверен на 8082 | Добавить профиль и реальную выдачу токена через OAuth/device login; затем APK |
+| 21.08.2026 | Добавлена вкладка профиля: состояние mobile-сессии, logout с удалением токена из SecureStore/localStorage; Expo Web export и mobile TypeScript зелёные | Заменить demo-ввод токена на OAuth/device login; затем ручной checkout и APK |
+| 21.08.2026 | Добавлен `GET /api/mobile/profile` с owner-scoped user data и E2E smoke на 401 без Bearer; profile UI подключён к API; общий check и unit **44/44** зелёные | Сделать реальную выдачу mobile-токена через OAuth/device login |
+| 21.08.2026 | `POST /api/mobile/auth/token` усилен: при наличии NextAuth-сессии токен выпускается для `session.user.id`, в production неаутентифицированный `userId` fallback запрещён; typecheck/lint/unit зелёные | Подключить mobile UI к OAuth/device login вместо ручного token input |
+| 21.08.2026 | Корзина Expo переведена на AsyncStorage: восстановление после перезапуска, защита от битого JSON, очистка при logout; Expo Web export и unit **44/44** зелёные | OAuth/device login и ручной end-to-end checkout на Android/Web |
+| 21.08.2026 | В корзину добавлены +/- и удаление позиции; quantity ограничивается stock, ноль удаляет товар; mobile TypeScript зелёный | Ручная проверка checkout и затем OAuth/device login или APK |
+| 21.08.2026 | В checkout добавлена клиентская валидация доставки и телефона; ошибки показываются до запроса, mobile TypeScript зелёный | Ручной happy-path checkout с реальным токеном; затем OAuth/device login/APK |
+| 21.08.2026 | Добавлен `POST /api/mobile/orders/:id/confirm`; simulated checkout в Expo автоматически подтверждает заказ и переводит hold stock в PAID; добавлен E2E smoke 401 | Проверить полный checkout с MySQL/токеном; для real Stripe добавить payment UI |
+| 21.08.2026 | Добавлен `DELETE /api/mobile/orders/:id` с owner scope, освобождением hold stock и UI-кнопкой отмены в истории заказов; добавлен E2E smoke 401 | Проверить полный order lifecycle вручную; затем real Stripe UI/OAuth/APK |
+| 21.08.2026 | Mobile MVP подготовлен к Android: API default для emulator `10.0.2.2`, бренд `SHOP Mobile`, package `com.shop.mobile`, `mobile/eas.json` preview APK, `mobile/README.md` и root README mobile section | Запустить `npx eas build --platform android --profile preview` после EAS login; затем ручной device checkout |
 
 ---
 

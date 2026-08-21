@@ -2,9 +2,9 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createHash } from "node:crypto";
 
 // Mock db before importing the module under test.
-const findUnique = vi.fn();
-const deleteFn = vi.fn();
-const upsert = vi.fn();
+const findUnique = vi.fn<(...args: unknown[]) => unknown>();
+const deleteFn = vi.fn<(...args: unknown[]) => unknown>();
+const upsert = vi.fn<(...args: unknown[]) => unknown>();
 
 vi.mock("~/server/db", () => ({
   db: {

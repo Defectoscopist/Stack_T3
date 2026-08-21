@@ -19,6 +19,7 @@ A full-featured fashion e‑commerce web application built with the
 - **Admin dashboard** — dashboard stats, product/category/brand/variant CRUD, order status management, user role management.
 - **Tests** — Vitest unit (schemas, order/payment, mobile Bearer) + Playwright E2E smoke (UI + mobile API).
 - **CI** — GitHub Actions: `lint → typecheck → unit → architecture (depcruise) → e2e → build`.
+- **Mobile** — Expo SDK 57 client in `mobile/`: catalog, product detail, persistent cart, checkout, orders, profile and Bearer token flow.
 
 ---
 
@@ -108,6 +109,44 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+---
+
+## 📱 Mobile app
+
+The Expo client lives in `mobile/` and uses the same REST mobile contract:
+
+- `GET /api/mobile/products` and `/products/:slug`
+- `GET/POST /api/mobile/orders`
+- `POST /api/mobile/orders/:id/confirm`
+- `DELETE /api/mobile/orders/:id`
+- `GET /api/mobile/profile`
+- `POST /api/mobile/auth/token`
+
+Run the mobile client:
+
+```powershell
+Push-Location mobile
+npm install
+npm run web
+Pop-Location
+```
+
+For Android emulator, the client defaults to `http://10.0.2.2:3000`; for a
+physical device set `EXPO_PUBLIC_API_URL` to the computer's LAN IP. Copy
+`mobile/.env.example` to `mobile/.env` when needed.
+
+To build an installable APK with EAS:
+
+```powershell
+Push-Location mobile
+npx eas login
+npx eas build --platform android --profile preview
+Pop-Location
+```
+
+The preview profile is configured in `mobile/eas.json`. EAS account access and
+Android signing are required for the remote build.
 
 ---
 
