@@ -36,6 +36,7 @@
 | Команда | Что делает |
 |---|---|
 | `npm run dev` | dev-сервер |
+| `npm run dev:all` | backend (3000) + mobile web preview (8081) вместе (`scripts/dev-all.mjs`) |
 | `npm run build` | прод-сборка (гоняет lint + typecheck) |
 | `npm run check` | `next lint && tsc --noEmit` (всё зелёное = ок) |
 | `npm test` / `npm run test:watch` / `npm run test:coverage` | Unit-тесты (Vitest) |
@@ -122,7 +123,11 @@
 - [x] Mobile auth bridge: `POST /api/mobile/auth/token` сначала обменивает авторизованную NextAuth web-сессию на Bearer-токен; `userId` fallback оставлен только для development.
 - [ ] Expo-приложение: полноценная выдача токена через OAuth/device login без ручной вставки.
 - [ ] Собрать **Android `.apk`** (sideload): Expo/EAS config готов (`mobile/eas.json`, preview APK profile), остался запуск EAS с аккаунтом/signing. iOS `.ipa` — требует Mac+Xcode+Apple Dev (99$/yr) — вне этого Windows-окружения.
-- [ ] Обновить README/mobile + BRIDGE/ANALYSIS.
+- [x] **CORS для мобилки**: `src/middleware.ts` для `/api/mobile/*` (Expo Web 8081 → backend 3000); чинит «Токен не принят» в браузере.
+- [x] **Картинки mobile**: `resolveImageUrl()` (абсолютный URL); + выбор цвета/размеров на detail; + sale-бейдж `-N%` и badges.
+- [x] **Рестайл mobile UI под web-палитру**: белый/чёрный, чёрные кнопки-пилюли, серые рамки, белая шапка `SHOP`; не пиксельная копия web (RN limit).
+- [x] **`npm run dev:all`** — backend (3000) + mobile web preview (8081) одной командой.
+- [x] Обновить README/mobile + BRIDGE/ANALYSIS.
 
 **Хвосты / техдолг:**
 - [ ] (низкий/опц.) Русская версия README (сейчас англ.).
@@ -167,6 +172,10 @@
 | 21.08.2026 | Добавлен `POST /api/mobile/orders/:id/confirm`; simulated checkout в Expo автоматически подтверждает заказ и переводит hold stock в PAID; добавлен E2E smoke 401 | Проверить полный checkout с MySQL/токеном; для real Stripe добавить payment UI |
 | 21.08.2026 | Добавлен `DELETE /api/mobile/orders/:id` с owner scope, освобождением hold stock и UI-кнопкой отмены в истории заказов; добавлен E2E smoke 401 | Проверить полный order lifecycle вручную; затем real Stripe UI/OAuth/APK |
 | 21.08.2026 | Mobile MVP подготовлен к Android: API default для emulator `10.0.2.2`, бренд `SHOP Mobile`, package `com.shop.mobile`, `mobile/eas.json` preview APK, `mobile/README.md` и root README mobile section | Запустить `npx eas build --platform android --profile preview` после EAS login; затем ручной device checkout |
+| 21.08.2026 | **CORS для `/api/mobile/*`** (`src/middleware.ts`): Expo Web (8081) → backend (3000) cross-origin; валидный Bearer «не принимался» из-за CORS. Preflight OPTIONS + allow-headers. Verified products 200. commit `7855847` | Запушить; рестайл mobile UI |
+| 21.08.2026 | **Картинки mobile**: бэкенд шлёт относительные пути `/images/...`, RN требует абсолютный URL → хелпер `resolveImageUrl()` (prepend API_URL); + выбор цвета/размеров на detail; + sale-бейдж `-N%` и badges Featured/Best Seller. commit `8abae44` | Рестайл UI под web |
+| 21.08.2026 | **Рестайл mobile UI под web-палитру**: белый фон/чёрный текст/чёрные кнопки-пилюли/серые рамки, белая шапка с лого `SHOP`, светлый логин, вкладки-пилюли. Не пиксельная копия (RN без Tailwind-flexbox/dropdown). commit `867feac` | dev:all + запуск web |
+| 21.08.2026 | **`npm run dev:all`** (`scripts/dev-all.mjs`) — поднимает backend (3000) + mobile web preview (8081) одной командой, Ctrl+C останавливает оба; README обновлён. commit `d6063ab`; засеяны demo-данные, сгенерирован/проверен demo-токен | Продолжить мобилку или деплой |
 
 ---
 

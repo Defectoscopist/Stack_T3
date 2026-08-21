@@ -254,3 +254,17 @@ e2e/                 Playwright
 - Статус миграций показал две неприменённые миграции: `20260818000000_payment_hold` и `20260818010000_mobile_token`.
 - Выполнен `npx prisma migrate deploy` без сброса данных. Повторный прямой вызов tRPC `product.getAll({ limit: 12 })` вернул HTTP 200.
 - Вывод: проблема была в рассинхронизации схемы БД и Prisma, а не в компоненте `/shop` или router `product.getAll`.
+
+### Mobile polish — 21.08.2026 (эта сессия)
+- ✅ **CORS для mobile API**: добавлен `src/middleware.ts` (`matcher: /api/mobile/:path*`) — Expo Web preview на `http://localhost:8081` ходит на бэкенд `http://localhost:3000` (cross-origin), без CORS браузер блокировал запросы и даже валидный Bearer-токен «не принимался». Preflight OPTIONS отдаёт `Access-Control-Allow-Origin`/`Methods`/`Headers`; allow-all origin допустим, т.к. реальный шлюз — Bearer. (commit `7855847`)
+- ✅ **Картинки товаров**: бэкенд отдаёт относительные пути (`/images/catalog/...`), а React Native `<Image>` требует абсолютный URL. Добавлен хелпер `resolveImageUrl()` (prepend `API_URL`, абсолютные `https://` проходят без изменений); применён к карточке и detail. Проверено: `GET http://localhost:3000/images/...` → 200. (commit `8abae44`)
+- ✅ **Цвета и размеры на detail**: варианты группируются по `color`, выводятся swatches; размеры показываются только для выбранного цвета; недоступные размеры подписаны «(нет)»; авто-выбор первого доступного цвета/размера. Ранее показывался плоский список всех size-дублей.
+- ✅ **Sale/badges ближе к web**: акционная цена + старая (зачёркнутая) + пилюля `-N%` (красная, как web `bg-red-500`), бейджи `Featured` (чёрный) и `Best Seller` (жёлтый `#f59e0b`, как web `bg-amber-500`).
+- ✅ **Рестайл mobile UI под web-палитру** (commit `867feac`): белый фон вместо бежевого, чёрный текст вместо тёмно-зелёного, чёрные кнопки-«пилюли» (rounded-full) вместо терракотовых, серые рамки (gray-200/300), белая шапка с логотипом `SHOP` и тёмным StatusBar, светлый логин-экран, вкладки-пилюли (активная — чёрная). Удалены неиспользуемые стили `kicker`/`title`/`subtitle`.
+- ⚠️ Честно: **не пиксельная копия web** — Tailwind-flexbox/dropdown/hero/аккордеоны недоступны в RN из коробки; совпадают цветовая система, формы кнопок, типографика, логика карточек/бейджей/скидок.
+- ⚠️ **Runtime requires два сервера**: бэкенд (3000) + Expo Web/Metro (8081). Expo-web не является частью `next dev`; если 8081 не отвечает — Metro не запущен, поднять `npm run web` в `mobile/`.
+- ✅ **Одна команда `npm run dev:all`** (commit `d6063ab`): `scripts/dev-all.mjs` поднимает бэкенд (3000) и mobile web preview (8081) вместе, логи с префиксами `[backend]`/`[mobile]`, Ctrl+C останавливает оба. Добавлен в README (раздел Mobile + таблица scripts).
+- ✅ Проверки после всех правок: `mobile` TypeScript `--noEmit` → 0, backend unit **44/44**.
+- ✅ Демо-данные засеяны (`npm run db:seed` → 100+ продуктов, demo-user `demo@example.com`); demo-токен сгенерирован и проверен на живом API (products → 200).
+- 🔲 Следующее: выбор рейтинга-звёзд на карточках (как web `★`), вынос цветов в общий `theme.ts`, реальная auth-flow (OAuth/device login) вместо ручного token input, Android APK, live deploy, DB-backed E2E.
+
