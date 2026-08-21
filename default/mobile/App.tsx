@@ -428,7 +428,7 @@ export default function App() {
   if (!tokenReady) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color="#d96b3b" size="large" />
+        <ActivityIndicator color="#000000" size="large" />
         <Text style={styles.muted}>Проверяем сессию</Text>
       </View>
     );
@@ -437,18 +437,18 @@ export default function App() {
   if (!mobileToken) {
     return (
       <View style={styles.authScreen}>
-        <StatusBar style="light" />
-        <Text style={styles.kicker}>SHOP / MOBILE</Text>
-        <Text style={styles.authTitle}>Открой свою коллекцию</Text>
+        <StatusBar style="dark" />
+        <Text style={styles.authLogo}>SHOP</Text>
+        <Text style={styles.authTitle}>Войди, чтобы открыть коллекцию</Text>
         <Text style={styles.authDescription}>Вставь mobile Bearer-токен, чтобы подключить каталог и заказы.</Text>
         <TextInput
           autoCapitalize="none"
           autoCorrect={false}
           onChangeText={setTokenInput}
           placeholder="Bearer token"
-          placeholderTextColor="#8b877e"
+          placeholderTextColor="#9ca3af"
           secureTextEntry
-          style={styles.input}
+          style={[styles.input, styles.authInput]}
           value={tokenInput}
         />
         {tokenError ? <Text style={styles.formMessage}>{tokenError}</Text> : null}
@@ -463,7 +463,7 @@ export default function App() {
   if (loading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color="#d96b3b" size="large" />
+        <ActivityIndicator color="#000000" size="large" />
         <Text style={styles.muted}>Загружаем коллекцию</Text>
       </View>
     );
@@ -471,11 +471,10 @@ export default function App() {
 
   return (
     <View style={styles.screen}>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <View style={styles.header}>
-        <Text style={styles.kicker}>SHOP / MOBILE</Text>
-        <Text style={styles.title}>Новая форма движения</Text>
-        <Text style={styles.subtitle}>Подборка одежды и экипировки на каждый день.</Text>
+        <Text style={styles.logo}>SHOP</Text>
+        <Text style={styles.headerSubtitle}>Твой стиль, каждый день</Text>
       </View>
 
       {selectedProduct ? (
@@ -588,14 +587,14 @@ export default function App() {
               keyboardType={field === "phone" ? "phone-pad" : "default"}
               onChangeText={(value) => updateCheckoutField(field, value)}
               placeholder={{ firstName: "Имя", lastName: "Фамилия", street: "Адрес", city: "Город", state: "Регион", postalCode: "Индекс", country: "Страна", phone: "Телефон" }[field]}
-              placeholderTextColor="#8b877e"
+              placeholderTextColor="#9ca3af"
               style={styles.input}
               value={checkoutForm[field]}
             />
           ))}
           {checkoutMessage ? <Text style={styles.formMessage}>{checkoutMessage}</Text> : null}
           <Pressable disabled={placingOrder} onPress={submitCheckout} style={styles.primaryButton}>
-            {placingOrder ? <ActivityIndicator color="#fff8ed" /> : <Text style={styles.primaryButtonText}>Подтвердить заказ</Text>}
+            {placingOrder ? <ActivityIndicator color="#ffffff" /> : <Text style={styles.primaryButtonText}>Подтвердить заказ</Text>}
           </Pressable>
         </ScrollView>
       ) : null}
@@ -628,7 +627,7 @@ export default function App() {
         contentContainerStyle={styles.list}
         data={products}
         keyExtractor={(product) => product.id}
-        refreshControl={<RefreshControl onRefresh={refresh} refreshing={refreshing} tintColor="#d96b3b" />}
+        refreshControl={<RefreshControl onRefresh={refresh} refreshing={refreshing} tintColor="#6b7280" />}
         renderItem={({ item }) => {
           const price = item.salePrice ?? item.variants[0]?.price ?? 0;
           const image = item.imagesUrl[0];
@@ -651,7 +650,7 @@ export default function App() {
         contentContainerStyle={styles.list}
         data={orders}
         keyExtractor={(order) => order.id}
-        refreshControl={<RefreshControl onRefresh={refresh} refreshing={refreshing} tintColor="#d96b3b" />}
+        refreshControl={<RefreshControl onRefresh={refresh} refreshing={refreshing} tintColor="#6b7280" />}
         renderItem={({ item }) => (
           <View style={styles.order}>
             <View style={styles.productHeading}>
@@ -716,63 +715,65 @@ export default function App() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#f4efe7",
+    backgroundColor: "#ffffff",
   },
   header: {
-    backgroundColor: "#172a27",
+    backgroundColor: "#ffffff",
+    borderBottomColor: "#e5e7eb",
+    borderBottomWidth: 1,
+    flexDirection: "row",
+    alignItems: "baseline",
     paddingHorizontal: 22,
-    paddingTop: 64,
-    paddingBottom: 28,
+    paddingTop: 60,
+    paddingBottom: 18,
+  },
+  logo: {
+    color: "#000000",
+    fontSize: 30,
+    fontWeight: "800",
+    letterSpacing: -0.5,
+    marginRight: 12,
+  },
+  headerSubtitle: {
+    color: "#6b7280",
+    fontSize: 14,
+    fontWeight: "500",
   },
   tabs: {
-    backgroundColor: "#172a27",
+    backgroundColor: "#ffffff",
+    borderBottomColor: "#e5e7eb",
+    borderBottomWidth: 1,
     flexDirection: "row",
     gap: 8,
     paddingHorizontal: 16,
-    paddingBottom: 14,
+    paddingVertical: 10,
   },
   tab: {
-    borderColor: "#49605a",
+    borderColor: "#d1d5db",
     borderWidth: 1,
+    borderRadius: 999,
     paddingHorizontal: 16,
-    paddingVertical: 9,
+    paddingVertical: 8,
   },
   activeTab: {
-    backgroundColor: "#e9a36d",
-    borderColor: "#e9a36d",
+    backgroundColor: "#000000",
+    borderColor: "#000000",
   },
   tabText: {
-    color: "#c5d0c7",
+    color: "#374151",
     fontSize: 14,
     fontWeight: "700",
   },
   activeTabText: {
-    color: "#172a27",
+    color: "#ffffff",
   },
   cartTab: {
-    backgroundColor: "#fff8ed",
-    borderColor: "#fff8ed",
+    backgroundColor: "#ffffff",
+    borderColor: "#000000",
+    borderWidth: 2,
   },
   cartTabText: {
-    color: "#172a27",
-  },
-  kicker: {
-    color: "#e9a36d",
-    fontSize: 12,
-    fontWeight: "700",
-    letterSpacing: 2,
-  },
-  title: {
-    color: "#fff8ed",
-    fontSize: 30,
-    fontWeight: "800",
-    marginTop: 12,
-  },
-  subtitle: {
-    color: "#c5d0c7",
-    fontSize: 15,
-    lineHeight: 22,
-    marginTop: 8,
+    color: "#000000",
   },
   list: {
     gap: 14,
@@ -792,35 +793,36 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
   },
   profilePanel: {
-    backgroundColor: "#fffaf2",
-    borderColor: "#e4d9ca",
+    backgroundColor: "#ffffff",
+    borderColor: "#e5e7eb",
     borderRadius: 8,
     borderWidth: 1,
     marginTop: 22,
     padding: 18,
   },
   profileLabel: {
-    color: "#6e716b",
+    color: "#4b5563",
     fontSize: 13,
     fontWeight: "700",
     textTransform: "uppercase",
   },
   profileValue: {
-    color: "#172a27",
+    color: "#000000",
     fontSize: 20,
     fontWeight: "800",
     marginTop: 8,
   },
   secondaryButton: {
+    borderRadius: 999,
     alignItems: "center",
-    borderColor: "#b65c37",
+    borderColor: "#000000",
     borderWidth: 1,
     marginTop: 16,
     paddingHorizontal: 18,
     paddingVertical: 13,
   },
   secondaryButtonText: {
-    color: "#b65c37",
+    color: "#000000",
     fontSize: 15,
     fontWeight: "800",
   },
@@ -829,18 +831,18 @@ const styles = StyleSheet.create({
     paddingBottom: 14,
   },
   backText: {
-    color: "#b65c37",
+    color: "#000000",
     fontSize: 15,
     fontWeight: "700",
   },
   detailImage: {
-    backgroundColor: "#e7ded2",
+    backgroundColor: "#f3f4f6",
     borderRadius: 8,
     height: 300,
     width: "100%",
   },
   detailKicker: {
-    color: "#b65c37",
+    color: "#000000",
     fontSize: 12,
     fontWeight: "800",
     letterSpacing: 1.5,
@@ -853,9 +855,9 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   featuredBadge: {
-    backgroundColor: "#172a27",
+    backgroundColor: "#000000",
     borderRadius: 6,
-    color: "#fff8ed",
+    color: "#ffffff",
     fontSize: 12,
     fontWeight: "800",
     overflow: "hidden",
@@ -864,7 +866,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   bestsellerBadge: {
-    backgroundColor: "#ef4444",
+    backgroundColor: "#f59e0b",
     borderRadius: 6,
     color: "#ffffff",
     fontSize: 12,
@@ -875,13 +877,13 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   detailTitle: {
-    color: "#172a27",
+    color: "#000000",
     fontSize: 30,
     fontWeight: "800",
     marginTop: 8,
   },
   optionLabel: {
-    color: "#172a27",
+    color: "#000000",
     fontSize: 14,
     fontWeight: "800",
     marginTop: 24,
@@ -899,8 +901,8 @@ const styles = StyleSheet.create({
     textDecorationLine: "line-through",
   },
   saleBadge: {
-    backgroundColor: "#22c55e",
-    borderRadius: 6,
+    backgroundColor: "#ef4444",
+    borderRadius: 999,
     color: "#ffffff",
     fontSize: 12,
     fontWeight: "800",
@@ -915,7 +917,7 @@ const styles = StyleSheet.create({
   },
   colorSwatch: {
     alignItems: "center",
-    borderColor: "#c9bdae",
+    borderColor: "#d1d5db",
     borderWidth: 1,
     justifyContent: "center",
     minWidth: 44,
@@ -923,11 +925,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   colorSwatchSelected: {
-    borderColor: "#172a27",
+    borderColor: "#000000",
     borderWidth: 2,
   },
   colorSwatchText: {
-    color: "#172a27",
+    color: "#000000",
     fontSize: 13,
     fontWeight: "700",
   },
@@ -938,60 +940,61 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   variant: {
-    borderColor: "#c9bdae",
+    borderColor: "#d1d5db",
     borderWidth: 1,
     minWidth: 52,
     paddingHorizontal: 14,
     paddingVertical: 10,
   },
   selectedVariant: {
-    backgroundColor: "#172a27",
-    borderColor: "#172a27",
+    backgroundColor: "#000000",
+    borderColor: "#000000",
   },
   disabledVariant: {
     opacity: 0.35,
   },
   variantText: {
-    color: "#172a27",
+    color: "#000000",
     fontSize: 14,
     fontWeight: "700",
     textAlign: "center",
   },
   selectedVariantText: {
-    color: "#fff8ed",
+    color: "#ffffff",
   },
   primaryButton: {
+    borderRadius: 999,
     alignItems: "center",
-    backgroundColor: "#b65c37",
+    backgroundColor: "#000000",
     marginTop: 22,
     paddingHorizontal: 18,
     paddingVertical: 14,
   },
   primaryButtonText: {
-    color: "#fff8ed",
+    color: "#ffffff",
     fontSize: 15,
     fontWeight: "800",
   },
   input: {
-    backgroundColor: "#fffaf2",
-    borderColor: "#d8ccbd",
+    backgroundColor: "#ffffff",
+    borderColor: "#d1d5db",
     borderRadius: 6,
     borderWidth: 1,
-    color: "#172a27",
+    color: "#000000",
     fontSize: 16,
     marginTop: 10,
     paddingHorizontal: 14,
     paddingVertical: 13,
   },
   formMessage: {
-    color: "#7d3020",
+    color: "#dc2626",
     fontSize: 14,
     lineHeight: 20,
     marginTop: 14,
   },
   cartItem: {
-    backgroundColor: "#fffaf2",
-    borderColor: "#e4d9ca",
+    backgroundColor: "#ffffff",
+    borderColor: "#e5e7eb",
     borderRadius: 8,
     borderWidth: 1,
     padding: 16,
@@ -1004,19 +1007,19 @@ const styles = StyleSheet.create({
   },
   quantityButton: {
     alignItems: "center",
-    borderColor: "#c9bdae",
+    borderColor: "#d1d5db",
     borderWidth: 1,
     height: 34,
     justifyContent: "center",
     width: 34,
   },
   quantityButtonText: {
-    color: "#172a27",
+    color: "#000000",
     fontSize: 18,
     fontWeight: "700",
   },
   quantityValue: {
-    color: "#172a27",
+    color: "#000000",
     fontSize: 15,
     fontWeight: "800",
     minWidth: 18,
@@ -1027,13 +1030,13 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   removeButtonText: {
-    color: "#b65c37",
+    color: "#000000",
     fontSize: 13,
     fontWeight: "700",
   },
   cancelOrderButton: {
     alignSelf: "flex-start",
-    borderColor: "#d8ccbd",
+    borderColor: "#d1d5db",
     borderWidth: 1,
     marginTop: 14,
     paddingHorizontal: 12,
@@ -1043,31 +1046,31 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   product: {
-    backgroundColor: "#fffaf2",
-    borderColor: "#e4d9ca",
+    backgroundColor: "#ffffff",
+    borderColor: "#e5e7eb",
     borderRadius: 8,
     borderWidth: 1,
     overflow: "hidden",
   },
   order: {
-    backgroundColor: "#fffaf2",
-    borderColor: "#e4d9ca",
+    backgroundColor: "#ffffff",
+    borderColor: "#e5e7eb",
     borderRadius: 8,
     borderWidth: 1,
     padding: 16,
   },
   orderStatus: {
-    color: "#b65c37",
+    color: "#000000",
     fontSize: 12,
     fontWeight: "800",
   },
   productImage: {
-    backgroundColor: "#e7ded2",
+    backgroundColor: "#f3f4f6",
     height: 210,
     width: "100%",
   },
   imagePlaceholder: {
-    backgroundColor: "#e7ded2",
+    backgroundColor: "#f3f4f6",
     height: 210,
   },
   productBody: {
@@ -1080,82 +1083,92 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   productName: {
-    color: "#172a27",
+    color: "#000000",
     flex: 1,
     fontSize: 19,
     fontWeight: "700",
   },
   rating: {
-    color: "#b65c37",
+    color: "#000000",
     fontSize: 12,
     fontWeight: "700",
   },
   description: {
-    color: "#6e716b",
+    color: "#4b5563",
     fontSize: 14,
     lineHeight: 20,
     marginTop: 7,
   },
   price: {
-    color: "#172a27",
+    color: "#000000",
     fontSize: 18,
     fontWeight: "800",
     marginTop: 14,
   },
   centered: {
     alignItems: "center",
-    backgroundColor: "#f4efe7",
+    backgroundColor: "#ffffff",
     flex: 1,
     justifyContent: "center",
   },
   authScreen: {
-    backgroundColor: "#172a27",
+    backgroundColor: "#ffffff",
     flex: 1,
     justifyContent: "center",
     padding: 24,
   },
-  authTitle: {
-    color: "#fff8ed",
-    fontSize: 32,
+  authLogo: {
+    color: "#000000",
+    fontSize: 44,
     fontWeight: "800",
-    marginTop: 16,
+    letterSpacing: -1,
+  },
+  authTitle: {
+    color: "#000000",
+    fontSize: 30,
+    fontWeight: "800",
+    marginTop: 14,
   },
   authDescription: {
-    color: "#c5d0c7",
+    color: "#4b5563",
     fontSize: 16,
     lineHeight: 23,
     marginTop: 10,
   },
+  authInput: {
+    marginTop: 18,
+  },
   authHint: {
-    color: "#8da198",
+    color: "#6b7280",
     fontSize: 13,
     marginTop: 18,
     textAlign: "center",
   },
   muted: {
-    color: "#6e716b",
+    color: "#4b5563",
     fontSize: 15,
     marginTop: 12,
   },
   errorBox: {
-    backgroundColor: "#f8ddd0",
+    backgroundColor: "#fee2e2",
     margin: 16,
     padding: 14,
   },
   errorText: {
-    color: "#7d3020",
+    color: "#dc2626",
     fontSize: 14,
     lineHeight: 20,
   },
   retryButton: {
+    borderRadius: 999,
     alignSelf: "flex-start",
-    backgroundColor: "#b65c37",
+    backgroundColor: "#000000",
     marginTop: 12,
     paddingHorizontal: 14,
     paddingVertical: 9,
   },
   retryText: {
-    color: "#fff8ed",
+    color: "#ffffff",
     fontWeight: "700",
   },
 });
