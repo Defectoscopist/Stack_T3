@@ -132,6 +132,17 @@ npm run web
 Pop-Location
 ```
 
+Want the backend and the mobile web preview up in one command? From the
+repository root run:
+
+```bash
+npm run dev:all
+```
+
+This starts the Next.js backend on `http://localhost:3000` and the Expo web
+preview on `http://localhost:8081`, with logs prefixed `[backend]`/`[mobile]`.
+Press Ctrl+C to stop both.
+
 For Android emulator, the client defaults to `http://10.0.2.2:3000`; for a
 physical device set `EXPO_PUBLIC_API_URL` to the computer's LAN IP. Copy
 `mobile/.env.example` to `mobile/.env` when needed.
@@ -155,6 +166,7 @@ Android signing are required for the remote build.
 | Command | Description |
 |---|---|
 | `npm run dev` | Start Next.js dev server (Turbo) |
+| `npm run dev:all` | Start backend (3000) + mobile web preview (8081) |
 | `npm run build` | Production build (runs lint + typecheck) |
 | `npm run start` | Serve the production build |
 | `npm run lint` | ESLint check |
