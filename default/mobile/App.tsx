@@ -22,12 +22,86 @@ const ENV_MOBILE_TOKEN = process.env.EXPO_PUBLIC_MOBILE_TOKEN;
 const TOKEN_KEY = "shop.mobileToken";
 const CART_KEY = "shop.cart";
 
+/**
+ * The backend returns relative image paths (e.g. /images/catalog/...). React
+ * Native <Image> requires an absolute URL, so we prepend the API origin.
+ * Already-absolute URLs (https://...) pass through unchanged.
+ */
+function resolveImageUrl(url: string | undefined | null): string | null {
+  if (!url) return null;
+  if (/^https?:\/\//i.test(url)) return url;
+  return `${API_URL}${url.startsWith("/") ? "" : "/"}${url}`;
+}
+
+// Swatch colors for variant.color (mirrors web ProductCard.tsx).
+const colorMap: Record<string, string> = {
+  "White/Black": "#e5e7eb",
+  "Red/White": "#ef4444",
+  Black: "#1f2937",
+  White: "#f9fafb",
+  "White/Blue": "#3b82f6",
+  "Black/Green": "#22c55e",
+  "White/Gold": "#fbbf24",
+  "Black/Silver": "#6b7280",
+  "Navy/Red": "#1e40af",
+  Silver: "#d1d5db",
+  "Grey/Blue": "#64748b",
+  Purple: "#a855f7",
+  "Gold/Black": "#f59e0b",
+  Grey: "#9ca3af",
+  Blue: "#3b82f6",
+  Red: "#ef4444",
+  Navy: "#1e3a5f",
+  Green: "#22c55e",
+  Pink: "#ec4899",
+  "Grey Mix": "#a3a3a3",
+  Olive: "#808000",
+  Khaki: "#c3b091",
+  Beige: "#f5f5dc",
+  Brown: "#8b4513",
+  "Dark Blue": "#1e3a8a",
+  Yellow: "#eab308",
+  Orange: "#f97316",
+  "Multi-color": "#6366f1",
+  "Black/Red": "#991b1b",
+  "Red/Black": "#b91c1c",
+  Multi: "#8b5cf6",
+};
+
+function getSwatchColor(color: string | null): string {
+  if (!color) return "#ccc";
+  const normalized = color.trim();
+  if (colorMap[normalized]) return colorMap[normalized];
+  const lower = normalized.toLowerCase();
+  if (colorMap[lower]) return colorMap[lower];
+  return lower;
+}
+
+/** Distinct colors across a product's variants, preserving order. */
+function getColorOptions(
+  variants: { color: string | null }[],
+): (string | null)[] {
+  const seen = new Set<string>();
+  const colors: (string | null)[] = [];
+  for (const v of variants) {
+    const key = v.color ?? "\u0000none";
+    if (seen.has(key)) continue;
+    seen.add(key);
+    colors.push(v.color);
+  }
+  return colors;
+}
+
 type Product = {
   id: string;
   name: string;
   description: string;
   salePrice: number | null;
   originalPrice: number | null;
+  discountPercent: number;
+  isOnSale: boolean;
+  isFeatured: boolean;
+  isBestSeller: boolean;
   imagesUrl: string[];
   variants: { id: string; price: number; stock: number; color: string | null; size: string }[];
   averageRating: number;
@@ -110,6 +184,7 @@ export default function App() {
   const [cartReady, setCartReady] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [checkoutForm, setCheckoutForm] = useState<CheckoutForm>(emptyCheckoutForm);
   const [placingOrder, setPlacingOrder] = useState(false);
@@ -409,27 +484,88 @@ export default function App() {
           data={[selectedProduct]}
           keyExtractor={(product) => product.id}
           renderItem={({ item }) => {
-            const selectedVariant = item.variants.find((variant) => variant.id === selectedVariantId) ?? item.variants[0];
+            const colorOptions = getColorOptions(item.variants);
+            // Active color: user choice, else the first color with stock.
+            const activeColor =
+              selectedColor ??
+              item.variants.find((v) => v.color && v.stock > 0)?.color ??
+              item.variants[0]?.color ??
+              null;
+            // Sizes/stock for the active color only.
+            const colorVariants = activeColor
+              ? item.variants.filter((v) => v.color === activeColor)
+              : item.variants;
+            const selectedVariant =
+              item.variants.find((variant) => variant.id === selectedVariantId) ??
+              colorVariants.find((v) => v.stock > 0) ??
+              colorVariants[0];
+            const hasStock = item.variants.some((v) => v.stock > 0);
+            const lowestPrice = Math.min(...item.variants.map((v) => v.price));
+            const displayPrice =
+              item.isOnSale && item.salePrice ? item.salePrice : lowestPrice;
+            const originalPrice =
+              item.isOnSale && item.originalPrice
+                ? item.originalPrice
+                : lowestPrice;
+            const pickColor = (color: string | null) => {
+              setSelectedColor(color);
+              const firstInColor = item.variants.find((v) => v.color === color && v.stock > 0) ?? item.variants.find((v) => v.color === color);
+              setSelectedVariantId(firstInColor?.id ?? null);
+            };
             return (
               <View>
                 <Pressable onPress={() => setSelectedProduct(null)} style={styles.backButton}>
                   <Text style={styles.backText}>← Каталог</Text>
                 </Pressable>
-                {item.imagesUrl[0] ? <Image source={{ uri: item.imagesUrl[0] }} style={styles.detailImage} /> : <View style={styles.detailImage} />}
+                {resolveImageUrl(item.imagesUrl[0]) ? <Image source={{ uri: resolveImageUrl(item.imagesUrl[0])! }} style={styles.detailImage} /> : <View style={styles.detailImage} />}
+                {item.isFeatured || item.isBestSeller ? (
+                  <View style={styles.badgeRow}>
+                    {item.isFeatured ? <Text style={styles.featuredBadge}>Featured</Text> : null}
+                    {item.isBestSeller ? <Text style={styles.bestsellerBadge}>Best Seller</Text> : null}
+                  </View>
+                ) : null}
                 <Text style={styles.detailKicker}>{item.category?.name ?? "SHOP EDIT"}</Text>
                 <Text style={styles.detailTitle}>{item.name}</Text>
                 <Text style={styles.description}>{item.description}</Text>
-                <Text style={styles.price}>${(selectedVariant?.price ?? 0).toFixed(2)}</Text>
-                <Text style={styles.optionLabel}>Выбери размер</Text>
+                <View style={styles.priceRow}>
+                  <Text style={styles.price}>${displayPrice.toFixed(2)}</Text>
+                  {item.isOnSale && originalPrice > displayPrice ? (
+                    <Text style={styles.originalPrice}>${originalPrice.toFixed(2)}</Text>
+                  ) : null}
+                  {item.isOnSale && item.discountPercent ? (
+                    <Text style={styles.saleBadge}>-{item.discountPercent}%</Text>
+                  ) : null}
+                </View>
+                {colorOptions.length > 0 ? (
+                  <>
+                    <Text style={styles.optionLabel}>Цвет</Text>
+                    <View style={styles.colorList}>
+                      {colorOptions.map((color) => (
+                        <Pressable
+                          key={color ?? "none"}
+                          onPress={() => pickColor(color)}
+                          style={[
+                            styles.colorSwatch,
+                            { backgroundColor: getSwatchColor(color) },
+                            activeColor === color && styles.colorSwatchSelected,
+                          ]}
+                        >
+                          <Text style={styles.colorSwatchText}>{color ?? "—"}</Text>
+                        </Pressable>
+                      ))}
+                    </View>
+                  </>
+                ) : null}
+                <Text style={styles.optionLabel}>Размер</Text>
                 <View style={styles.variantList}>
-                  {item.variants.map((variant) => (
+                  {colorVariants.map((variant) => (
                     <Pressable key={variant.id} disabled={variant.stock < 1} onPress={() => setSelectedVariantId(variant.id)} style={[styles.variant, selectedVariant?.id === variant.id && styles.selectedVariant, variant.stock < 1 && styles.disabledVariant]}>
-                      <Text style={[styles.variantText, selectedVariant?.id === variant.id && styles.selectedVariantText]}>{variant.size}</Text>
+                      <Text style={[styles.variantText, selectedVariant?.id === variant.id && styles.selectedVariantText]}>{variant.size}{variant.stock < 1 ? " (нет)" : ""}</Text>
                     </Pressable>
                   ))}
                 </View>
-                <Pressable disabled={!selectedVariant || selectedVariant.stock < 1} onPress={addToCart} style={styles.primaryButton}>
-                  <Text style={styles.primaryButtonText}>{selectedVariant?.stock ? "Добавить в корзину" : "Нет в наличии"}</Text>
+                <Pressable disabled={!selectedVariant || selectedVariant.stock < 1 || !hasStock} onPress={addToCart} style={styles.primaryButton}>
+                  <Text style={styles.primaryButtonText}>{!hasStock ? "Нет в наличии" : selectedVariant?.stock ? "Добавить в корзину" : "Нет в наличии"}</Text>
                 </Pressable>
               </View>
             );
@@ -498,7 +634,7 @@ export default function App() {
           const image = item.imagesUrl[0];
           return (
             <Pressable onPress={() => { setSelectedProduct(item); setSelectedVariantId(item.variants[0]?.id ?? null); }} style={styles.product}>
-              {image ? <Image source={{ uri: image }} style={styles.productImage} /> : <View style={styles.imagePlaceholder} />}
+              {image ? <Image source={{ uri: resolveImageUrl(image)! }} style={styles.productImage} /> : <View style={styles.imagePlaceholder} />}
               <View style={styles.productBody}>
                 <View style={styles.productHeading}>
                   <Text numberOfLines={2} style={styles.productName}>{item.name}</Text>
@@ -711,6 +847,33 @@ const styles = StyleSheet.create({
     marginTop: 20,
     textTransform: "uppercase",
   },
+  badgeRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginTop: 12,
+  },
+  featuredBadge: {
+    backgroundColor: "#172a27",
+    borderRadius: 6,
+    color: "#fff8ed",
+    fontSize: 12,
+    fontWeight: "800",
+    overflow: "hidden",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    textTransform: "uppercase",
+  },
+  bestsellerBadge: {
+    backgroundColor: "#ef4444",
+    borderRadius: 6,
+    color: "#ffffff",
+    fontSize: 12,
+    fontWeight: "800",
+    overflow: "hidden",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    textTransform: "uppercase",
+  },
   detailTitle: {
     color: "#172a27",
     fontSize: 30,
@@ -722,6 +885,51 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "800",
     marginTop: 24,
+  },
+  priceRow: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 8,
+    marginTop: 14,
+  },
+  originalPrice: {
+    color: "#8a8a86",
+    fontSize: 15,
+    fontWeight: "600",
+    textDecorationLine: "line-through",
+  },
+  saleBadge: {
+    backgroundColor: "#22c55e",
+    borderRadius: 6,
+    color: "#ffffff",
+    fontSize: 12,
+    fontWeight: "800",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  colorList: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginTop: 10,
+  },
+  colorSwatch: {
+    alignItems: "center",
+    borderColor: "#c9bdae",
+    borderWidth: 1,
+    justifyContent: "center",
+    minWidth: 44,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  colorSwatchSelected: {
+    borderColor: "#172a27",
+    borderWidth: 2,
+  },
+  colorSwatchText: {
+    color: "#172a27",
+    fontSize: 13,
+    fontWeight: "700",
   },
   variantList: {
     flexDirection: "row",
